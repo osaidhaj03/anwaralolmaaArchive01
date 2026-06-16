@@ -12,15 +12,18 @@ import {
   LogOut,
   Menu,
   MessageCircle,
+  Moon,
   PlayCircle,
   Search,
   Settings,
+  Sun,
   Tags,
   UserRound,
   UsersRound,
 } from 'lucide-react'
 import { BrandMark } from '../components/AdminIcons'
 import { useLanguage, type Language } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 
 const navItems = [
   { label: { ar: 'لوحة التحكم', en: 'Dashboard' }, href: '/admin', icon: Home },
@@ -38,6 +41,7 @@ const navItems = [
 
 export function AdminShell() {
   const { dir, language, setLanguage } = useLanguage()
+  const { theme, toggleTheme } = useTheme()
   const copy = shellCopy[language]
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -131,6 +135,9 @@ export function AdminShell() {
               </button>
             </div>
             <button onClick={() => setPreviewOpen((current) => !current)} type="button">{copy.preview}</button>
+            <button className="top-icon" onClick={toggleTheme} title={copy.theme} type="button">
+              {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
             <button
               className={`top-icon ${notificationsOpen ? 'is-active' : ''}`}
               onClick={() => setNotificationsOpen((current) => !current)}
@@ -195,6 +202,7 @@ const shellCopy: Record<Language, Record<string, string>> = {
     breadcrumb: 'الرئيسية / لوحة التحكم',
     languageLabel: 'تغيير اللغة',
     preview: 'عرض الموقع',
+    theme: 'تغيير الوضع',
     previewTitle: 'معاينة الموقع',
     previewText: 'هذه نسخة واجهة فقط. سيتم فتح الموقع العام بعد بناء صفحات الواجهة العامة.',
     notifications: 'الإشعارات',
@@ -216,6 +224,7 @@ const shellCopy: Record<Language, Record<string, string>> = {
     breadcrumb: 'Home / Dashboard',
     languageLabel: 'Change language',
     preview: 'Preview site',
+    theme: 'Toggle theme',
     previewTitle: 'Site Preview',
     previewText: 'This is a frontend-only mock. Public pages will open here after they are built.',
     notifications: 'Notifications',

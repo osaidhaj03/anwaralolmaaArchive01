@@ -9,6 +9,14 @@ import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { AdminManagementPage } from './pages/admin/AdminManagementPage'
 import { AdminPlaceholderPage } from './pages/admin/AdminPlaceholderPage'
 import { AdminYouTubeImportPage } from './pages/admin/AdminYouTubeImportPage'
+import { CourseDetailPage } from './pages/public/CourseDetailPage'
+import { CoursesPage } from './pages/public/CoursesPage'
+import { FatwaPage } from './pages/public/FatwaPage'
+import { LandingPage } from './pages/public/LandingPage'
+import { LibraryPage } from './pages/public/LibraryPage'
+import { LoginPage } from './pages/public/LoginPage'
+import { ScholarAboutComingSoonPage } from './pages/public/ScholarAboutComingSoonPage'
+import { ScholarsPage } from './pages/public/ScholarsPage'
 
 function App() {
   const { language } = useLanguage()
@@ -16,7 +24,14 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/admin" replace />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/courses" element={<CoursesPage />} />
+      <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+      <Route path="/scholars" element={<ScholarsPage />} />
+      <Route path="/scholars/:scholarId/about" element={<ScholarAboutComingSoonPage />} />
+      <Route path="/fatwa" element={<FatwaPage />} />
+      <Route path="/library" element={<LibraryPage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route element={<AdminShell />}>
         <Route index path="/admin" element={<AdminDashboard />} />
         <Route
@@ -65,7 +80,7 @@ function App() {
           element={<AdminPlaceholderPage badge={language === 'ar' ? 'لاحقاً' : 'Later'} description={language === 'ar' ? 'إعدادات الموقع والصلاحيات ستضاف بعد تثبيت صفحات الإدارة الأساسية.' : 'Site settings and permissions will be added after the core admin pages are stable.'} title={language === 'ar' ? 'قريباً' : 'Coming soon'} />}
         />
       </Route>
-      <Route path="*" element={<Navigate to="/admin" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
