@@ -1,5 +1,5 @@
 import { BookOpen, Eye, GraduationCap, LockKeyhole, LogIn, Mail, Moon, Sun, UsersRound } from 'lucide-react'
-import { type FormEvent } from 'react'
+import { type FormEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BrandMark } from '../../components/AdminIcons'
 import { useLanguage, type Language } from '../../context/LanguageContext'
@@ -29,6 +29,9 @@ const loginCopy: Record<Language, Record<string, string>> = {
     lessons: 'دروس علمية مبسطة',
     scholars: 'كوكبة من أهل العلم',
     copyright: '2025 © أنوار العلماء - جميع الحقوق محفوظة',
+    demo: 'تم تنفيذ هذا الإجراء كواجهة تجريبية فقط.',
+    hidden: 'إظهار كلمة المرور',
+    visible: 'إخفاء كلمة المرور',
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -53,6 +56,9 @@ const loginCopy: Record<Language, Record<string, string>> = {
     lessons: 'Clear lessons',
     scholars: 'Recognized scholars',
     copyright: '2025 © Anwar Alolmaa - All rights reserved',
+    demo: 'This action is available as a frontend demo only.',
+    hidden: 'Show password',
+    visible: 'Hide password',
   },
 }
 
@@ -61,10 +67,16 @@ export function LoginPage() {
   const { theme, toggleTheme } = useTheme()
   const copy = loginCopy[language]
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
+  const [message, setMessage] = useState('')
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     navigate('/admin')
+  }
+
+  function handleMockAction() {
+    setMessage(copy.demo)
   }
 
   return (
@@ -88,8 +100,8 @@ export function LoginPage() {
             <span>{copy.password}</span>
             <div>
               <LockKeyhole size={19} />
-              <input autoComplete="current-password" placeholder={copy.passwordPlaceholder} type="password" />
-              <button aria-label="Show password" type="button">
+              <input autoComplete="current-password" placeholder={copy.passwordPlaceholder} type={showPassword ? 'text' : 'password'} />
+              <button aria-label={showPassword ? copy.visible : copy.hidden} onClick={() => setShowPassword((current) => !current)} type="button">
                 <Eye size={18} />
               </button>
             </div>
@@ -100,7 +112,7 @@ export function LoginPage() {
               <input type="checkbox" />
               <span>{copy.remember}</span>
             </label>
-            <a href="#forgot">{copy.forgot}</a>
+            <button className="login-link-button" onClick={handleMockAction} type="button">{copy.forgot}</button>
           </div>
 
           <button className="login-submit" type="submit">
@@ -113,19 +125,20 @@ export function LoginPage() {
           </div>
 
           <div className="social-login-row">
-            <button type="button">
+            <button onClick={handleMockAction} type="button">
               <span className="google-mark">G</span>
               {copy.google}
             </button>
-            <button type="button">
+            <button onClick={handleMockAction} type="button">
               <span className="microsoft-mark" />
               {copy.microsoft}
             </button>
           </div>
 
           <p className="signup-line">
-            {copy.noAccount} <a href="#create">{copy.create}</a>
+            {copy.noAccount} <button className="login-link-button" onClick={handleMockAction} type="button">{copy.create}</button>
           </p>
+          {message ? <p className="login-helper-message">{message}</p> : null}
         </form>
 
         <p className="login-copyright">{copy.copyright}</p>
@@ -133,7 +146,7 @@ export function LoginPage() {
 
       <section className="login-visual">
         <div className="login-language">
-          <button onClick={toggleTheme} type="button" aria-label="Toggle dark mode">
+          <button aria-label="Toggle dark mode" onClick={toggleTheme} type="button">
             {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
           </button>
           <button className={language === 'ar' ? 'is-active' : ''} onClick={() => setLanguage('ar')} type="button">

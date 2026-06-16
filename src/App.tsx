@@ -9,13 +9,19 @@ import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { AdminManagementPage } from './pages/admin/AdminManagementPage'
 import { AdminPlaceholderPage } from './pages/admin/AdminPlaceholderPage'
 import { AdminYouTubeImportPage } from './pages/admin/AdminYouTubeImportPage'
+import { CategoriesPage } from './pages/public/CategoriesPage'
+import { CategoryDetailPage } from './pages/public/CategoryDetailPage'
 import { CourseDetailPage } from './pages/public/CourseDetailPage'
 import { CoursesPage } from './pages/public/CoursesPage'
 import { FatwaPage } from './pages/public/FatwaPage'
+import { FatwaDetailPage } from './pages/public/FatwaDetailPage'
 import { LandingPage } from './pages/public/LandingPage'
 import { LibraryPage } from './pages/public/LibraryPage'
+import { LibraryDetailPage } from './pages/public/LibraryDetailPage'
 import { LoginPage } from './pages/public/LoginPage'
+import { ScholarProfilePage } from './pages/public/ScholarProfilePage'
 import { ScholarAboutComingSoonPage } from './pages/public/ScholarAboutComingSoonPage'
+import { SearchResultsPage } from './pages/public/SearchResultsPage'
 import { ScholarsPage } from './pages/public/ScholarsPage'
 
 function App() {
@@ -25,12 +31,18 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/categories" element={<CategoriesPage />} />
+      <Route path="/categories/:categoryId" element={<CategoryDetailPage />} />
       <Route path="/courses" element={<CoursesPage />} />
       <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+      <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/scholars" element={<ScholarsPage />} />
+      <Route path="/scholars/:scholarId" element={<ScholarProfilePage />} />
       <Route path="/scholars/:scholarId/about" element={<ScholarAboutComingSoonPage />} />
       <Route path="/fatwa" element={<FatwaPage />} />
+      <Route path="/fatwa/:fatwaId" element={<FatwaDetailPage />} />
       <Route path="/library" element={<LibraryPage />} />
+      <Route path="/library/:bookId" element={<LibraryDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route element={<AdminShell />}>
         <Route index path="/admin" element={<AdminDashboard />} />

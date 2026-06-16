@@ -114,9 +114,9 @@ function HeaderActions({
 }) {
   return (
     <div className="public-actions">
-      <button className="public-icon-button" type="button" aria-label={searchLabel}>
+      <Link className="public-icon-button" to="/search" aria-label={searchLabel}>
         <Search size={19} />
-      </button>
+      </Link>
       <button className="public-icon-button" onClick={toggleTheme} type="button" aria-label={themeLabel}>
         {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
       </button>
