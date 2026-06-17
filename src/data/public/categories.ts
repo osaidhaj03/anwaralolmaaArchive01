@@ -1,6 +1,7 @@
-import { BookOpen, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UserRound, UsersRound } from 'lucide-react'
+import { BookOpen, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UsersRound } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { CategoriesCopy } from './pageTypes'
+import { pickLocalizedText, sharedCategories } from '../shared/archive'
 
 export const categoriesCopy: Record<Language, CategoriesCopy> = {
   ar: {
@@ -32,14 +33,15 @@ export const categoriesCopy: Record<Language, CategoriesCopy> = {
     quickLinks: 'روابط سريعة',
     footerText: 'منهج أهل السنة فقهاً وعقيدة وسلوكاً.',
     newsletterSuccess: 'تم تسجيل بريدك في القائمة البريدية.',
-    items: [
-      { id: 'quran', title: 'القرآن الكريم', text: 'علوم القرآن والتفسير وعلومه', icon: BookOpen, courses: 89, lessons: 2541, books: 156 },
-      { id: 'aqidah', title: 'العقيدة', text: 'العقيدة والتوحيد وأصول الإيمان', icon: LibraryBig, courses: 78, lessons: 1356, books: 78 },
-      { id: 'fiqh', title: 'الفقه وأصوله', text: 'الفقه الإسلامي وأصول الفقه والقواعد', icon: GraduationCap, courses: 332, lessons: 5412, books: 632 },
-      { id: 'hadith', title: 'الحديث وعلومه', text: 'السنة النبوية وشرح الأحاديث', icon: BookOpen, courses: 210, lessons: 3612, books: 210 },
-      { id: 'seerah', title: 'السيرة النبوية', text: 'سيرة النبي والدروس المستفادة', icon: UserRound, courses: 32, lessons: 845, books: 312 },
-      { id: 'arabic', title: 'اللغة العربية', text: 'النحو والصرف والبلاغة', icon: LibraryBig, courses: 45, lessons: 1624, books: 86 },
-    ],
+    items: sharedCategories.map((item) => ({
+      id: item.id,
+      title: item.title.ar,
+      text: item.text.ar,
+      icon: item.icon,
+      courses: item.courses,
+      lessons: item.lessons,
+      books: item.books,
+    })),
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -70,13 +72,14 @@ export const categoriesCopy: Record<Language, CategoriesCopy> = {
     quickLinks: 'Quick links',
     footerText: 'A Sunni learning archive for creed, worship, and conduct.',
     newsletterSuccess: 'Your email has been added to the newsletter list.',
-    items: [
-      { id: 'quran', title: 'Quran Studies', text: 'Tafsir, recitation, and Quranic sciences', icon: BookOpen, courses: 89, lessons: 2541, books: 156 },
-      { id: 'aqidah', title: 'Aqidah', text: 'Creed, tawhid, and foundations of faith', icon: LibraryBig, courses: 78, lessons: 1356, books: 78 },
-      { id: 'fiqh', title: 'Fiqh and Usul', text: 'Islamic jurisprudence, usul, and legal maxims', icon: GraduationCap, courses: 332, lessons: 5412, books: 632 },
-      { id: 'hadith', title: 'Hadith Sciences', text: 'Prophetic tradition and hadith commentary', icon: BookOpen, courses: 210, lessons: 3612, books: 210 },
-      { id: 'seerah', title: 'Prophetic Seerah', text: 'Biography of the Prophet and lessons from it', icon: UserRound, courses: 32, lessons: 845, books: 312 },
-      { id: 'arabic', title: 'Arabic Language', text: 'Grammar, morphology, and rhetoric', icon: LibraryBig, courses: 45, lessons: 1624, books: 86 },
-    ],
+    items: sharedCategories.map((item) => ({
+      id: item.id,
+      title: pickLocalizedText(item.title, 'en'),
+      text: pickLocalizedText(item.text, 'en'),
+      icon: item.icon,
+      courses: item.courses,
+      lessons: item.lessons,
+      books: item.books,
+    })),
   },
 }

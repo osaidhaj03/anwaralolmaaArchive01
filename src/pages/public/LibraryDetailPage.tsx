@@ -4,6 +4,7 @@ import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { DetailInfoList } from '../../components/public/DetailInfoList'
 import { DetailRelatedLinks } from '../../components/public/DetailRelatedLinks'
+import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { libraryCopy } from '../../data/public/library'
 
@@ -42,9 +43,10 @@ export function LibraryDetailPage() {
   const { bookId } = useParams()
   const { dir, language } = useLanguage()
   const pageCopy = libraryCopy[language]
+  const archive = useLocalizedArchive(language)
   const copy = detailCopy[language]
   const index = Number(bookId) - 1
-  const item = pageCopy.items[index]
+  const item = archive.books[index]
 
   if (!item) {
     return <Navigate to="/library" replace />
@@ -82,10 +84,10 @@ export function LibraryDetailPage() {
             <h2>{copy.related}</h2>
             <DetailRelatedLinks
               className="library-detail-related"
-              items={pageCopy.items.filter((candidate) => candidate.category === item.category && candidate.title !== item.title).slice(0, 3).map((related) => ({
+              items={archive.books.filter((candidate) => candidate.category === item.category && candidate.title !== item.title).slice(0, 3).map((related) => ({
                 description: related.author,
                 title: related.title,
-                to: `/library/${pageCopy.items.findIndex((candidate) => candidate.title === related.title) + 1}`,
+                to: `/library/${archive.books.findIndex((candidate) => candidate.title === related.title) + 1}`,
               }))}
             />
           </article>

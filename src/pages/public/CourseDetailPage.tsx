@@ -15,6 +15,7 @@ import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { CourseLessonList } from '../../components/public/CourseLessonList'
 import { CourseSummaryCard } from '../../components/public/CourseSummaryCard'
+import { useArchiveData, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { coursesCopy } from '../../data/public/courses'
 
@@ -65,17 +66,21 @@ export function CourseDetailPage() {
   const { courseId } = useParams()
   const { dir, language } = useLanguage()
   const listCopy = coursesCopy[language]
+  const archive = useLocalizedArchive(language)
+  const { lessonsByCourse } = useArchiveData()
   const copy = detailCopy[language]
   const index = Number(courseId) - 1
-  const course = listCopy.courses[index]
+  const course = archive.courses[index]
   const [activeTab, setActiveTab] = useState<'content' | 'materials' | 'downloads'>('content')
-  const lessonRows = Array.from({ length: 8 }, (_, lessonIndex) => ({
+  const storedLessons = lessonsByCourse[String(index)] ?? []
+  const lessonCountLabel = language === 'ar' ? `${storedLessons.length} درس` : `${storedLessons.length} lessons`
+  const lessonRows = storedLessons.map((lesson, lessonIndex) => ({
     title:
       language === 'ar'
-        ? `${lessonIndex + 1}. ${lessonIndex === 0 ? copy.overview : `${course?.title ?? ''} - الدرس ${lessonIndex + 1}`}`
-        : `${lessonIndex + 1}. ${lessonIndex === 0 ? copy.overview : `${course?.title ?? ''} - Lesson ${lessonIndex + 1}`}`,
-    duration: ['45:32', '43:18', '48:05', '50:21', '46:15', '44:30', '41:12', '52:08'][lessonIndex],
-    locked: lessonIndex > 2,
+        ? `${lessonIndex + 1}. ${lesson.title.includes('Course introduction') ? copy.overview : lesson.title.replace('Lesson', 'الدرس')}`
+        : `${lessonIndex + 1}. ${lesson.title}`,
+    duration: lesson.duration,
+    locked: lesson.locked,
   }))
   const materialRows = [
     {
@@ -95,7 +100,7 @@ export function CourseDetailPage() {
     },
   ]
   const downloadRows = lessonRows.slice(0, 5).map((lesson, lessonIndex) => ({
-    title: language === 'ar' ? `تحميل ${lesson.title}` : `Download ${lesson.title}`,
+      title: language === 'ar' ? `تحميل ${lesson.title}` : `Download ${lesson.title}`,
     meta: language === 'ar' ? `MP4 · الجودة ${lessonIndex % 2 === 0 ? 'العالية' : 'المتوسطة'}` : `MP4 · ${lessonIndex % 2 === 0 ? 'High' : 'Medium'} quality`,
   }))
 
@@ -146,7 +151,7 @@ export function CourseDetailPage() {
               <h2>{course.title}</h2>
             </div>
             <div className="course-video-meta">
-              <span><BookOpen size={17} />{course.lessons}</span>
+              <span><BookOpen size={17} />{lessonCountLabel}</span>
               <span><Clock size={17} />{course.hours}</span>
               <span><UsersRound size={17} />{course.students}</span>
               <span><Star size={17} />{course.rating}</span>

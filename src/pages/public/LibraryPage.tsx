@@ -6,37 +6,50 @@ import { LibraryCard } from '../../components/public/LibraryCard'
 import { PublicFilterSelect } from '../../components/public/PublicFilterSelect'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
 import { PublicStatStrip } from '../../components/public/PublicStatStrip'
+import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { libraryCopy } from '../../data/public/library'
 
 export function LibraryPage() {
   const { dir, language } = useLanguage()
   const copy = libraryCopy[language]
+  const archive = useLocalizedArchive(language)
+  const stats = useArchiveStats()
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
   const [author, setAuthor] = useState('')
   const [type, setType] = useState('')
   const [sort, setSort] = useState<'latest' | 'downloads'>('latest')
 
-  const categories = useMemo(() => unique(copy.items.map((item) => item.category)), [copy.items])
-  const authors = useMemo(() => unique(copy.items.map((item) => item.author)), [copy.items])
-  const types = useMemo(() => unique(copy.items.map((item) => item.type)), [copy.items])
+  const categories = useMemo(() => unique(archive.books.map((item) => item.category)), [archive.books])
+  const authors = useMemo(() => unique(archive.books.map((item) => item.author)), [archive.books])
+  const types = useMemo(() => unique(archive.books.map((item) => item.type)), [archive.books])
   const items = useMemo(() => {
     const query = search.trim().toLowerCase()
-    return copy.items
+    return archive.books
       .filter((item) => {
         const matchesSearch = [item.title, item.author, item.category, item.type].some((value) => value.toLowerCase().includes(query))
         return (!query || matchesSearch) && (!category || item.category === category) && (!author || item.author === author) && (!type || item.type === type)
       })
       .sort((first, second) => sort === 'downloads' ? numericValue(second.downloads) - numericValue(first.downloads) : 0)
-  }, [author, category, copy.items, search, sort, type])
+  }, [archive.books, author, category, search, sort, type])
+
+  const normalizedStats = [
+    String(stats.public.books),
+    String(unique(archive.books.map((item) => item.author)).length),
+    compactNumber(stats.public.downloads),
+    compactNumber(stats.public.reads),
+  ]
 
   return (
     <main className="public-site" dir={dir}>
       <PublicHeader activeTo="/library" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="library-hero" description={copy.description} title={copy.title}>
-        <PublicStatStrip className="library-stat-strip" items={copy.stats} />
+        <PublicStatStrip
+          className="library-stat-strip"
+          items={copy.stats.map((item, index) => ({ ...item, value: normalizedStats[index] }))}
+        />
       </PublicPageHero>
 
       <section className="public-container library-layout">
@@ -84,4 +97,11 @@ function unique(values: string[]) {
 
 function numericValue(value: string) {
   return Number(value.replace(/[^\d]/g, ''))
+}
+
+function compactNumber(value: number) {
+  if (value >= 1000) {
+    return `${Math.round(value / 1000)}K`
+  }
+  return String(value)
 }

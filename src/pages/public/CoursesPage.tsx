@@ -1,44 +1,33 @@
-import {
-  Grid2X2,
-  Search,
-} from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
-import { CourseCard } from '../../components/public/CourseCard'
-import { PublicFilterSelect } from '../../components/public/PublicFilterSelect'
+import { CoursesFilterCard, type CourseFilters } from '../../components/public/CoursesFilterCard'
+import { CoursesHeroTools } from '../../components/public/CoursesHeroTools'
+import { CoursesResults, type CourseViewMode } from '../../components/public/CoursesResults'
+import { FeaturedCourseCard } from '../../components/public/FeaturedCourseCard'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
-import { PublicStatStrip } from '../../components/public/PublicStatStrip'
+import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { coursesCopy } from '../../data/public/courses'
 import type { CourseItem } from '../../data/public/pageTypes'
 
-type ViewMode = 'grid' | 'list'
-
-type CourseFilters = {
-  category: string
-  level: string
-  status: string
-  teacher: string
-}
-
-
 export function CoursesPage() {
   const { dir, language } = useLanguage()
   const copy = coursesCopy[language]
+  const archive = useLocalizedArchive(language)
+  const stats = useArchiveStats()
   const [search, setSearch] = useState('')
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [viewMode, setViewMode] = useState<CourseViewMode>('grid')
   const [draftFilters, setDraftFilters] = useState<CourseFilters>({ category: '', level: '', status: '', teacher: '' })
   const [activeFilters, setActiveFilters] = useState<CourseFilters>(draftFilters)
 
-  const categoryOptions = useMemo(() => unique(copy.courses.map((course) => course.category)), [copy.courses])
-  const levelOptions = useMemo(() => unique(copy.courses.map((course) => course.level)), [copy.courses])
-  const teacherOptions = useMemo(() => unique(copy.courses.map((course) => course.teacher)), [copy.courses])
+  const categoryOptions = useMemo(() => unique(archive.courses.map((course) => course.category)), [archive.courses])
+  const levelOptions = useMemo(() => unique(archive.courses.map((course) => course.level)), [archive.courses])
+  const teacherOptions = useMemo(() => unique(archive.courses.map((course) => course.teacher)), [archive.courses])
 
   const filteredCourses = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase()
-    const filtered = copy.courses.filter((course) => {
+    const filtered = archive.courses.filter((course) => {
       const courseStatus = getCourseStatus(course, language)
       const matchesSearch = [course.title, course.teacher, course.category, course.level].some((value) =>
         value.toLowerCase().includes(normalizedSearch),
@@ -54,13 +43,17 @@ export function CoursesPage() {
     })
 
     return filtered
-  }, [activeFilters, copy.courses, language, search])
+  }, [activeFilters, archive.courses, language, search])
 
-  const featured = filteredCourses[0] ?? copy.courses[0]
+  const featured = filteredCourses[0] ?? archive.courses[0]
+  const normalizedStats = copy.stats.map((item) => ({
+    ...item,
+    value: item.label === 'درس' || item.label === 'Lessons' ? new Intl.NumberFormat('en-US').format(stats.public.lessons) : String(stats.public.courses),
+  }))
   const showingText =
     language === 'ar'
-      ? `عرض ${filteredCourses.length ? 1 : 0} - ${filteredCourses.length} من أصل ${copy.courses.length} دورة`
-      : `Showing ${filteredCourses.length ? 1 : 0} - ${filteredCourses.length} of ${copy.courses.length} courses`
+      ? `عرض ${filteredCourses.length ? 1 : 0} - ${filteredCourses.length} من أصل ${archive.courses.length} دورة`
+      : `Showing ${filteredCourses.length ? 1 : 0} - ${filteredCourses.length} of ${archive.courses.length} courses`
 
   function updateDraftFilter(key: keyof CourseFilters, value: string) {
     setDraftFilters((current) => ({ ...current, [key]: value }))
@@ -82,71 +75,48 @@ export function CoursesPage() {
       <PublicHeader activeTo="/courses" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="courses-hero" description={copy.description} title={copy.title}>
-          <div className="courses-searchbar">
-            <label>
-              <Search size={20} />
-              <input onChange={(event) => setSearch(event.target.value)} placeholder={copy.searchPlaceholder} value={search} />
-            </label>
-          </div>
-          <PublicStatStrip className="courses-stat-strip" iconSize={22} items={copy.stats} />
+        <CoursesHeroTools onSearchChange={setSearch} search={search} searchPlaceholder={copy.searchPlaceholder} stats={normalizedStats} />
       </PublicPageHero>
 
       <section className="public-container courses-layout">
-        <aside className="courses-filter-card">
-          <h2>{copy.filtersTitle}</h2>
-          <PublicFilterSelect label={copy.categoryFilter} onChange={(value) => updateDraftFilter('category', value)} options={categoryOptions} value={draftFilters.category} allLabel={copy.all} />
-          <PublicFilterSelect label={copy.levelFilter} onChange={(value) => updateDraftFilter('level', value)} options={levelOptions} value={draftFilters.level} allLabel={copy.all} />
-          <PublicFilterSelect label={copy.statusFilter} onChange={(value) => updateDraftFilter('status', value)} options={[copy.active, copy.completed]} value={draftFilters.status} allLabel={copy.all} />
-          <PublicFilterSelect label={copy.teacherFilter} onChange={(value) => updateDraftFilter('teacher', value)} options={teacherOptions} value={draftFilters.teacher} allLabel={copy.all} />
-          <div className="courses-filter-actions">
-            <button onClick={applyFilters} type="button">{copy.apply}</button>
-            <button onClick={resetFilters} type="button">{copy.reset}</button>
-          </div>
-        </aside>
+        <CoursesFilterCard
+          allLabel={copy.all}
+          applyLabel={copy.apply}
+          categoryLabel={copy.categoryFilter}
+          categoryOptions={categoryOptions}
+          filters={draftFilters}
+          levelLabel={copy.levelFilter}
+          levelOptions={levelOptions}
+          onApply={applyFilters}
+          onReset={resetFilters}
+          onUpdate={updateDraftFilter}
+          resetLabel={copy.reset}
+          statusLabel={copy.statusFilter}
+          statusOptions={[copy.active, copy.completed]}
+          teacherLabel={copy.teacherFilter}
+          teacherOptions={teacherOptions}
+          title={copy.filtersTitle}
+        />
 
-        <div className="courses-content">
-          <div className="courses-content__header">
-            <span>{showingText}</span>
-            <div>
-              <button className={viewMode === 'grid' ? 'is-active' : ''} onClick={() => setViewMode('grid')} type="button" aria-label="Grid view">
-                <Grid2X2 size={18} />
-              </button>
-              <button className={viewMode === 'list' ? 'is-active' : ''} onClick={() => setViewMode('list')} type="button" aria-label="List view">
-                <Grid2X2 size={18} />
-              </button>
-            </div>
-          </div>
+        <CoursesResults
+          allCourses={archive.courses}
+          courses={filteredCourses}
+          detailsLabel={copy.details}
+          emptyLabel={copy.empty}
+          onViewModeChange={setViewMode}
+          showingText={showingText}
+          viewMode={viewMode}
+        />
 
-          <div className={`public-course-grid ${viewMode === 'list' ? 'is-list' : ''}`}>
-            {filteredCourses.map((course) => {
-              const courseIndex = copy.courses.findIndex((item) => item.title === course.title)
-              return <CourseCard course={course} detailsLabel={copy.details} href={`/courses/${courseIndex + 1}`} key={course.title} />
-            })}
-            {filteredCourses.length === 0 ? <p className="courses-empty">{copy.empty}</p> : null}
-          </div>
-        </div>
-
-        <aside className="featured-course-card">
-          <div className={`public-course-cover tone-${featured.tone}`}>
-            <span>{featured.title}</span>
-            <small>{copy.featured}</small>
-          </div>
-          <dl>
-            <div>
-              <dt>{copy.about}</dt>
-              <dd>{featured.teacher}</dd>
-            </div>
-            <div>
-              <dt>{copy.content}</dt>
-              <dd>{featured.lessons}</dd>
-            </div>
-            <div>
-              <dt>{copy.levelFilter}</dt>
-              <dd>{featured.level}</dd>
-            </div>
-          </dl>
-          <Link to={`/courses/${Math.max(1, copy.courses.findIndex((item) => item.title === featured.title) + 1)}`}>{copy.details}</Link>
-        </aside>
+        <FeaturedCourseCard
+          aboutLabel={copy.about}
+          allCourses={archive.courses}
+          contentLabel={copy.content}
+          course={featured}
+          detailsLabel={copy.details}
+          featuredLabel={copy.featured}
+          levelLabel={copy.levelFilter}
+        />
       </section>
 
       <PublicFooter

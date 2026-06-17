@@ -2,6 +2,7 @@ import { BookOpen, GraduationCap, Landmark, MapPin, Star } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
+import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
 
@@ -41,8 +42,9 @@ export function ScholarAboutComingSoonPage() {
   const { dir, language } = useLanguage()
   const copy = aboutCopy[language]
   const scholarsPageCopy = scholarsCopy[language]
+  const archive = useLocalizedArchive(language)
   const index = Number(scholarId) - 1
-  const scholar = scholarsPageCopy.scholars[index]
+  const scholar = archive.scholars[index]
 
   if (!scholar) {
     return <Navigate to="/scholars" replace />

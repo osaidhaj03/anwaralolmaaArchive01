@@ -1,75 +1,64 @@
-import {
-  Search,
-} from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
-import { ScholarCard } from '../../components/public/ScholarCard'
-import { PublicStatStrip } from '../../components/public/PublicStatStrip'
+import { ScholarsFilterCard } from '../../components/public/ScholarsFilterCard'
+import { ScholarsGrid } from '../../components/public/ScholarsGrid'
+import { ScholarsHeroStats } from '../../components/public/ScholarsHeroStats'
+import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
 
 export function ScholarsPage() {
   const { dir, language } = useLanguage()
   const copy = scholarsCopy[language]
+  const archive = useLocalizedArchive(language)
+  const stats = useArchiveStats()
   const [search, setSearch] = useState('')
   const [field, setField] = useState('')
   const [country, setCountry] = useState('')
+  const normalizedStats = [
+    String(stats.public.scholars),
+    String(stats.public.courses),
+    new Intl.NumberFormat('en-US').format(stats.public.lessons),
+    compactNumber(stats.public.students),
+  ]
+  const heroStats = copy.stats.map((item, index) => ({ ...item, value: normalizedStats[index] }))
 
-  const fields = useMemo(() => unique(copy.scholars.map((scholar) => scholar.field)), [copy.scholars])
-  const countries = useMemo(() => unique(copy.scholars.map((scholar) => scholar.country)), [copy.scholars])
+  const fields = useMemo(() => unique(archive.scholars.map((scholar) => scholar.field)), [archive.scholars])
+  const countries = useMemo(() => unique(archive.scholars.map((scholar) => scholar.country)), [archive.scholars])
   const scholars = useMemo(() => {
     const query = search.trim().toLowerCase()
-    return copy.scholars.filter((scholar) => {
+    return archive.scholars.filter((scholar) => {
       const matchesSearch = [scholar.name, scholar.title, scholar.field, scholar.country].some((value) => value.toLowerCase().includes(query))
       return (!query || matchesSearch) && (!field || scholar.field === field) && (!country || scholar.country === country)
     })
-  }, [copy.scholars, country, field, search])
+  }, [archive.scholars, country, field, search])
   return (
     <main className="public-site" dir={dir}>
       <PublicHeader activeTo="/scholars" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="scholars-hero" description={copy.description} title={copy.title}>
-        <PublicStatStrip className="scholars-stat-strip" items={copy.stats} />
+        <ScholarsHeroStats stats={heroStats} />
       </PublicPageHero>
 
       <section className="public-container scholars-layout">
-        <div className="scholars-filter-card">
-          <label className="scholars-search">
-            <Search size={19} />
-            <input onChange={(event) => setSearch(event.target.value)} placeholder={copy.searchPlaceholder} value={search} />
-          </label>
-          <label>
-            <span>{copy.fieldsTitle}</span>
-            <select onChange={(event) => setField(event.target.value)} value={field}>
-              <option value="">{copy.all}</option>
-              {fields.map((value) => <option key={value}>{value}</option>)}
-            </select>
-          </label>
-          <label>
-            <span>{copy.countriesTitle}</span>
-            <select onChange={(event) => setCountry(event.target.value)} value={country}>
-              <option value="">{copy.all}</option>
-              {countries.map((value) => <option key={value}>{value}</option>)}
-            </select>
-          </label>
-        </div>
+        <ScholarsFilterCard
+          allLabel={copy.all}
+          countries={countries}
+          country={country}
+          countryLabel={copy.countriesTitle}
+          field={field}
+          fieldLabel={copy.fieldsTitle}
+          fields={fields}
+          onCountryChange={setCountry}
+          onFieldChange={setField}
+          onSearchChange={setSearch}
+          search={search}
+          searchPlaceholder={copy.searchPlaceholder}
+        />
 
-        <div className="scholars-grid">
-          {scholars.map((scholar) => {
-            const scholarIndex = copy.scholars.findIndex((item) => item.name === scholar.name)
-            return (
-              <ScholarCard
-                aboutLabel={copy.about}
-                aboutTo={`/scholars/${scholarIndex + 1}`}
-                key={scholar.name}
-                scholar={scholar}
-              />
-            )
-          })}
-          {scholars.length === 0 ? <p className="courses-empty">{copy.empty}</p> : null}
-        </div>
+        <ScholarsGrid aboutLabel={copy.about} allScholars={archive.scholars} emptyLabel={copy.empty} scholars={scholars} />
       </section>
 
       <PublicFooter
@@ -94,4 +83,11 @@ export function ScholarsPage() {
 
 function unique(values: string[]) {
   return Array.from(new Set(values))
+}
+
+function compactNumber(value: number) {
+  if (value >= 1000) {
+    return `${Math.round(value / 1000)}K`
+  }
+  return String(value)
 }

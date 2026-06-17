@@ -1,6 +1,7 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock3, Edit3, PlaySquare, Plus, Search, Trash2 } from 'lucide-react'
+import { useArchiveData, type CourseLesson } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import type { AdminPageSeed } from '../../data/adminSeed'
 
@@ -12,19 +13,20 @@ type AdminCourseLessonsPageProps = {
 export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourseLessonsPageProps) {
   const { courseId } = useParams()
   const { language } = useLanguage()
+  const { deleteLessonRow, lessonsByCourse, reorderLessons: reorderCourseLessons, saveLessonRow } = useArchiveData()
   const copy = courseLessonsCopy[language]
   const index = Number(courseId) - 1
   const course = coursesPage.rows[index]
-  const [lessons, setLessons] = useState(lessonsPage.rows)
   const [query, setQuery] = useState('')
   const [editingLesson, setEditingLesson] = useState<Record<string, string> | null>(null)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const lessons = useMemo(() => lessonsByCourse[String(index)] ?? [], [index, lessonsByCourse])
 
   const BackIcon = language === 'ar' ? ArrowRight : ArrowLeft
   const visibleLessons = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
     if (!normalizedQuery) return lessons
-    return lessons.filter((lesson) => Object.values(lesson).some((value) => value.toLowerCase().includes(normalizedQuery)))
+    return lessons.filter((lesson) => Object.values(lesson).some((value) => String(value).toLowerCase().includes(normalizedQuery)))
   }, [lessons, query])
 
   function openAddLesson() {
@@ -40,24 +42,27 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
     setEditingIndex(null)
   }
 
-  function openEditLesson(lesson: Record<string, string>) {
-    setEditingLesson({ ...lesson })
+  function openEditLesson(lesson: CourseLesson) {
+    setEditingLesson({
+      course: lesson.course,
+      duration: lesson.duration,
+      number: lesson.number,
+      status: lesson.status,
+      teacher: lesson.teacher,
+      title: lesson.title,
+    })
     setEditingIndex(lessons.indexOf(lesson))
   }
 
   function saveLesson() {
     if (!editingLesson) return
-    if (editingIndex === null) {
-      setLessons((current) => [...current, editingLesson])
-    } else {
-      setLessons((current) => current.map((lesson, lessonIndex) => (lessonIndex === editingIndex ? editingLesson : lesson)))
-    }
+    saveLessonRow(index, editingLesson, editingIndex)
     setEditingLesson(null)
     setEditingIndex(null)
   }
 
   function reorderLessons() {
-    setLessons((current) => [...current].reverse())
+    reorderCourseLessons(index)
   }
 
   useEffect(() => {
@@ -104,7 +109,7 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
           </span>
           <div>
             <span>{copy.lessonCount}</span>
-            <strong>{course.lessons}</strong>
+            <strong>{lessons.length}</strong>
             <small>{copy.lessonCountHint}</small>
           </div>
         </article>
@@ -171,7 +176,7 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
                 <tr key={`${course.title}-${lesson.title}`}>
                   {lessonsPage.columns.map((column) => (
                     <td key={column.key}>
-                      {column.key === 'course' ? course.title : column.key === 'number' ? `${lessonIndex + 1}` : lesson[column.key]}
+                      {column.key === 'course' ? course.title : column.key === 'number' ? `${lessonIndex + 1}` : String(lesson[column.key as keyof CourseLesson] ?? '')}
                     </td>
                   ))}
                   <td>
@@ -179,7 +184,7 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
                       <button onClick={() => openEditLesson(lesson)} title={copy.edit} type="button">
                         <Edit3 size={16} />
                       </button>
-                      <button onClick={() => setLessons((current) => current.filter((item) => item !== lesson))} title={copy.delete} type="button">
+                      <button onClick={() => deleteLessonRow(index, lessons.indexOf(lesson))} title={copy.delete} type="button">
                         <Trash2 size={16} />
                       </button>
                     </div>

@@ -7,12 +7,17 @@ import type { AdminPageSeed } from '../../data/adminSeed'
 type AdminManagementPageProps = {
   page: AdminPageSeed
   getRowHref?: (row: Record<string, string>, index: number) => string
+  rowsOverride?: Record<string, string>[]
+  onSaveRow?: (row: Record<string, string>, index: number | null) => void
+  onDeleteRow?: (index: number) => void
+  onToggleRowStatus?: (index: number, language: Language) => void
 }
 
-export function AdminManagementPage({ page, getRowHref }: AdminManagementPageProps) {
+export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, onToggleRowStatus, rowsOverride }: AdminManagementPageProps) {
   const { language } = useLanguage()
   const copy = managementCopy[language]
   const [rows, setRows] = useState(page.rows)
+  const sourceRows = rowsOverride ?? rows
   const [query, setQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState(page.filters[0] ?? '')
   const [pageNumber, setPageNumber] = useState(1)
@@ -21,7 +26,7 @@ export function AdminManagementPage({ page, getRowHref }: AdminManagementPagePro
 
   const filteredRows = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
-    return rows.filter((row) => {
+    return sourceRows.filter((row) => {
       const matchesSearch =
         normalizedQuery.length === 0 ||
         Object.values(row).some((value) => value.toLowerCase().includes(normalizedQuery))
@@ -30,7 +35,7 @@ export function AdminManagementPage({ page, getRowHref }: AdminManagementPagePro
         Object.values(row).some((value) => value.toLowerCase().includes(activeFilter.toLowerCase()))
       return matchesSearch && matchesFilter
     })
-  }, [activeFilter, page.filters, query, rows])
+  }, [activeFilter, page.filters, query, sourceRows])
 
   const pageSize = 5
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize))
@@ -43,28 +48,40 @@ export function AdminManagementPage({ page, getRowHref }: AdminManagementPagePro
   }
 
   function openEditDialog(row: Record<string, string>) {
-    const originalIndex = rows.indexOf(row)
+    const originalIndex = sourceRows.indexOf(row)
     setEditingRow({ ...row })
     setEditingIndex(originalIndex)
   }
 
   function saveDialog() {
     if (!editingRow) return
-    if (editingIndex === null) {
-      setRows((current) => [editingRow, ...current])
+    if (onSaveRow) {
+      onSaveRow(editingRow, editingIndex)
     } else {
-      setRows((current) => current.map((row, index) => (index === editingIndex ? editingRow : row)))
+      if (editingIndex === null) {
+        setRows((current) => [editingRow, ...current])
+      } else {
+        setRows((current) => current.map((row, index) => (index === editingIndex ? editingRow : row)))
+      }
     }
     setEditingRow(null)
     setEditingIndex(null)
     setPageNumber(1)
   }
 
-  function deleteRow(row: Record<string, string>) {
+  function deleteRow(row: Record<string, string>, index: number) {
+    if (onDeleteRow) {
+      onDeleteRow(index)
+      return
+    }
     setRows((current) => current.filter((item) => item !== row))
   }
 
-  function toggleRowStatus(row: Record<string, string>) {
+  function toggleRowStatus(row: Record<string, string>, index: number) {
+    if (onToggleRowStatus) {
+      onToggleRowStatus(index, language)
+      return
+    }
     if (!row.status) return
     const nextStatus = nextStatusValue(row.status, language)
     setRows((current) => current.map((item) => (item === row ? { ...item, status: nextStatus } : item)))
@@ -188,17 +205,17 @@ export function AdminManagementPage({ page, getRowHref }: AdminManagementPagePro
                     <td>
                       <div className="row-actions">
                         {getRowHref ? (
-                          <Link title={copy.open} to={getRowHref(row, rows.indexOf(row))}>
+                          <Link title={copy.open} to={getRowHref(row, sourceRows.indexOf(row))}>
                             <Eye size={16} />
                           </Link>
                         ) : null}
                         <button onClick={() => openEditDialog(row)} title={copy.edit} type="button">
                           <Edit3 size={16} />
                         </button>
-                        <button onClick={() => deleteRow(row)} title={copy.delete} type="button">
+                        <button onClick={() => deleteRow(row, sourceRows.indexOf(row))} title={copy.delete} type="button">
                           <Trash2 size={16} />
                         </button>
-                        <button onClick={() => toggleRowStatus(row)} title={copy.more} type="button">
+                        <button onClick={() => toggleRowStatus(row, sourceRows.indexOf(row))} title={copy.more} type="button">
                           <MoreHorizontal size={16} />
                         </button>
                       </div>

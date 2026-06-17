@@ -8,8 +8,13 @@ import {
   TrendingUp,
   UsersRound,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { AdminDashboardModal } from '../../components/admin/AdminDashboardModal'
+import { AdminPanelHeader } from '../../components/admin/AdminPanelHeader'
+import { AdminStatGrid } from '../../components/admin/AdminStatGrid'
+import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
+import { formatNumber } from '../../data/shared/archive'
 
 const dashboardData = {
   ar: {
@@ -23,41 +28,20 @@ const dashboardData = {
     usersTitle: 'إحصائيات المستخدمين',
     activityTitle: 'آخر النشاطات',
     viewAll: 'عرض الكل',
-    collapse: 'إخفاء',
     totalContent: 'إجمالي المحتوى',
     userMetrics: ['إجمالي المستخدمين', 'المستخدمون النشطون', 'إجمالي ساعات المشاهدة', 'زيارات الصفحات'],
-    stats: [
-  { label: 'إجمالي المشاهدات', value: '2,453,876', change: '+18%', icon: Eye, tone: 'teal' },
-  { label: 'إجمالي الفتاوى', value: '1,532', change: '+10%', icon: FileQuestion, tone: 'rose' },
-  { label: 'إجمالي العلماء', value: '326', change: '+6%', icon: UsersRound, tone: 'amber' },
-  { label: 'إجمالي الكتب', value: '842', change: '+8%', icon: BookOpen, tone: 'violet' },
-  { label: 'إجمالي الدروس', value: '18,756', change: '+15%', icon: PlaySquare, tone: 'green' },
-  { label: 'إجمالي الدورات', value: '1,245', change: '+12%', icon: GraduationCap, tone: 'blue' },
-],
     imports: [
-  { title: 'شرح كتاب التوحيد', lessons: '45 درس', status: 'تم الاستيراد', date: '16 مايو 2025' },
-  { title: 'أصول الفقه', lessons: '28 درس', status: 'تم الاستيراد', date: '15 مايو 2025' },
-  { title: 'تفسير سورة البقرة', lessons: '50 درس', status: 'جاري المعالجة', date: '15 مايو 2025' },
-  { title: 'السيرة النبوية', lessons: '35 درس', status: 'قيد المراجعة', date: '14 مايو 2025' },
-  { title: 'فقه المعاملات', lessons: '22 درس', status: 'فشل الاستيراد', date: '14 مايو 2025' },
-],
-    popularLessons: [
-  { title: 'شرح كتاب التوحيد - الدرس 25', teacher: 'الشيخ محمد بن صالح العثيمين', views: '125,430' },
-  { title: 'أصول الفقه - الدرس 12', teacher: 'الشيخ عبدالعزيز بن باز', views: '98,706' },
-  { title: 'تفسير سورة البقرة - الدرس 45', teacher: 'الشيخ صالح الفوزان', views: '89,214' },
-  { title: 'فقه العبادات - الدرس 8', teacher: 'الشيخ ابن عثيمين', views: '76,830' },
-],
+      { title: 'شرح كتاب التوحيد', lessons: '45 درس', status: 'تم الاستيراد', date: '16 مايو 2025' },
+      { title: 'أصول الفقه', lessons: '28 درس', status: 'تم الاستيراد', date: '15 مايو 2025' },
+      { title: 'تفسير سورة البقرة', lessons: '50 درس', status: 'جاري المعالجة', date: '15 مايو 2025' },
+      { title: 'السيرة النبوية', lessons: '35 درس', status: 'قيد المراجعة', date: '14 مايو 2025' },
+      { title: 'فقه المعاملات', lessons: '22 درس', status: 'فشل الاستيراد', date: '14 مايو 2025' },
+    ],
     activity: [
-  { user: 'أبو محمد', action: 'أضاف درس شرح كتاب التوحيد - الدرس 15', time: 'منذ 10 دقائق' },
-  { user: 'فاطمة الزهراء', action: 'راجعت فتوى حكم طلب العلم', time: 'منذ 25 دقيقة' },
-  { user: 'عبدالله', action: 'صنف درس أصول الفقه - الدرس 7', time: 'منذ ساعة' },
-],
-    distribution: [
-  { label: 'دروس', value: '18,756', percent: 82.6, color: '#4775e6' },
-  { label: 'كتب', value: '842', percent: 3.7, color: '#23a36f' },
-  { label: 'فتاوى', value: '1,532', percent: 6.7, color: '#f59e0b' },
-  { label: 'محاضرات', value: '1,341', percent: 5.9, color: '#8b5cf6' },
-],
+      { user: 'أبو محمد', action: 'أضاف درس شرح كتاب التوحيد - الدرس 15', time: 'منذ 10 دقائق' },
+      { user: 'فاطمة الزهراء', action: 'راجعت فتوى حكم طلب العلم', time: 'منذ 25 دقيقة' },
+      { user: 'عبدالله', action: 'صنف درس أصول الفقه - الدرس 7', time: 'منذ ساعة' },
+    ],
   },
   en: {
     monthSuffix: 'vs last month',
@@ -70,17 +54,8 @@ const dashboardData = {
     usersTitle: 'User Statistics',
     activityTitle: 'Recent Activity',
     viewAll: 'View all',
-    collapse: 'Collapse',
     totalContent: 'Total content',
     userMetrics: ['Total users', 'Active users', 'Total watch hours', 'Page visits'],
-    stats: [
-      { label: 'Total Views', value: '2,453,876', change: '+18%', icon: Eye, tone: 'teal' },
-      { label: 'Total Fatwas', value: '1,532', change: '+10%', icon: FileQuestion, tone: 'rose' },
-      { label: 'Total Scholars', value: '326', change: '+6%', icon: UsersRound, tone: 'amber' },
-      { label: 'Total Books', value: '842', change: '+8%', icon: BookOpen, tone: 'violet' },
-      { label: 'Total Lessons', value: '18,756', change: '+15%', icon: PlaySquare, tone: 'green' },
-      { label: 'Total Courses', value: '1,245', change: '+12%', icon: GraduationCap, tone: 'blue' },
-    ],
     imports: [
       { title: 'Explanation of Kitab at-Tawhid', lessons: '45 lessons', status: 'Imported', date: 'May 16, 2025' },
       { title: 'Principles of Fiqh', lessons: '28 lessons', status: 'Imported', date: 'May 15, 2025' },
@@ -88,22 +63,10 @@ const dashboardData = {
       { title: 'Prophetic Seerah', lessons: '35 lessons', status: 'In review', date: 'May 14, 2025' },
       { title: 'Fiqh Transactions', lessons: '22 lessons', status: 'Failed', date: 'May 14, 2025' },
     ],
-    popularLessons: [
-      { title: 'Kitab at-Tawhid - Lesson 25', teacher: 'Shaykh Muhammad ibn Uthaymeen', views: '125,430' },
-      { title: 'Principles of Fiqh - Lesson 12', teacher: 'Shaykh Abdulaziz bin Baz', views: '98,706' },
-      { title: 'Tafsir Al-Baqarah - Lesson 45', teacher: 'Shaykh Saleh Al-Fawzan', views: '89,214' },
-      { title: 'Fiqh of Worship - Lesson 8', teacher: 'Shaykh Ibn Uthaymeen', views: '76,830' },
-    ],
     activity: [
       { user: 'Abu Muhammad', action: 'Added Kitab at-Tawhid - Lesson 15', time: '10 minutes ago' },
       { user: 'Fatimah Al-Zahra', action: 'Reviewed a fatwa about seeking knowledge', time: '25 minutes ago' },
       { user: 'Abdullah', action: 'Classified Principles of Fiqh - Lesson 7', time: '1 hour ago' },
-    ],
-    distribution: [
-      { label: 'Lessons', value: '18,756', percent: 82.6, color: '#4775e6' },
-      { label: 'Books', value: '842', percent: 3.7, color: '#23a36f' },
-      { label: 'Fatwas', value: '1,532', percent: 6.7, color: '#f59e0b' },
-      { label: 'Lectures', value: '1,341', percent: 5.9, color: '#8b5cf6' },
     ],
   },
 } satisfies Record<Language, Record<string, unknown>>
@@ -111,8 +74,52 @@ const dashboardData = {
 export function AdminDashboard() {
   const { language } = useLanguage()
   const data = dashboardData[language]
+  const archive = useLocalizedArchive(language)
+  const stats = useArchiveStats()
   const [modalPanel, setModalPanel] = useState<string | null>(null)
   const [chartRange, setChartRange] = useState('30')
+
+  const dashboardStats = useMemo(
+    () => [
+      { label: language === 'ar' ? 'إجمالي المشاهدات' : 'Total Views', value: formatNumber(stats.admin.views), change: '+18%', icon: Eye, tone: 'teal' },
+      { label: language === 'ar' ? 'إجمالي الفتاوى' : 'Total Fatwas', value: formatNumber(stats.public.fatwas), change: '+10%', icon: FileQuestion, tone: 'rose' },
+      { label: language === 'ar' ? 'إجمالي العلماء' : 'Total Scholars', value: String(stats.admin.scholars), change: '+6%', icon: UsersRound, tone: 'amber' },
+      { label: language === 'ar' ? 'إجمالي الكتب' : 'Total Books', value: formatNumber(stats.admin.books), change: '+8%', icon: BookOpen, tone: 'violet' },
+      { label: language === 'ar' ? 'إجمالي الدروس' : 'Total Lessons', value: formatNumber(stats.admin.lessons), change: '+15%', icon: PlaySquare, tone: 'green' },
+      { label: language === 'ar' ? 'إجمالي الدورات' : 'Total Courses', value: String(stats.admin.courses), change: '+12%', icon: GraduationCap, tone: 'blue' },
+    ],
+    [language, stats],
+  )
+
+  const popularLessons = useMemo(
+    () =>
+      archive.courses.slice(0, 4).map((course, index) => ({
+        title: `${course.title} ${language === 'ar' ? `- الدرس ${index + 1}` : `- Lesson ${index + 1}`}`,
+        teacher: course.teacher,
+        views: formatNumber(Math.max(1200, numericText(course.students) * 3)),
+      })),
+    [archive.courses, language],
+  )
+
+  const distribution = useMemo(() => {
+    const items = [
+      { label: language === 'ar' ? 'دروس' : 'Lessons', value: stats.public.lessons, color: '#4775e6' },
+      { label: language === 'ar' ? 'كتب' : 'Books', value: stats.public.books, color: '#23a36f' },
+      { label: language === 'ar' ? 'فتاوى' : 'Fatwas', value: stats.public.fatwas, color: '#f59e0b' },
+      { label: language === 'ar' ? 'دورات' : 'Courses', value: stats.public.courses, color: '#8b5cf6' },
+    ]
+    const total = items.reduce((sum, item) => sum + item.value, 0)
+    return items.map((item) => ({
+      ...item,
+      value: formatNumber(item.value),
+      percent: total ? Number(((item.value / total) * 100).toFixed(1)) : 0,
+    }))
+  }, [language, stats])
+
+  const userMetricValues = useMemo(
+    () => [formatNumber(stats.admin.totalUsers), formatNumber(stats.admin.activeUsers), formatNumber(stats.admin.watchHours), formatNumber(stats.admin.pageVisits)],
+    [stats],
+  )
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -127,36 +134,16 @@ export function AdminDashboard() {
 
   return (
     <div className="admin-page">
-      <section className="stats-grid" aria-label="ملخص المنصة">
-        {data.stats.map((stat) => {
-          const Icon = stat.icon
-          return (
-            <article className={`stat-card tone-${stat.tone}`} key={stat.label}>
-              <span className="stat-icon">
-                <Icon size={23} />
-              </span>
-              <div>
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-                <small>
-                  <TrendingUp size={13} />
-                  {stat.change} {data.monthSuffix}
-                </small>
-              </div>
-            </article>
-          )
-        })}
-      </section>
+      <AdminStatGrid items={dashboardStats} monthSuffix={data.monthSuffix} />
 
       <section className="admin-grid">
         <article className="admin-panel chart-panel">
-          <div className="admin-panel__header">
-            <h2>{data.viewsTitle}</h2>
+          <AdminPanelHeader title={data.viewsTitle}>
             <select onChange={(event) => setChartRange(event.target.value)} value={chartRange}>
               <option value="30">{data.last30}</option>
               <option value="7">{data.last7}</option>
             </select>
-          </div>
+          </AdminPanelHeader>
           <div className="mock-chart" aria-label="رسم بياني للمشاهدات">
             {Array.from({ length: chartRange === '30' ? 18 : 7 }, (_, index) => (
               <span key={index} style={{ height: `${34 + ((index * 19) % 58)}%` }} />
@@ -165,14 +152,9 @@ export function AdminDashboard() {
         </article>
 
         <article className="admin-panel">
-          <div className="admin-panel__header">
-            <h2>{data.popularTitle}</h2>
-            <button onClick={() => setModalPanel('popular')} type="button">
-              {data.viewAll}
-            </button>
-          </div>
+          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('popular')} title={data.popularTitle} />
           <div className="rank-list">
-            {data.popularLessons.slice(0, 3).map((lesson, index) => (
+            {popularLessons.slice(0, 3).map((lesson, index) => (
               <div className="rank-item" key={lesson.title}>
                 <span>{index + 1}</span>
                 <div>
@@ -186,12 +168,7 @@ export function AdminDashboard() {
         </article>
 
         <article className="admin-panel">
-          <div className="admin-panel__header">
-            <h2>{data.importsTitle}</h2>
-            <button onClick={() => setModalPanel('imports')} type="button">
-              {data.viewAll}
-            </button>
-          </div>
+          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('imports')} title={data.importsTitle} />
           <div className="import-list">
             {data.imports.slice(0, 3).map((item, index) => (
               <div className="import-row" key={`${item.title}-${index}`}>
@@ -209,19 +186,14 @@ export function AdminDashboard() {
 
       <section className="admin-grid admin-grid--bottom">
         <article className="admin-panel">
-          <div className="admin-panel__header">
-            <h2>{data.distributionTitle}</h2>
-            <button onClick={() => setModalPanel('distribution')} type="button">
-              {data.viewAll}
-            </button>
-          </div>
+          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('distribution')} title={data.distributionTitle} />
           <div className="distribution">
             <div className="donut">
-              <strong>22,701</strong>
+              <strong>{formatNumber(totalContent(stats))}</strong>
               <span>{data.totalContent}</span>
             </div>
             <div className="distribution-list">
-              {data.distribution.map((item) => (
+              {distribution.map((item) => (
                 <div key={item.label}>
                   <span style={{ backgroundColor: item.color }} />
                   <strong>{item.label}</strong>
@@ -235,38 +207,28 @@ export function AdminDashboard() {
         </article>
 
         <article className="admin-panel">
-          <div className="admin-panel__header">
-            <h2>{data.usersTitle}</h2>
-            <button onClick={() => setModalPanel('users')} type="button">
-              {data.viewAll}
-            </button>
-          </div>
+          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('users')} title={data.usersTitle} />
           <div className="user-metrics">
             <div>
               <UsersRound size={18} />
               <span>{data.userMetrics[0]}</span>
-              <strong>142,580</strong>
+              <strong>{userMetricValues[0]}</strong>
             </div>
             <div>
               <TrendingUp size={18} />
               <span>{data.userMetrics[1]}</span>
-              <strong>32,450</strong>
+              <strong>{userMetricValues[1]}</strong>
             </div>
             <div>
               <LibraryBig size={18} />
               <span>{data.userMetrics[2]}</span>
-              <strong>1,245,680</strong>
+              <strong>{userMetricValues[2]}</strong>
             </div>
           </div>
         </article>
 
         <article className="admin-panel">
-          <div className="admin-panel__header">
-            <h2>{data.activityTitle}</h2>
-            <button onClick={() => setModalPanel('activity')} type="button">
-              {data.viewAll}
-            </button>
-          </div>
+          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('activity')} title={data.activityTitle} />
           <div className="activity-feed">
             {data.activity.slice(0, 2).map((item, index) => (
               <div key={`${item.user}-${item.time}-${index}`}>
@@ -285,111 +247,26 @@ export function AdminDashboard() {
       </section>
 
       {modalPanel ? (
-        <div className="modal-backdrop" role="presentation">
-          <section className="admin-modal dashboard-modal" role="dialog" aria-modal="true" aria-label={modalTitle(modalPanel, data)}>
-            <header>
-              <h2>{modalTitle(modalPanel, data)}</h2>
-              <button onClick={() => setModalPanel(null)} type="button">
-                ×
-              </button>
-            </header>
-            <div className="dashboard-modal__content">{renderDashboardModal(modalPanel, data)}</div>
-          </section>
-        </div>
+        <AdminDashboardModal
+          data={data}
+          distribution={distribution}
+          onClose={() => setModalPanel(null)}
+          panel={modalPanel}
+          popularLessons={popularLessons}
+          totalContentValue={formatNumber(totalContent(stats))}
+          userMetricValues={userMetricValues}
+        />
       ) : null}
     </div>
   )
 }
 
-function modalTitle(panel: string, data: (typeof dashboardData)['ar']) {
-  if (panel === 'popular') return data.popularTitle
-  if (panel === 'imports') return data.importsTitle
-  if (panel === 'distribution') return data.distributionTitle
-  if (panel === 'users') return data.usersTitle
-  return data.activityTitle
+function numericText(value: string) {
+  return Number(value.replace(/[^\d]/g, ''))
 }
 
-function renderDashboardModal(panel: string, data: (typeof dashboardData)['ar']) {
-  if (panel === 'popular') {
-    return (
-      <div className="rank-list">
-        {[...data.popularLessons, ...data.popularLessons].map((lesson, index) => (
-          <div className="rank-item" key={`${lesson.title}-${index}`}>
-            <span>{index + 1}</span>
-            <div>
-              <strong>{lesson.title}</strong>
-              <small>{lesson.teacher}</small>
-            </div>
-            <b>{lesson.views}</b>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  if (panel === 'imports') {
-    return (
-      <div className="import-list">
-        {[...data.imports, ...data.imports].map((item, index) => (
-          <div className="import-row" key={`${item.title}-${index}`}>
-            <div>
-              <strong>{item.title}</strong>
-              <small>{item.lessons}</small>
-            </div>
-            <span className={`import-status ${statusClass(item.status)}`}>{item.status}</span>
-            <time>{item.date}</time>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  if (panel === 'distribution') {
-    return (
-      <div className="distribution-list">
-        {[...data.distribution, { label: data.totalContent, value: '22,701', percent: 100, color: '#0d263d' }].map((item) => (
-          <div key={item.label}>
-            <span style={{ backgroundColor: item.color }} />
-            <strong>{item.label}</strong>
-            <small>
-              {item.value} ({item.percent}%)
-            </small>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  if (panel === 'users') {
-    return (
-      <div className="user-metrics">
-        {data.userMetrics.map((label, index) => (
-          <div key={label}>
-            <Eye size={18} />
-            <span>{label}</span>
-            <strong>{['142,580', '32,450', '1,245,680', '684,220'][index]}</strong>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  return (
-    <div className="activity-feed">
-      {[...data.activity, ...data.activity].map((item, index) => (
-        <div key={`${item.user}-${item.time}-${index}`}>
-          <span className="avatar avatar--small">
-            <UsersRound size={15} />
-          </span>
-          <div>
-            <strong>{item.user}</strong>
-            <small>{item.action}</small>
-          </div>
-          <time>{item.time}</time>
-        </div>
-      ))}
-    </div>
-  )
+function totalContent(stats: ReturnType<typeof useArchiveStats>) {
+  return stats.public.lessons + stats.public.books + stats.public.fatwas + stats.public.courses
 }
 
 function statusClass(status: string) {

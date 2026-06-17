@@ -16,6 +16,7 @@ import {
   UsersRound,
 } from 'lucide-react'
 import type { AdminPageSeed } from './adminSeed'
+import { formatNumber, sharedArchiveMetrics, sharedBooks, sharedCategories, sharedCourses, sharedScholars } from './shared/archive'
 
 export const adminPagesEn: Record<string, AdminPageSeed> = {
   categories: {
@@ -25,9 +26,9 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
     searchPlaceholder: 'Search by category or description...',
     filters: ['All statuses', 'Published', 'Draft', 'Most content'],
     stats: [
-      { label: 'Total Categories', value: '20', change: '+2 this month', icon: Tags, tone: 'amber' },
-      { label: 'Linked Lessons', value: '10,842', change: '+186 lessons', icon: PlaySquare, tone: 'green' },
-      { label: 'Linked Courses', value: '300', change: '+12 courses', icon: GraduationCap, tone: 'blue' },
+      { label: 'Total Categories', value: String(sharedArchiveMetrics.public.categories), change: '+2 this month', icon: Tags, tone: 'amber' },
+      { label: 'Linked Lessons', value: formatNumber(sharedArchiveMetrics.public.lessons), change: '+186 lessons', icon: PlaySquare, tone: 'green' },
+      { label: 'Linked Courses', value: String(sharedArchiveMetrics.public.courses), change: '+12 courses', icon: GraduationCap, tone: 'blue' },
       { label: 'Need Review', value: '3', change: 'Order and images', icon: AlertTriangle, tone: 'rose' },
     ],
     columns: [
@@ -38,14 +39,15 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
       { key: 'status', label: 'Status' },
       { key: 'updated', label: 'Updated' },
     ],
-    rows: [
-      { name: 'Fiqh and Principles', slug: 'fiqh', courses: '332', lessons: '5,412', status: 'Published', updated: 'June 15, 2026' },
-      { name: 'Aqeedah', slug: 'aqeedah', courses: '78', lessons: '1,356', status: 'Published', updated: 'June 14, 2026' },
-      { name: 'Hadith Sciences', slug: 'hadith', courses: '156', lessons: '2,541', status: 'Published', updated: 'June 13, 2026' },
-      { name: 'Tafsir and Quran Sciences', slug: 'tafsir', courses: '89', lessons: '1,624', status: 'Published', updated: 'June 12, 2026' },
-      { name: 'Prophetic Seerah', slug: 'seerah', courses: '32', lessons: '845', status: 'Review', updated: 'June 11, 2026' },
-    ],
-    insights: ['Fiqh is the most active category this month.', 'Three categories still need images or longer descriptions.', 'Published categories appear on the public website.'],
+    rows: sharedCategories.map((item, index) => ({
+      name: item.title.en,
+      slug: item.id,
+      courses: formatNumber(item.courses),
+      lessons: formatNumber(item.lessons),
+      status: index === 4 ? 'Review' : 'Published',
+      updated: `June ${15 - index}, 2026`,
+    })),
+    insights: ['These categories now feed the public category pages directly.', 'Name and description changes should propagate to public cards.', 'Counter values are derived from the same shared source.'],
     notes: ['Keep category names short and clear.', 'Card descriptions should stay under 180 characters.'],
   },
   teachers: {
@@ -53,12 +55,12 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
     description: 'Manage scholars, specialties, profile details, and linked educational content.',
     actionLabel: 'Add Scholar',
     searchPlaceholder: 'Search scholar or specialty...',
-    filters: ['All specialties', 'Fiqh', 'Aqeedah', 'Hadith', 'Tafsir'],
+    filters: ['All specialties', 'Fiqh', 'Aqidah', 'Hadith', 'Tafsir'],
     stats: [
-      { label: 'Total Scholars', value: '86', change: '+3%', icon: UsersRound, tone: 'green' },
-      { label: 'Total Courses', value: '342', change: '+8%', icon: GraduationCap, tone: 'violet' },
-      { label: 'Total Lessons', value: '12,842', change: '+45%', icon: PlaySquare, tone: 'amber' },
-      { label: 'Total Books', value: '1,245', change: '+18%', icon: BookOpen, tone: 'blue' },
+      { label: 'Total Scholars', value: String(sharedArchiveMetrics.admin.scholars), change: '+3%', icon: UsersRound, tone: 'green' },
+      { label: 'Total Courses', value: String(sharedArchiveMetrics.admin.courses), change: '+8%', icon: GraduationCap, tone: 'violet' },
+      { label: 'Total Lessons', value: formatNumber(sharedArchiveMetrics.admin.lessons), change: '+45%', icon: PlaySquare, tone: 'amber' },
+      { label: 'Total Books', value: formatNumber(sharedArchiveMetrics.admin.books), change: '+18%', icon: BookOpen, tone: 'blue' },
     ],
     columns: [
       { key: 'image', label: 'Photo' },
@@ -70,14 +72,17 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
       { key: 'fatwas', label: 'Fatwas' },
       { key: 'date', label: 'Added Date' },
     ],
-    rows: [
-      { image: 'https://i.pravatar.cc/96?img=12', name: 'Saleh bin Fawzan Al-Fawzan', english: 'Dr. Saleh Al-Fawzan', specialty: 'Fiqh', courses: '45', lessons: '1,245', fatwas: '532', date: '2025-05-14' },
-      { image: 'https://i.pravatar.cc/96?img=15', name: 'Saad bin Turki Al-Khathlan', english: 'Dr. Saad Al-Khathlan', specialty: 'Tafsir', courses: '28', lessons: '856', fatwas: '214', date: '2025-05-13' },
-      { image: 'https://i.pravatar.cc/96?img=32', name: 'Essam bin Abdullah Al-Sunbul', english: 'Dr. Essam Al-Sunbul', specialty: 'Seerah', courses: '35', lessons: '642', fatwas: '98', date: '2025-05-12' },
-      { image: 'https://i.pravatar.cc/96?img=60', name: 'Khalid Al-Jeraisy', english: 'Dr. Khalid Al-Jeraisy', specialty: 'Hadith', courses: '22', lessons: '521', fatwas: '76', date: '2025-05-12' },
-      { image: 'https://i.pravatar.cc/96?img=68', name: 'Ali Al-Halabi', english: 'Dr. Ali Al-Halabi', specialty: 'Aqeedah', courses: '18', lessons: '412', fatwas: '63', date: '2025-05-10' },
-    ],
-    insights: ['Five scholar profiles are missing social links.', 'Fiqh is currently the most represented specialty.', 'English names help search and indexing later.'],
+    rows: sharedScholars.map((item, index) => ({
+      image: item.image,
+      name: item.name.ar,
+      english: item.name.en,
+      specialty: item.field.en,
+      courses: String(item.courses),
+      lessons: formatNumber(item.lessons),
+      fatwas: String(532 - index * 54),
+      date: `2025-05-${String(14 - index).padStart(2, '0')}`,
+    })),
+    insights: ['These scholar records should match the public scholar cards and profiles.', 'Image, name, and field now come from the same shared source.', 'English names help search and indexing later.'],
     notes: ['Assign a primary and secondary specialty to each scholar.', 'Profile images should be clear and square.'],
   },
   books: {
@@ -87,7 +92,7 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
     searchPlaceholder: 'Search book or author...',
     filters: ['All categories', 'Has PDF', 'Missing cover', 'Linked to courses'],
     stats: [
-      { label: 'Total Books', value: '328', change: '+41 linked', icon: BookOpen, tone: 'green' },
+      { label: 'Total Books', value: String(sharedArchiveMetrics.public.books), change: '+41 linked', icon: BookOpen, tone: 'green' },
       { label: 'PDF Files', value: '214', change: '+12 files', icon: LibraryBig, tone: 'blue' },
       { label: 'Linked Explanations', value: '486', change: '+19 lessons', icon: GraduationCap, tone: 'amber' },
       { label: 'Need Covers', value: '27', change: 'Review', icon: AlertTriangle, tone: 'rose' },
@@ -100,57 +105,85 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
       { key: 'file', label: 'File' },
       { key: 'status', label: 'Status' },
     ],
-    rows: [
-      { title: 'Kitab at-Tawhid', author: 'Muhammad ibn Abd al-Wahhab', category: 'Aqeedah', courses: '12', file: 'PDF', status: 'Published' },
-      { title: 'Forty Nawawi Hadith', author: 'Imam An-Nawawi', category: 'Hadith', courses: '9', file: 'PDF', status: 'Published' },
-      { title: 'Al-Aqeedah Al-Wasitiyyah', author: 'Ibn Taymiyyah', category: 'Aqeedah', courses: '7', file: 'PDF', status: 'Published' },
-      { title: 'Bulugh Al-Maram', author: 'Ibn Hajar', category: 'Fiqh', courses: '5', file: 'Missing', status: 'Review' },
-      { title: 'Riyad as-Salihin', author: 'Imam An-Nawawi', category: 'Hadith', courses: '8', file: 'PDF', status: 'Published' },
-    ],
-    insights: ['Aqeedah books have the most course relationships.', '27 books still need suitable covers.', 'PDF files should be reviewed before public publishing.'],
+    rows: sharedBooks.map((item) => ({
+      title: item.title.en,
+      author: item.author.en,
+      category: item.category.en,
+      courses: String(item.explanations),
+      file: item.file.en,
+      status: item.status.en,
+    })),
+    insights: ['These books are now linked directly to the public library pages.', 'Any title or author change will reflect in the public library.', 'PDF files should be reviewed before public publishing.'],
     notes: ['A book can be linked to multiple courses.', 'Keep author names normalized.'],
   },
-  courses: makeCourseLikePage('Courses Management', 'Manage courses, levels, books, and lesson structure.', 'Add Course'),
-  lessons: makeCourseLikePage('Lessons Content', 'Manage lessons, standalone lectures, YouTube links, and attachments.', 'Add Lesson'),
-  youtubeImport: makeOpsPage('YouTube Import', 'Import channels and playlists, then prepare them for editorial review.', 'Start Import', UploadCloud),
-  importReview: makeOpsPage('Import Review', 'Classify imported videos and link them to category, scholar, and course.', 'Approve Selected', CheckCircle2),
-  comments: makeOpsPage('Comments and Alerts', 'Review student comments, content reports, and system alerts.', 'Send Alert', MessageCircle),
-  searchIndex: makeOpsPage('Search Index', 'Monitor search quality, popular queries, and missing result topics.', 'Reindex', Search),
-  reports: makeOpsPage('Reports and Analytics', 'Track platform usage, content performance, and student activity.', 'Export Report', Eye),
-  settings: makeOpsPage('Settings', 'Manage site identity, permissions, SEO defaults, and system options.', 'Save Settings', Settings),
-}
-
-function makeCourseLikePage(title: string, description: string, actionLabel: string): AdminPageSeed {
-  return {
-    title,
-    description,
-    actionLabel,
-    searchPlaceholder: 'Search title, scholar, or category...',
+  courses: {
+    title: 'Courses Management',
+    description: 'Manage courses, levels, books, and lesson structure.',
+    actionLabel: 'Add Course',
+    searchPlaceholder: 'Search course...',
     filters: ['All categories', 'Beginner', 'Intermediate', 'Advanced', 'Published'],
     stats: [
-      { label: 'Total Items', value: '10,842', change: '+186 this month', icon: PlaySquare, tone: 'green' },
-      { label: 'Published', value: '8,920', change: '82%', icon: CheckCircle2, tone: 'blue' },
-      { label: 'Needs Review', value: '312', change: 'Editorial queue', icon: AlertTriangle, tone: 'rose' },
-      { label: 'Attachments', value: '714', change: '+33 files', icon: Link2, tone: 'amber' },
+      { label: 'Total Courses', value: String(sharedArchiveMetrics.public.courses), change: '+12 courses', icon: GraduationCap, tone: 'blue' },
+      { label: 'Completed Courses', value: '218', change: '72%', icon: CheckCircle2, tone: 'green' },
+      { label: 'In Review', value: '34', change: 'Needs proofreading', icon: Clock3, tone: 'amber' },
+      { label: 'Missing Book', value: '48', change: 'Link required', icon: BookOpen, tone: 'rose' },
     ],
     columns: [
-      { key: 'title', label: 'Title' },
+      { key: 'title', label: 'Course' },
       { key: 'teacher', label: 'Scholar' },
       { key: 'category', label: 'Category' },
       { key: 'level', label: 'Level' },
       { key: 'lessons', label: 'Lessons' },
       { key: 'status', label: 'Status' },
     ],
-    rows: [
-      { title: 'Explanation of Manhaj as-Salikin', teacher: 'Dr. Saleh Al-Fawzan', category: 'Fiqh', level: 'Advanced', lessons: '245', status: 'Published' },
-      { title: 'Fiqh of Worship', teacher: 'Dr. Ibn Uthaymeen', category: 'Fiqh', level: 'Intermediate', lessons: '186', status: 'Published' },
-      { title: 'Explanation of Al-Wasitiyyah', teacher: 'Dr. Saad Al-Shithri', category: 'Aqeedah', level: 'Intermediate', lessons: '72', status: 'Review' },
-      { title: 'Tafsir of Surat Al-Baqarah', teacher: 'Dr. Muhammad Al-Munajjid', category: 'Tafsir', level: 'Advanced', lessons: '210', status: 'Published' },
-      { title: 'Principles of Fiqh', teacher: 'Dr. Abdulaziz bin Baz', category: 'Fiqh', level: 'Intermediate', lessons: '156', status: 'Draft' },
+    rows: sharedCourses.map((item) => ({
+      title: item.title.en,
+      teacher: item.teacher.en,
+      category: item.category.en,
+      level: item.level.en,
+      lessons: String(item.lessons),
+      status: item.status.en,
+    })),
+    insights: ['Courses here and on the public site now share the same source.', 'Book relationships will improve the public book pages.', 'Draft items stay hidden from public pages.'],
+    notes: ['Set a clear educational level for every course.', 'Course covers should use a stable 16:9 ratio.'],
+  },
+  lessons: {
+    title: 'Lessons Content',
+    description: 'Manage lessons, standalone lectures, YouTube links, and attachments.',
+    actionLabel: 'Add Lesson',
+    searchPlaceholder: 'Search lesson or YouTube link...',
+    filters: ['All courses', 'Has files', 'Valid link', 'Needs classification'],
+    stats: [
+      { label: 'Total Lessons', value: formatNumber(sharedArchiveMetrics.public.lessons), change: '+186 lessons', icon: PlaySquare, tone: 'green' },
+      { label: 'Standalone Lectures', value: '1,256', change: '+24 lectures', icon: LibraryBig, tone: 'blue' },
+      { label: 'Need Review', value: '312', change: 'Editorial queue', icon: AlertTriangle, tone: 'rose' },
+      { label: 'Linked Attachments', value: '714', change: '+33 files', icon: Link2, tone: 'amber' },
     ],
-    insights: ['Long courses need clear chapter grouping.', 'Book relationships improve the public book pages.', 'Draft items stay hidden from public pages.'],
-    notes: ['Set a clear educational level for every item.', 'Course covers should use a stable 16:9 ratio.'],
-  }
+    columns: [
+      { key: 'title', label: 'Title' },
+      { key: 'course', label: 'Course' },
+      { key: 'teacher', label: 'Scholar' },
+      { key: 'number', label: 'Lesson #' },
+      { key: 'duration', label: 'Duration' },
+      { key: 'status', label: 'Status' },
+    ],
+    rows: sharedCourses.slice(0, 5).map((item, index) => ({
+      title: index === 0 ? 'Course introduction and book overview' : `Lesson ${index + 1} from ${item.title.en}`,
+      course: item.title.en,
+      teacher: item.teacher.en,
+      number: String(index + 1),
+      duration: `${45 + index}:${String((index * 7 + 12) % 60).padStart(2, '0')}`,
+      status: item.status.en,
+    })),
+    insights: ['The lesson list is now anchored to the same course source.', 'Lesson ordering is required for the public course page.', 'Attachments can move into the shared source next.'],
+    notes: ['Validate YouTube links before publishing.', 'Use a stable duration format.'],
+  },
+  youtubeImport: makeOpsPage('YouTube Import', 'Import channels and playlists, then prepare them for editorial review.', 'Start Import', UploadCloud),
+  importReview: makeOpsPage('Import Review', 'Classify imported videos and link them to category, scholar, and course.', 'Approve Selected', CheckCircle2),
+  comments: makeOpsPage('Comments and Alerts', 'Review student comments, content reports, and system alerts.', 'Send Alert', MessageCircle),
+  searchIndex: makeOpsPage('Search Index', 'Monitor search quality, popular queries, and missing result topics.', 'Reindex', Search),
+  reports: makeOpsPage('Reports and Analytics', 'Track platform usage, content performance, and student activity.', 'Export Report', Eye),
+  settings: makeOpsPage('Settings', 'Manage site identity, permissions, SEO defaults, and system options.', 'Save Settings', Settings),
 }
 
 function makeOpsPage(title: string, description: string, actionLabel: string, icon: AdminPageSeed['stats'][number]['icon']): AdminPageSeed {
@@ -181,7 +214,7 @@ function makeOpsPage(title: string, description: string, actionLabel: string, ic
       { title: 'Search terms without results', type: 'Report', owner: 'Analytics', count: '1,204', status: 'Review', updated: 'June 11' },
       { title: 'SEO defaults update', type: 'Settings', owner: 'Admin', count: '9', status: 'Published', updated: 'June 10' },
     ],
-    insights: ['Records in review should be handled before public publishing.', 'System checks can be converted into editorial tasks.', 'Mock data is ready for a future Supabase connection.'],
+    insights: ['The current phase prioritizes a unified content source.', 'Operational pages will connect to live data later.', 'The current goal is public/admin consistency.'],
     notes: ['Keep status names consistent.', 'Every operational record should have an owner.'],
   }
 }

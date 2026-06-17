@@ -1,6 +1,7 @@
 import { BookOpen, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UserRound, UsersRound } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { ScholarsCopy } from './pageTypes'
+import { formatCompact, formatNumber, pickLocalizedText, sharedArchiveMetrics, sharedScholars } from '../shared/archive'
 
 export const scholarsCopy: Record<Language, ScholarsCopy> = {
   ar: {
@@ -30,10 +31,10 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     about: 'نبذة',
     contact: 'تواصل',
     stats: [
-      { value: '48', label: 'شيخ وعالم', icon: UsersRound },
-      { value: '300', label: 'دورة علمية', icon: GraduationCap },
-      { value: '10,842', label: 'درس ومقطع', icon: BookOpen },
-      { value: '156K', label: 'طالب', icon: UserRound },
+      { value: String(sharedArchiveMetrics.public.scholars), label: 'شيخ وعالم', icon: UsersRound },
+      { value: String(sharedArchiveMetrics.public.courses), label: 'دورة علمية', icon: GraduationCap },
+      { value: formatNumber(sharedArchiveMetrics.public.lessons), label: 'درس ومقطع', icon: BookOpen },
+      { value: formatCompact(sharedArchiveMetrics.public.students), label: 'طالب', icon: UserRound },
     ],
     empty: 'لا توجد نتائج مطابقة',
     newsletterTitle: 'اشترك في النشرة البريدية',
@@ -43,16 +44,17 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     quickLinks: 'روابط سريعة',
     footerText: 'منهج أهل السنة فقهاً وعقيدة وسلوكاً.',
     newsletterSuccess: 'تم تسجيل بريدك في القائمة البريدية.',
-    scholars: [
-      { name: 'الشيخ صالح الفوزان', title: 'عضو هيئة كبار العلماء', field: 'الفقه وأصوله', country: 'السعودية', courses: 42, lessons: 1860, students: '156,842', rating: '4.9', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'الشيخ محمد بن صالح العثيمين', title: 'عالم وفقيه', field: 'الفقه والعقيدة', country: 'السعودية', courses: 38, lessons: 1520, students: '142,300', rating: '4.9', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-      { name: 'الشيخ عبدالعزيز بن باز', title: 'مفتي عام سابق', field: 'العقيدة والفتوى', country: 'السعودية', courses: 45, lessons: 2156, students: '180,215', rating: '5.0', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'الشيخ سعد الشثري', title: 'أستاذ الفقه وأصوله', field: 'أصول الفقه', country: 'السعودية', courses: 28, lessons: 856, students: '84,210', rating: '4.8', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-      { name: 'الشيخ ربيع المدخلي', title: 'أستاذ الحديث', field: 'الحديث وعلومه', country: 'السعودية', courses: 31, lessons: 980, students: '74,920', rating: '4.7', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'الشيخ محمد سعيد رسلان', title: 'داعية ومحاضر', field: 'العقيدة والسلوك', country: 'مصر', courses: 35, lessons: 1245, students: '92,410', rating: '4.8', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-      { name: 'الشيخ عبدالمحسن العباد', title: 'محدث وفقيه', field: 'الحديث وعلومه', country: 'السعودية', courses: 26, lessons: 732, students: '63,125', rating: '4.7', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'الشيخ يوسف القرضاوي', title: 'عالم شرعي', field: 'الفقه المقارن', country: 'قطر', courses: 24, lessons: 690, students: '58,700', rating: '4.5', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-    ],
+    scholars: sharedScholars.map((item) => ({
+      name: item.name.ar,
+      title: item.title.ar,
+      field: item.field.ar,
+      country: item.country.ar,
+      courses: item.courses,
+      lessons: item.lessons,
+      students: formatNumber(item.students),
+      rating: item.rating,
+      image: item.image,
+    })),
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -81,10 +83,10 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     about: 'About',
     contact: 'Contact',
     stats: [
-      { value: '48', label: 'Scholars', icon: UsersRound },
-      { value: '300', label: 'Courses', icon: GraduationCap },
-      { value: '10,842', label: 'Lessons', icon: BookOpen },
-      { value: '156K', label: 'Students', icon: UserRound },
+      { value: String(sharedArchiveMetrics.public.scholars), label: 'Scholars', icon: UsersRound },
+      { value: String(sharedArchiveMetrics.public.courses), label: 'Courses', icon: GraduationCap },
+      { value: formatNumber(sharedArchiveMetrics.public.lessons), label: 'Lessons', icon: BookOpen },
+      { value: formatCompact(sharedArchiveMetrics.public.students), label: 'Students', icon: UserRound },
     ],
     empty: 'No matching scholars',
     newsletterTitle: 'Subscribe to the newsletter',
@@ -94,15 +96,16 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     quickLinks: 'Quick links',
     footerText: 'A Sunni learning archive for creed, worship, and conduct.',
     newsletterSuccess: 'Your email has been added to the newsletter list.',
-    scholars: [
-      { name: 'Shaykh Saleh Al-Fawzan', title: 'Senior Scholars Council member', field: 'Fiqh and Usul', country: 'Saudi Arabia', courses: 42, lessons: 1860, students: '156,842', rating: '4.9', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'Shaykh Ibn Uthaymeen', title: 'Scholar and jurist', field: 'Fiqh and Aqidah', country: 'Saudi Arabia', courses: 38, lessons: 1520, students: '142,300', rating: '4.9', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-      { name: 'Shaykh Abdulaziz Ibn Baz', title: 'Former grand mufti', field: 'Aqidah and Fatwa', country: 'Saudi Arabia', courses: 45, lessons: 2156, students: '180,215', rating: '5.0', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'Shaykh Saad Al-Shithri', title: 'Professor of Usul al-Fiqh', field: 'Usul al-Fiqh', country: 'Saudi Arabia', courses: 28, lessons: 856, students: '84,210', rating: '4.8', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-      { name: 'Shaykh Rabi Al-Madkhali', title: 'Hadith professor', field: 'Hadith Sciences', country: 'Saudi Arabia', courses: 31, lessons: 980, students: '74,920', rating: '4.7', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'Shaykh Muhammad Saeed Raslan', title: 'Lecturer and preacher', field: 'Aqidah and Conduct', country: 'Egypt', courses: 35, lessons: 1245, students: '92,410', rating: '4.8', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-      { name: 'Shaykh Abdulmuhsin Al-Abbad', title: 'Hadith scholar', field: 'Hadith Sciences', country: 'Saudi Arabia', courses: 26, lessons: 732, students: '63,125', rating: '4.7', image: '/scholars/Screenshot 2026-06-16 222158.png' },
-      { name: 'Shaykh Yusuf Al-Qaradawi', title: 'Islamic scholar', field: 'Comparative Fiqh', country: 'Qatar', courses: 24, lessons: 690, students: '58,700', rating: '4.5', image: '/scholars/Screenshot 2026-06-16 222008.png' },
-    ],
+    scholars: sharedScholars.map((item) => ({
+      name: pickLocalizedText(item.name, 'en'),
+      title: pickLocalizedText(item.title, 'en'),
+      field: pickLocalizedText(item.field, 'en'),
+      country: pickLocalizedText(item.country, 'en'),
+      courses: item.courses,
+      lessons: item.lessons,
+      students: formatNumber(item.students),
+      rating: item.rating,
+      image: item.image,
+    })),
   },
 }

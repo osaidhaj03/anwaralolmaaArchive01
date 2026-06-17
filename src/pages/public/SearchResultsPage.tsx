@@ -1,14 +1,11 @@
-import { BookOpen, GraduationCap, LibraryBig, MessageCircleQuestion, Search, UsersRound } from 'lucide-react'
+import { BookOpen, GraduationCap, LibraryBig, MessageCircleQuestion, PlaySquare, Search, UsersRound } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
+import { useArchiveData, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
-import { categoriesCopy } from '../../data/public/categories'
 import { coursesCopy } from '../../data/public/courses'
-import { fatwaCopy } from '../../data/public/fatwa'
-import { libraryCopy } from '../../data/public/library'
-import { scholarsCopy } from '../../data/public/scholars'
 
 type SearchResult = {
   title: string
@@ -25,6 +22,7 @@ const searchCopy: Record<Language, Record<string, string>> = {
     placeholder: 'ابحث في كل المحتوى...',
     all: 'الكل',
     courses: 'الدورات',
+    lessons: 'الدروس',
     scholars: 'العلماء',
     fatwa: 'الفتاوى',
     library: 'المكتبة',
@@ -40,6 +38,7 @@ const searchCopy: Record<Language, Record<string, string>> = {
     placeholder: 'Search all content...',
     all: 'All',
     courses: 'Courses',
+    lessons: 'Lessons',
     scholars: 'Scholars',
     fatwa: 'Fatwa',
     library: 'Library',
@@ -54,28 +53,36 @@ export function SearchResultsPage() {
   const { dir, language } = useLanguage()
   const [params, setParams] = useSearchParams()
   const copy = searchCopy[language]
+  const archive = useLocalizedArchive(language)
+  const { lessonsByCourse } = useArchiveData()
   const courses = coursesCopy[language]
-  const scholars = scholarsCopy[language]
-  const library = libraryCopy[language]
-  const fatwa = fatwaCopy[language]
-  const categories = categoriesCopy[language]
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState(params.get('q') ?? '')
 
   const results = useMemo(() => {
+    const lessonItems: SearchResult[] = Object.entries(lessonsByCourse).flatMap(([courseIndex, lessons]) =>
+      lessons.map((lesson, lessonIndex) => ({
+        title: lesson.title,
+        meta: `${lesson.teacher} · ${lesson.duration}`,
+        type: 'lessons',
+        to: `/courses/${Number(courseIndex) + 1}#lesson-${lessonIndex + 1}`,
+      })),
+    )
+
     const items: SearchResult[] = [
-      ...courses.courses.map((item, index) => ({ title: item.title, meta: item.teacher, type: 'courses', to: `/courses/${index + 1}` })),
-      ...scholars.scholars.map((item, index) => ({ title: item.name, meta: item.field, type: 'scholars', to: `/scholars/${index + 1}` })),
-      ...library.items.map((item, index) => ({ title: item.title, meta: item.author, type: 'library', to: `/library/${index + 1}` })),
-      ...fatwa.items.map((item, index) => ({ title: item.title, meta: item.scholar, type: 'fatwa', to: `/fatwa/${index + 1}` })),
-      ...categories.items.map((item) => ({ title: item.title, meta: item.text, type: 'categories', to: `/categories/${item.id}` })),
+      ...archive.courses.map((item, index) => ({ title: item.title, meta: item.teacher, type: 'courses', to: `/courses/${index + 1}` })),
+      ...lessonItems,
+      ...archive.scholars.map((item, index) => ({ title: item.name, meta: item.field, type: 'scholars', to: `/scholars/${index + 1}` })),
+      ...archive.books.map((item, index) => ({ title: item.title, meta: item.author, type: 'library', to: `/library/${index + 1}` })),
+      ...archive.fatwas.map((item, index) => ({ title: item.title, meta: item.scholar, type: 'fatwa', to: `/fatwa/${index + 1}` })),
+      ...archive.categories.map((item) => ({ title: item.title, meta: item.text, type: 'categories', to: `/categories/${item.id}` })),
     ]
     const normalized = query.trim().toLowerCase()
     return items.filter((item) => {
       const match = !normalized || item.title.toLowerCase().includes(normalized) || item.meta.toLowerCase().includes(normalized)
       return match && (filter === 'all' || item.type === filter)
     })
-  }, [categories.items, courses.courses, fatwa.items, filter, library.items, query, scholars.scholars])
+  }, [archive.books, archive.categories, archive.courses, archive.fatwas, archive.scholars, filter, lessonsByCourse, query])
 
   function handleSubmit() {
     const next = new URLSearchParams(params)
@@ -87,6 +94,7 @@ export function SearchResultsPage() {
   const filterButtons = [
     { key: 'all', label: copy.all, icon: Search },
     { key: 'courses', label: copy.courses, icon: GraduationCap },
+    { key: 'lessons', label: copy.lessons, icon: PlaySquare },
     { key: 'scholars', label: copy.scholars, icon: UsersRound },
     { key: 'fatwa', label: copy.fatwa, icon: MessageCircleQuestion },
     { key: 'library', label: copy.library, icon: BookOpen },

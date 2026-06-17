@@ -1,6 +1,7 @@
 import { BookOpen, Eye, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UsersRound } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { FatwaCopy } from './pageTypes'
+import { formatCompact, formatNumber, pickLocalizedText, sharedArchiveMetrics, sharedFatwas } from '../shared/archive'
 
 export const fatwaCopy: Record<Language, FatwaCopy> = {
   ar: {
@@ -30,10 +31,10 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
     watch: 'مشاهدة الفتوى',
     empty: 'لا توجد فتاوى مطابقة',
     stats: [
-      { value: '1,532', label: 'فتوى', icon: MessageCircleQuestion },
+      { value: formatNumber(sharedArchiveMetrics.public.fatwas), label: 'فتوى', icon: MessageCircleQuestion },
       { value: '86', label: 'تصنيف', icon: LibraryBig },
-      { value: '48', label: 'عالم', icon: UsersRound },
-      { value: '245K', label: 'مشاهدة', icon: Eye },
+      { value: String(sharedArchiveMetrics.public.scholars), label: 'عالم', icon: UsersRound },
+      { value: formatCompact(sharedArchiveMetrics.public.reads), label: 'مشاهدة', icon: Eye },
     ],
     newsletterTitle: 'اشترك في النشرة البريدية',
     newsletterText: 'ليصلك كل جديد من الدورات والدروس والمحاضرات.',
@@ -42,14 +43,15 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
     quickLinks: 'روابط سريعة',
     footerText: 'منهج أهل السنة فقهاً وعقيدة وسلوكاً.',
     newsletterSuccess: 'تم تسجيل بريدك في القائمة البريدية.',
-    items: [
-      { title: 'حكم الوضوء بماء البحر', scholar: 'الشيخ عبدالعزيز بن باز', category: 'الطهارة', duration: '3:15', views: '4,215', date: '2025-05-16', tone: 'green' },
-      { title: 'حكم الجمع بين الصلاتين للمسافر', scholar: 'الشيخ صالح الفوزان', category: 'الصلاة', duration: '6:42', views: '8,920', date: '2025-05-15', tone: 'navy' },
-      { title: 'ضوابط الزكاة في المال المدخر', scholar: 'الشيخ ابن عثيمين', category: 'الزكاة', duration: '9:10', views: '12,340', date: '2025-05-14', tone: 'gold' },
-      { title: 'آداب طالب العلم في السؤال', scholar: 'الشيخ سعد الشثري', category: 'طلب العلم', duration: '7:28', views: '5,812', date: '2025-05-13', tone: 'blue' },
-      { title: 'حكم البيع بالتقسيط', scholar: 'الشيخ محمد المختار الشنقيطي', category: 'المعاملات', duration: '11:04', views: '9,540', date: '2025-05-12', tone: 'brown' },
-      { title: 'التوبة من الغيبة والنميمة', scholar: 'الشيخ محمد سعيد رسلان', category: 'الآداب', duration: '5:36', views: '6,730', date: '2025-05-11', tone: 'cream' },
-    ],
+    items: sharedFatwas.map((item) => ({
+      title: item.title.ar,
+      scholar: item.scholar.ar,
+      category: item.category.ar,
+      duration: item.duration,
+      views: formatNumber(item.views),
+      date: item.date,
+      tone: item.tone,
+    })),
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -78,10 +80,10 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
     watch: 'Watch fatwa',
     empty: 'No matching fatwas',
     stats: [
-      { value: '1,532', label: 'Fatwas', icon: MessageCircleQuestion },
+      { value: formatNumber(sharedArchiveMetrics.public.fatwas), label: 'Fatwas', icon: MessageCircleQuestion },
       { value: '86', label: 'Categories', icon: LibraryBig },
-      { value: '48', label: 'Scholars', icon: UsersRound },
-      { value: '245K', label: 'Views', icon: Eye },
+      { value: String(sharedArchiveMetrics.public.scholars), label: 'Scholars', icon: UsersRound },
+      { value: formatCompact(sharedArchiveMetrics.public.reads), label: 'Views', icon: Eye },
     ],
     newsletterTitle: 'Subscribe to the newsletter',
     newsletterText: 'Get the latest courses, lessons, and lectures.',
@@ -90,13 +92,14 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
     quickLinks: 'Quick links',
     footerText: 'A Sunni learning archive for creed, worship, and conduct.',
     newsletterSuccess: 'Your email has been added to the newsletter list.',
-    items: [
-      { title: 'Ruling on making wudu with seawater', scholar: 'Shaykh Abdulaziz Ibn Baz', category: 'Purification', duration: '3:15', views: '4,215', date: '2025-05-16', tone: 'green' },
-      { title: 'Combining prayers while travelling', scholar: 'Shaykh Saleh Al-Fawzan', category: 'Prayer', duration: '6:42', views: '8,920', date: '2025-05-15', tone: 'navy' },
-      { title: 'Zakat on saved money', scholar: 'Shaykh Ibn Uthaymeen', category: 'Zakat', duration: '9:10', views: '12,340', date: '2025-05-14', tone: 'gold' },
-      { title: 'How students of knowledge should ask', scholar: 'Shaykh Saad Al-Shithri', category: 'Knowledge', duration: '7:28', views: '5,812', date: '2025-05-13', tone: 'blue' },
-      { title: 'Ruling on installment sales', scholar: 'Shaykh Muhammad Al-Shinqiti', category: 'Transactions', duration: '11:04', views: '9,540', date: '2025-05-12', tone: 'brown' },
-      { title: 'Repenting from backbiting', scholar: 'Shaykh Muhammad Saeed Raslan', category: 'Conduct', duration: '5:36', views: '6,730', date: '2025-05-11', tone: 'cream' },
-    ],
+    items: sharedFatwas.map((item) => ({
+      title: pickLocalizedText(item.title, 'en'),
+      scholar: pickLocalizedText(item.scholar, 'en'),
+      category: pickLocalizedText(item.category, 'en'),
+      duration: item.duration,
+      views: formatNumber(item.views),
+      date: item.date,
+      tone: item.tone,
+    })),
   },
 }

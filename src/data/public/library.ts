@@ -1,6 +1,7 @@
 import { BookMarked, BookOpen, Download, Eye, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UsersRound } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { LibraryCopy } from './pageTypes'
+import { formatCompact, formatNumber, pickLocalizedText, sharedArchiveMetrics, sharedBooks } from '../shared/archive'
 
 export const libraryCopy: Record<Language, LibraryCopy> = {
   ar: {
@@ -32,10 +33,10 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
     download: 'تحميل',
     empty: 'لا توجد كتب مطابقة',
     stats: [
-      { value: '328', label: 'كتاب ومتن', icon: BookOpen },
+      { value: String(sharedArchiveMetrics.public.books), label: 'كتاب ومتن', icon: BookOpen },
       { value: '86', label: 'شرح', icon: BookMarked },
-      { value: '42K', label: 'تحميل', icon: Download },
-      { value: '245K', label: 'قراءة', icon: Eye },
+      { value: formatCompact(sharedArchiveMetrics.public.downloads), label: 'تحميل', icon: Download },
+      { value: formatCompact(sharedArchiveMetrics.public.reads), label: 'قراءة', icon: Eye },
     ],
     newsletterTitle: 'اشترك في النشرة البريدية',
     newsletterText: 'ليصلك كل جديد من الكتب والدروس والمحاضرات.',
@@ -44,14 +45,16 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
     quickLinks: 'روابط سريعة',
     footerText: 'منهج أهل السنة فقهاً وعقيدة وسلوكاً.',
     newsletterSuccess: 'تم تسجيل بريدك في القائمة البريدية.',
-    items: [
-      { title: 'كتاب التوحيد', author: 'الإمام محمد بن عبدالوهاب', category: 'العقيدة', type: 'متن', pages: '128', downloads: '12,540', views: '45,210', tone: 'green' },
-      { title: 'العقيدة الواسطية', author: 'شيخ الإسلام ابن تيمية', category: 'العقيدة', type: 'متن', pages: '96', downloads: '10,421', views: '39,810', tone: 'navy' },
-      { title: 'رياض الصالحين', author: 'الإمام النووي', category: 'الحديث', type: 'كتاب', pages: '540', downloads: '18,760', views: '68,430', tone: 'brown' },
-      { title: 'بلوغ المرام', author: 'الحافظ ابن حجر', category: 'الحديث', type: 'كتاب', pages: '420', downloads: '9,240', views: '31,200', tone: 'gold' },
-      { title: 'منهج السالكين', author: 'الشيخ عبدالرحمن السعدي', category: 'الفقه', type: 'متن', pages: '180', downloads: '8,520', views: '27,540', tone: 'blue' },
-      { title: 'الأصول الثلاثة', author: 'الإمام محمد بن عبدالوهاب', category: 'العقيدة', type: 'متن', pages: '48', downloads: '15,320', views: '52,110', tone: 'cream' },
-    ],
+    items: sharedBooks.map((item) => ({
+      title: item.title.ar,
+      author: item.author.ar,
+      category: item.category.ar,
+      type: item.type.ar,
+      pages: String(item.pages),
+      downloads: formatNumber(item.downloads),
+      views: formatNumber(item.views),
+      tone: item.tone,
+    })),
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -82,10 +85,10 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
     download: 'Download',
     empty: 'No matching books',
     stats: [
-      { value: '328', label: 'Books', icon: BookOpen },
+      { value: String(sharedArchiveMetrics.public.books), label: 'Books', icon: BookOpen },
       { value: '86', label: 'Commentaries', icon: BookMarked },
-      { value: '42K', label: 'Downloads', icon: Download },
-      { value: '245K', label: 'Reads', icon: Eye },
+      { value: formatCompact(sharedArchiveMetrics.public.downloads), label: 'Downloads', icon: Download },
+      { value: formatCompact(sharedArchiveMetrics.public.reads), label: 'Reads', icon: Eye },
     ],
     newsletterTitle: 'Subscribe to the newsletter',
     newsletterText: 'Get the latest books, lessons, and lectures.',
@@ -94,13 +97,15 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
     quickLinks: 'Quick links',
     footerText: 'A Sunni learning archive for creed, worship, and conduct.',
     newsletterSuccess: 'Your email has been added to the newsletter list.',
-    items: [
-      { title: 'Kitab at-Tawhid', author: 'Imam Muhammad ibn Abd al-Wahhab', category: 'Aqidah', type: 'Primer', pages: '128', downloads: '12,540', views: '45,210', tone: 'green' },
-      { title: 'Al-Aqidah Al-Wasitiyyah', author: 'Ibn Taymiyyah', category: 'Aqidah', type: 'Primer', pages: '96', downloads: '10,421', views: '39,810', tone: 'navy' },
-      { title: 'Riyad as-Salihin', author: 'Imam An-Nawawi', category: 'Hadith', type: 'Book', pages: '540', downloads: '18,760', views: '68,430', tone: 'brown' },
-      { title: 'Bulugh Al-Maram', author: 'Ibn Hajar', category: 'Hadith', type: 'Book', pages: '420', downloads: '9,240', views: '31,200', tone: 'gold' },
-      { title: 'Manhaj as-Salikin', author: 'Abdulrahman As-Saadi', category: 'Fiqh', type: 'Primer', pages: '180', downloads: '8,520', views: '27,540', tone: 'blue' },
-      { title: 'Al-Usul Ath-Thalathah', author: 'Imam Muhammad ibn Abd al-Wahhab', category: 'Aqidah', type: 'Primer', pages: '48', downloads: '15,320', views: '52,110', tone: 'cream' },
-    ],
+    items: sharedBooks.map((item) => ({
+      title: pickLocalizedText(item.title, 'en'),
+      author: pickLocalizedText(item.author, 'en'),
+      category: pickLocalizedText(item.category, 'en'),
+      type: pickLocalizedText(item.type, 'en'),
+      pages: String(item.pages),
+      downloads: formatNumber(item.downloads),
+      views: formatNumber(item.views),
+      tone: item.tone,
+    })),
   },
 }

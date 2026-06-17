@@ -1,6 +1,7 @@
 import { BookOpen, GraduationCap, Grid2X2, Home, LibraryBig, MessageCircleQuestion, UserRound, UsersRound } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { CoursesCopy } from './pageTypes'
+import { formatNumber, pickLocalizedText, sharedArchiveMetrics, sharedCourses } from '../shared/archive'
 
 export const coursesCopy: Record<Language, CoursesCopy> = {
   ar: {
@@ -27,8 +28,8 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
     completed: 'مكتملة',
     empty: 'لا توجد دورات مطابقة',
     stats: [
-      { value: '332', label: 'دورة', icon: Grid2X2 },
-      { value: '10,842', label: 'درس', icon: BookOpen },
+      { value: String(sharedArchiveMetrics.public.courses), label: 'دورة', icon: Grid2X2 },
+      { value: formatNumber(sharedArchiveMetrics.public.lessons), label: 'درس', icon: BookOpen },
       { value: '78', label: 'محاضر', icon: UserRound },
       { value: '5,412', label: 'طالب', icon: UsersRound },
     ],
@@ -43,7 +44,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
     about: 'نبذة عن الدورة',
     content: 'محتوى الدورة',
     details: 'عرض تفاصيل الدورة',
-    showing: 'عرض 1 - 8 من أصل 332 دورة',
+    showing: `عرض 1 - ${sharedCourses.length} من أصل ${sharedArchiveMetrics.public.courses} دورة`,
     newsletterTitle: 'اشترك في النشرة البريدية',
     newsletterText: 'ليصلك كل جديد من الدورات والدروس والمحاضرات.',
     newsletterPlaceholder: 'أدخل بريدك الإلكتروني',
@@ -51,16 +52,18 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
     quickLinks: 'روابط سريعة',
     footerText: 'منهج أهل السنة فقهاً وعقيدة وسلوكاً.',
     newsletterSuccess: 'تم تسجيل بريدك في القائمة البريدية.',
-    courses: [
-      { title: 'شرح منهج السالكين في الفقه', teacher: 'د. صالح بن فوزان الفوزان', category: 'الفقه', level: 'متقدم', lessons: '245 درس', hours: '86 ساعة', students: '12,542', rating: '4.8', progress: 85, tone: 'green' },
-      { title: 'فقه العبادات على مذهب السلف', teacher: 'د. محمد بن صالح العثيمين', category: 'الفقه', level: 'متوسط', lessons: '186 درس', hours: '60 ساعة', students: '8,421', rating: '4.7', progress: 60, tone: 'gold' },
-      { title: 'الجامع في الفقه الإسلامي', teacher: 'د. سعد بن ناصر الشثري', category: 'الفقه', level: 'متقدم', lessons: '312 درس', hours: '96 ساعة', students: '15,231', rating: '4.9', progress: 72, tone: 'navy' },
-      { title: 'أصول الفقه وقواعده', teacher: 'د. عبدالعزيز بن باز', category: 'أصول الفقه', level: 'متوسط', lessons: '156 درس', hours: '45 ساعة', students: '6,321', rating: '4.6', progress: 30, tone: 'cream' },
-      { title: 'القواعد الفقهية وتطبيقاتها', teacher: 'د. عبدالرحمن السعدي', category: 'الفقه', level: 'متوسط', lessons: '98 درس', hours: '38 ساعة', students: '4,256', rating: '4.5', progress: 65, tone: 'brown' },
-      { title: 'المعاملات المالية في الفقه الإسلامي', teacher: 'د. محمد المختار الشنقيطي', category: 'المعاملات', level: 'متقدم', lessons: '210 درس', hours: '72 ساعة', students: '9,870', rating: '4.8', progress: 68, tone: 'green' },
-      { title: 'فقه العبادات على المذاهب الأربعة', teacher: 'د. عبدالمحسن العباد', category: 'العبادات', level: 'متقدم', lessons: '278 درس', hours: '92 ساعة', students: '11,624', rating: '4.7', progress: 80, tone: 'blue' },
-      { title: 'الفتوى ضوابط وأحكام', teacher: 'د. صالح الفوزان', category: 'الفتوى', level: 'متوسط', lessons: '112 درس', hours: '32 ساعة', students: '5,420', rating: '4.4', progress: 40, tone: 'navy' },
-    ],
+    courses: sharedCourses.map((item) => ({
+      title: item.title.ar,
+      teacher: item.teacher.ar,
+      category: item.category.ar,
+      level: item.level.ar,
+      lessons: `${formatNumber(item.lessons)} درس`,
+      hours: `${item.hours} ساعة`,
+      students: formatNumber(item.students),
+      rating: item.rating,
+      progress: item.progress,
+      tone: item.tone,
+    })),
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -86,8 +89,8 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
     completed: 'Completed',
     empty: 'No matching courses',
     stats: [
-      { value: '332', label: 'Courses', icon: Grid2X2 },
-      { value: '10,842', label: 'Lessons', icon: BookOpen },
+      { value: String(sharedArchiveMetrics.public.courses), label: 'Courses', icon: Grid2X2 },
+      { value: formatNumber(sharedArchiveMetrics.public.lessons), label: 'Lessons', icon: BookOpen },
       { value: '78', label: 'Lecturers', icon: UserRound },
       { value: '5,412', label: 'Students', icon: UsersRound },
     ],
@@ -102,7 +105,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
     about: 'Course overview',
     content: 'Course content',
     details: 'View course details',
-    showing: 'Showing 1 - 8 of 332 courses',
+    showing: `Showing 1 - ${sharedCourses.length} of ${sharedArchiveMetrics.public.courses} courses`,
     newsletterTitle: 'Subscribe to the newsletter',
     newsletterText: 'Get the latest courses, lessons, and lectures.',
     newsletterPlaceholder: 'Enter your email',
@@ -110,15 +113,17 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
     quickLinks: 'Quick links',
     footerText: 'A Sunni learning archive for creed, worship, and conduct.',
     newsletterSuccess: 'Your email has been added to the newsletter list.',
-    courses: [
-      { title: 'Manhaj as-Salikin in Fiqh', teacher: 'Dr. Saleh Al-Fawzan', category: 'Fiqh', level: 'Advanced', lessons: '245 lessons', hours: '86 hours', students: '12,542', rating: '4.8', progress: 85, tone: 'green' },
-      { title: 'Fiqh of Worship', teacher: 'Dr. Ibn Uthaymeen', category: 'Fiqh', level: 'Intermediate', lessons: '186 lessons', hours: '60 hours', students: '8,421', rating: '4.7', progress: 60, tone: 'gold' },
-      { title: 'Comprehensive Islamic Fiqh', teacher: 'Dr. Saad Al-Shithri', category: 'Fiqh', level: 'Advanced', lessons: '312 lessons', hours: '96 hours', students: '15,231', rating: '4.9', progress: 72, tone: 'navy' },
-      { title: 'Usul al-Fiqh and Maxims', teacher: 'Dr. Abdulaziz Ibn Baz', category: 'Usul', level: 'Intermediate', lessons: '156 lessons', hours: '45 hours', students: '6,321', rating: '4.6', progress: 30, tone: 'cream' },
-      { title: 'Legal Maxims and Applications', teacher: 'Dr. Abdulrahman As-Saadi', category: 'Fiqh', level: 'Intermediate', lessons: '98 lessons', hours: '38 hours', students: '4,256', rating: '4.5', progress: 65, tone: 'brown' },
-      { title: 'Financial Transactions in Fiqh', teacher: 'Dr. Muhammad Al-Shinqiti', category: 'Transactions', level: 'Advanced', lessons: '210 lessons', hours: '72 hours', students: '9,870', rating: '4.8', progress: 68, tone: 'green' },
-      { title: 'Worship Across the Four Schools', teacher: 'Dr. Abdulmuhsin Al-Abbad', category: 'Worship', level: 'Advanced', lessons: '278 lessons', hours: '92 hours', students: '11,624', rating: '4.7', progress: 80, tone: 'blue' },
-      { title: 'Fatwa: Rules and Etiquette', teacher: 'Dr. Saleh Al-Fawzan', category: 'Fatwa', level: 'Intermediate', lessons: '112 lessons', hours: '32 hours', students: '5,420', rating: '4.4', progress: 40, tone: 'navy' },
-    ],
+    courses: sharedCourses.map((item) => ({
+      title: pickLocalizedText(item.title, 'en'),
+      teacher: pickLocalizedText(item.teacher, 'en'),
+      category: pickLocalizedText(item.category, 'en'),
+      level: pickLocalizedText(item.level, 'en'),
+      lessons: `${formatNumber(item.lessons)} lessons`,
+      hours: `${item.hours} hours`,
+      students: formatNumber(item.students),
+      rating: item.rating,
+      progress: item.progress,
+      tone: item.tone,
+    })),
   },
 }

@@ -3,9 +3,9 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { BrandMark } from '../../components/AdminIcons'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
+import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { categoriesCopy } from '../../data/public/categories'
-import { coursesCopy } from '../../data/public/courses'
 
 const categoryDetailCopy: Record<Language, Record<string, string>> = {
   ar: {
@@ -36,18 +36,18 @@ export function CategoryDetailPage() {
   const { categoryId } = useParams()
   const { dir, language } = useLanguage()
   const copy = categoriesCopy[language]
-  const coursesPageCopy = coursesCopy[language]
+  const archive = useLocalizedArchive(language)
   const detail = categoryDetailCopy[language]
-  const category = copy.items.find((item) => item.id === categoryId)
+  const category = archive.categories.find((item) => item.id === categoryId)
 
   if (!category) {
     return <Navigate to="/categories" replace />
   }
 
   const Icon = category.icon
-  const relatedCourses = coursesPageCopy.courses
+  const relatedCourses = archive.courses
     .map((course, index) => ({ course, index }))
-    .filter(({ course }) => course.category.toLowerCase().includes(category.title.split(' ')[0].toLowerCase()) || course.title.toLowerCase().includes(category.title.split(' ')[0].toLowerCase()))
+    .filter(({ course }) => course.categoryId === category.id)
     .slice(0, 4)
 
   return (
@@ -81,7 +81,7 @@ export function CategoryDetailPage() {
           <div className="category-detail-panel">
             <h2>{detail.topCourses}</h2>
             <div className="category-detail-course-list">
-              {(relatedCourses.length ? relatedCourses : coursesPageCopy.courses.map((course, index) => ({ course, index })).slice(0, 4)).map(({ course, index }) => (
+              {(relatedCourses.length ? relatedCourses : archive.courses.map((course, index) => ({ course, index })).slice(0, 4)).map(({ course, index }) => (
                 <article key={index}>
                   <div className="category-detail-course-icon"><BrandMark /></div>
                   <div>

@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
   BarChart3,
@@ -43,15 +43,14 @@ export function AdminShell() {
   const { dir, language, setLanguage } = useLanguage()
   const { theme, toggleTheme } = useTheme()
   const copy = shellCopy[language]
+  const navigate = useNavigate()
   const [notificationsOpen, setNotificationsOpen] = useState(false)
-  const [previewOpen, setPreviewOpen] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setNotificationsOpen(false)
-        setPreviewOpen(false)
         setMobileNavOpen(false)
       }
     }
@@ -134,7 +133,7 @@ export function AdminShell() {
                 EN
               </button>
             </div>
-            <button onClick={() => setPreviewOpen((current) => !current)} type="button">{copy.preview}</button>
+            <button onClick={() => navigate('/')} type="button">{copy.userSite}</button>
             <button className="top-icon" onClick={toggleTheme} title={copy.theme} type="button">
               {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
             </button>
@@ -153,13 +152,6 @@ export function AdminShell() {
             </button>
           </div>
         </header>
-
-        {previewOpen ? (
-          <div className="topbar-panel">
-            <strong>{copy.previewTitle}</strong>
-            <p>{copy.previewText}</p>
-          </div>
-        ) : null}
 
         {notificationsOpen ? (
           <div className="notification-popover">
@@ -201,10 +193,8 @@ const shellCopy: Record<Language, Record<string, string>> = {
     title: 'لوحة التحكم',
     breadcrumb: 'الرئيسية / لوحة التحكم',
     languageLabel: 'تغيير اللغة',
-    preview: 'عرض الموقع',
+    userSite: 'المستخدم',
     theme: 'تغيير الوضع',
-    previewTitle: 'معاينة الموقع',
-    previewText: 'هذه نسخة واجهة فقط. سيتم فتح الموقع العام بعد بناء صفحات الواجهة العامة.',
     notifications: 'الإشعارات',
     openMenu: 'فتح القائمة',
     closeMenu: 'إغلاق القائمة',
@@ -223,10 +213,8 @@ const shellCopy: Record<Language, Record<string, string>> = {
     title: 'Dashboard',
     breadcrumb: 'Home / Dashboard',
     languageLabel: 'Change language',
-    preview: 'Preview site',
+    userSite: 'User',
     theme: 'Toggle theme',
-    previewTitle: 'Site Preview',
-    previewText: 'This is a frontend-only mock. Public pages will open here after they are built.',
     notifications: 'Notifications',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',

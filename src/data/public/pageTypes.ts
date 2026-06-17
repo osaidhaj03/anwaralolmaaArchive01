@@ -259,9 +259,6 @@ export type LandingCopy = {
   scholarsTitle: string
   scholarsLink: string
   scholars: string[]
-  latestTitle: string
-  latestLink: string
-  lessons: Array<{ title: string; meta: string }>
   booksTitle: string
   books: string[]
   bookMeta: string

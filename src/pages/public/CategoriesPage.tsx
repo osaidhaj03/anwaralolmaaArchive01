@@ -4,18 +4,20 @@ import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { CategoryCard } from '../../components/public/CategoryCard'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
+import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { categoriesCopy } from '../../data/public/categories'
 
 export function CategoriesPage() {
   const { dir, language } = useLanguage()
   const copy = categoriesCopy[language]
+  const archive = useLocalizedArchive(language)
   const [search, setSearch] = useState('')
 
   const items = useMemo(() => {
     const query = search.trim().toLowerCase()
-    return copy.items.filter((item) => [item.title, item.text].some((value) => value.toLowerCase().includes(query)))
-  }, [copy.items, search])
+    return archive.categories.filter((item) => [item.title, item.text].some((value) => value.toLowerCase().includes(query)))
+  }, [archive.categories, search])
 
   return (
     <main className="public-site" dir={dir}>

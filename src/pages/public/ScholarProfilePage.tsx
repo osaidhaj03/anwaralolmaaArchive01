@@ -4,8 +4,8 @@ import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { DetailInfoList } from '../../components/public/DetailInfoList'
 import { DetailRelatedLinks } from '../../components/public/DetailRelatedLinks'
+import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
-import { coursesCopy } from '../../data/public/courses'
 import { scholarsCopy } from '../../data/public/scholars'
 
 const profileCopy: Record<Language, Record<string, string>> = {
@@ -45,16 +45,16 @@ export function ScholarProfilePage() {
   const { scholarId } = useParams()
   const { dir, language } = useLanguage()
   const pageCopy = scholarsCopy[language]
-  const coursesPageCopy = coursesCopy[language]
+  const archive = useLocalizedArchive(language)
   const copy = profileCopy[language]
   const index = Number(scholarId) - 1
-  const scholar = pageCopy.scholars[index]
+  const scholar = archive.scholars[index]
 
   if (!scholar) {
     return <Navigate to="/scholars" replace />
   }
 
-  const relatedCourses = coursesPageCopy.courses
+  const relatedCourses = archive.courses
     .map((course, courseIndex) => ({ course, courseIndex }))
     .filter(({ course }) => {
       const combined = `${course.teacher} ${course.category} ${course.title}`.toLowerCase()
@@ -103,7 +103,7 @@ export function ScholarProfilePage() {
             <h2>{copy.featuredCourses}</h2>
             <DetailRelatedLinks
               className="library-detail-related"
-              items={(relatedCourses.length ? relatedCourses : coursesPageCopy.courses.map((course, courseIndex) => ({ course, courseIndex })).slice(0, 4)).map(({ course, courseIndex }) => ({
+              items={(relatedCourses.length ? relatedCourses : archive.courses.map((course, courseIndex) => ({ course, courseIndex })).slice(0, 4)).map(({ course, courseIndex }) => ({
                 description: `${course.teacher} · ${course.lessons}`,
                 title: course.title,
                 to: `/courses/${courseIndex + 1}`,
