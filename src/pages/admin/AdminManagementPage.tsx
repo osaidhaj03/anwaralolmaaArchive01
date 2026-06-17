@@ -330,19 +330,28 @@ function isStatusColumn(key: string) {
 function nextStatusValue(status: string, language: Language) {
   const arabic = ['منشور', 'مراجعة', 'مسودة']
   const english = ['Published', 'Review', 'Draft']
-  const statuses = language === 'ar' ? arabic : english
+  const uzbek = ['Faol', 'Ko‘rib chiqilmoqda', 'Loyiha']
+  const uzbekCyr = ['Фаол', 'Кўриб чиқилмоқда', 'Лойиҳа']
+  const russian = ['Опубликовано', 'На проверке', 'Черновик']
+
+  let statuses = english
+  if (language === 'ar') statuses = arabic
+  else if (language === 'uz') statuses = uzbek
+  else if (language === 'uzCyr') statuses = uzbekCyr
+  else if (language === 'ru') statuses = russian
+
   const index = statuses.indexOf(status)
   return statuses[index === -1 ? 0 : (index + 1) % statuses.length]
 }
 
 function statusTone(value: string) {
-  if (['منشور', 'مكتمل', 'مفعل', 'جاهز', 'PDF', 'تم الاستيراد', 'مفهرس', 'Published'].includes(value)) {
+  if (['منشور', 'مكتمل', 'مفعل', 'جاهز', 'PDF', 'تم الاستيراد', 'مفهرس', 'Published', 'Faol', 'Фаол', 'Опубликовано', 'Chop etilgan', 'Чоп этилган', 'Import qilingan', 'Импорт қилинган', 'Импортировано'].includes(value)) {
     return 'is-good'
   }
-  if (['مراجعة', 'قيد المعالجة', 'يحتاج مراجعة', 'بانتظار رد', 'ناقص', 'Review'].includes(value)) {
+  if (['مراجعة', 'قيد المعالجة', 'يحتاج مراجعة', 'بانتظار رد', 'ناقص', 'Review', 'Ko‘rib chiqilmoqda', 'Кўриб чиқилмоқда', 'На проверке', 'Ishlanmoqda', 'Ишланмоқда', 'В обработке'].includes(value)) {
     return 'is-warn'
   }
-  if (['مسودة', 'ناقص', 'فشل', 'حرج', 'Draft', 'Missing'].includes(value)) {
+  if (['مسودة', 'ناقص', 'فشل', 'حرج', 'Draft', 'Missing', 'Xato', 'Хато', 'Ошибка', 'Loyiha', 'Лойиҳа', 'Черновик'].includes(value)) {
     return 'is-bad'
   }
   return 'is-neutral'
@@ -394,5 +403,74 @@ const managementCopy: Record<Language, Record<string, string>> = {
     save: 'Save',
     imageAlt: 'Scholar photo',
     imagePlaceholder: 'Image URL...',
+  },
+  uz: {
+    admin: 'Boshqaruv paneli',
+    export: 'Eksport',
+    filters: 'Filtrlar',
+    actions: 'Harakatlar',
+    edit: 'Tahrirlash',
+    delete: 'O‘chirish',
+    more: 'Batafsil',
+    open: 'Ochish',
+    showing: 'Ko‘rsatilmoqda',
+    to: 'dan',
+    of: 'gacha, jami:',
+    items: 'ta',
+    previous: 'Oldingi',
+    next: 'Keyingi',
+    insights: 'Tezkor tahlillar',
+    notes: 'Ishchi eslatmalar',
+    empty: 'Natija topilmadi',
+    cancel: 'Bekor qilish',
+    save: 'Saqlash',
+    imageAlt: 'Rasm',
+    imagePlaceholder: 'Rasm havolasi...',
+  },
+  uzCyr: {
+    admin: 'Бошқарув панели',
+    export: 'Экспорт',
+    filters: 'Филтрлар',
+    actions: 'Ҳаракатлар',
+    edit: 'Таҳрирлаш',
+    delete: 'Ўчириш',
+    more: 'Батафсил',
+    open: 'Очиш',
+    showing: 'Кўрсатилмоқда',
+    to: 'дан',
+    of: 'гача, жами:',
+    items: 'та',
+    previous: 'Олдинги',
+    next: 'Кейинги',
+    insights: 'Тезкор таҳлиллар',
+    notes: 'Ишчи эслатмалар',
+    empty: 'Натижа топилмади',
+    cancel: 'Бекор қилиш',
+    save: 'Сақлаш',
+    imageAlt: 'Расм',
+    imagePlaceholder: 'Расм ҳаволаси...',
+  },
+  ru: {
+    admin: 'Панель управления',
+    export: 'Экспорт',
+    filters: 'Фильтры',
+    actions: 'Действия',
+    edit: 'Редактировать',
+    delete: 'Удалить',
+    more: 'Еще',
+    open: 'Открыть',
+    showing: 'Показано',
+    to: 'с',
+    of: 'из',
+    items: 'записей',
+    previous: 'Назад',
+    next: 'Вперед',
+    insights: 'Аналитика',
+    notes: 'Рабочие заметки',
+    empty: 'Совпадений не найдено',
+    cancel: 'Отмена',
+    save: 'Сохранить',
+    imageAlt: 'Фото',
+    imagePlaceholder: 'Ссылка на изображение...',
   },
 }

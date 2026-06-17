@@ -22,10 +22,9 @@ type PublicHeaderProps = {
   themeLabel: string
 }
 
-export function PublicHeader({ activeTo, brand, languageLabel, login, nav, searchLabel, subtitle, themeLabel }: PublicHeaderProps) {
+export function PublicHeader({ activeTo, brand, languageLabel: _languageLabel, login, nav, searchLabel, subtitle, themeLabel }: PublicHeaderProps) {
   const { language, setLanguage } = useLanguage()
   const { theme, toggleTheme } = useTheme()
-  const nextLanguage: Language = language === 'ar' ? 'en' : 'ar'
   const [menuOpen, setMenuOpen] = useState(false)
   const [headerSearch, setHeaderSearch] = useState('')
   const navigate = useNavigate()
@@ -73,9 +72,7 @@ export function PublicHeader({ activeTo, brand, languageLabel, login, nav, searc
 
         <HeaderActions
           language={language}
-          languageLabel={languageLabel}
           login={login}
-          nextLanguage={nextLanguage}
           searchLabel={searchLabel}
           setLanguage={setLanguage}
           theme={theme}
@@ -116,9 +113,7 @@ export function PublicHeader({ activeTo, brand, languageLabel, login, nav, searc
             </nav>
             <HeaderActions
               language={language}
-              languageLabel={languageLabel}
               login={login}
-              nextLanguage={nextLanguage}
               onActionClick={() => setMenuOpen(false)}
               searchLabel={searchLabel}
               setLanguage={setLanguage}
@@ -135,9 +130,7 @@ export function PublicHeader({ activeTo, brand, languageLabel, login, nav, searc
 
 function HeaderActions({
   language,
-  languageLabel,
   login,
-  nextLanguage,
   onActionClick,
   searchLabel,
   setLanguage,
@@ -146,9 +139,7 @@ function HeaderActions({
   toggleTheme,
 }: {
   language: Language
-  languageLabel: string
   login: string
-  nextLanguage: Language
   onActionClick?: () => void
   searchLabel: string
   setLanguage: (language: Language) => void

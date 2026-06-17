@@ -373,8 +373,26 @@ export function useLocalizedArchive(language: Language) {
           category: resolvedCategory ? pickLocalizedText(resolvedCategory.title, language) : pickLocalizedText(item.category, language),
           categoryId: item.categoryId,
           level: pickLocalizedText(item.level, language),
-          lessons: language === 'ar' ? `${formatNumber(item.lessons)} درس` : `${formatNumber(item.lessons)} lessons`,
-          hours: language === 'ar' ? `${item.hours} ساعة` : `${item.hours} hours`,
+          lessons:
+            language === 'ar'
+              ? `${formatNumber(item.lessons)} درس`
+              : language === 'uz'
+              ? `${formatNumber(item.lessons)} dars`
+              : language === 'uzCyr'
+              ? `${formatNumber(item.lessons)} дарс`
+              : language === 'ru'
+              ? `${formatNumber(item.lessons)} уроков`
+              : `${formatNumber(item.lessons)} lessons`,
+          hours:
+            language === 'ar'
+              ? `${item.hours} ساعة`
+              : language === 'uz'
+              ? `${item.hours} soat`
+              : language === 'uzCyr'
+              ? `${item.hours} соат`
+              : language === 'ru'
+              ? `${item.hours} часов`
+              : `${item.hours} hours`,
           students: formatNumber(item.students),
           rating: item.rating,
           progress: item.progress,

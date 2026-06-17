@@ -105,7 +105,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     newsletterSuccess: 'Your email has been added to the newsletter list.',
   },
   uz: {
-    brand: 'Anvar Ulamolar',
+    brand: 'Anvar al-Ulamo',
     subtitle: 'Ilmiy arxiv',
     nav: [
       { label: 'Bosh sahifa', to: '/', icon: Home },
@@ -119,7 +119,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     themeLabel: 'Qorong\'u rejim',
     languageLabel: 'O\'zbekcha',
     login: 'Kirish',
-    heroTitle: 'Anvar Ulamolar',
+    heroTitle: 'Anvar al-Ulamo',
     heroText: 'Turli shar\'iy ilmlardagi kurslar, darslar, ma\'ruzalar, kitoblar va fatvolarning ishonchli ilmiy arxivi.',
     heroPlaceholder: 'Kurs, dars, fatvo, kitob yoki ustozlarni izlang...',
     searchButton: 'Izlash',
@@ -155,7 +155,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     newsletterSuccess: 'Elektron pochtangiz obunachilar ro\'yxatiga qo\'shildi.',
   },
   uzCyr: {
-    brand: 'Анвар Уламолар',
+    brand: 'Анвар ал-Уламо',
     subtitle: 'Илмий архив',
     nav: [
       { label: 'Бош саҳифа', to: '/', icon: Home },
@@ -169,7 +169,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     themeLabel: 'Қоронғу режим',
     languageLabel: 'Ўзбекча',
     login: 'Кириш',
-    heroTitle: 'Анвар Уламолар',
+    heroTitle: 'Анвар ал-Уламо',
     heroText: 'Турли шаръий илмлардаги курслар, дарслар, маърузалар, китоблар ва фатволарнинг ишончли илмий архиви.',
     heroPlaceholder: 'Курс, дарс, фатво, китоб ёки устозларни изланг...',
     searchButton: 'Излаш',

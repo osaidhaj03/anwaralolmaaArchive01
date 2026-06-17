@@ -16,7 +16,24 @@ import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataC
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { formatNumber } from '../../data/shared/archive'
 
-const dashboardData = {
+type DashboardData = {
+  monthSuffix: string
+  viewsTitle: string
+  last30: string
+  last7: string
+  popularTitle: string
+  importsTitle: string
+  distributionTitle: string
+  usersTitle: string
+  activityTitle: string
+  viewAll: string
+  totalContent: string
+  userMetrics: string[]
+  imports: { title: string; lessons: string; status: string; date: string }[]
+  activity: { user: string; action: string; time: string }[]
+}
+
+const dashboardData: Record<Language, DashboardData> = {
   ar: {
     monthSuffix: 'عن الشهر الماضي',
     viewsTitle: 'إحصائيات المشاهدات',
@@ -69,7 +86,85 @@ const dashboardData = {
       { user: 'Abdullah', action: 'Classified Principles of Fiqh - Lesson 7', time: '1 hour ago' },
     ],
   },
-} satisfies Record<Language, Record<string, unknown>>
+  uz: {
+    monthSuffix: 'o‘tgan oyga nisbatan',
+    viewsTitle: 'Ko‘rishlar statistikasi',
+    last30: 'Oxirgi 30 kun',
+    last7: 'Oxirgi 7 kun',
+    popularTitle: 'Eng ko‘p ko‘rilgan darslar',
+    importsTitle: 'YouTube orqali oxirgi importlar',
+    distributionTitle: 'Mundarija taqsimoti',
+    usersTitle: 'Foydalanuvchilar statistikasi',
+    activityTitle: 'Oxirgi faoliyatlar',
+    viewAll: 'Barchasini ko‘rish',
+    totalContent: 'Umumiy kontent',
+    userMetrics: ['Umumiy foydalanuvchilar', 'Faol foydalanuvchilar', 'Umumiy tomosha soatlari', 'Sahifa tashriflari'],
+    imports: [
+      { title: 'Tavhid kitobi sharhi', lessons: '45 dars', status: 'Import qilingan', date: '16-May, 2025' },
+      { title: 'Usulul fiqh', lessons: '28 dars', status: 'Import qilingan', date: '15-May, 2025' },
+      { title: 'Baqara surasi tafsiri', lessons: '50 dars', status: 'Ishlanmoqda', date: '15-May, 2025' },
+      { title: 'Payg‘ambarimiz siyratlari', lessons: '35 dars', status: 'Ko‘rib chiqilmoqda', date: '14-May, 2025' },
+      { title: 'Muomalalar fiqhi', lessons: '22 dars', status: 'Xato', date: '14-May, 2025' },
+    ],
+    activity: [
+      { user: 'Abu Muhammad', action: 'Tavhid kitobi sharhi - 15-darsni qo‘shdi', time: '10 daqiqa oldin' },
+      { user: 'Fotima al-Zahro', action: 'Ilm talab qilish haqidagi fatvoni ko‘rib chiqdi', time: '25 daqiqa oldin' },
+      { user: 'Abdulloh', action: 'Usulul fiqh - 7-darsni tasnifladi', time: '1 soat oldin' },
+    ],
+  },
+  uzCyr: {
+    monthSuffix: 'ўтган ойга нисбатан',
+    viewsTitle: 'Кўришлар статистикаси',
+    last30: 'Охирги 30 кун',
+    last7: 'Охирги 7 кун',
+    popularTitle: 'Энг кўп кўрилган дарслар',
+    importsTitle: 'YouTube орқали охирги импортлар',
+    distributionTitle: 'Мундарижа тақсимоти',
+    usersTitle: 'Фойдаланувчилар статистикаси',
+    activityTitle: 'Охирги фаолиятлар',
+    viewAll: 'Барчасини кўриш',
+    totalContent: 'Умумий контент',
+    userMetrics: ['Умумий фойдаланувчилар', 'Фаол фойдаланувчилар', 'Умумий томоша соатлари', 'Саҳифа ташрифлари'],
+    imports: [
+      { title: 'Тавҳид китоби шарҳи', lessons: '45 дарс', status: 'Импорт қилинган', date: '16-Май, 2025' },
+      { title: 'Усулул фиқҳ', lessons: '28 дарс', status: 'Импорт қилинган', date: '15-Май, 2025' },
+      { title: 'Бақара сураси тафсири', lessons: '50 дарс', status: 'Ишланмоқда', date: '15-Май, 2025' },
+      { title: 'Пайғамбаримиз сийратлари', lessons: '35 дарс', status: 'Кўриб чиқилмоқда', date: '14-Май, 2025' },
+      { title: 'Муомалалар фиқҳи', lessons: '22 дарс', status: 'Хато', date: '14-Май, 2025' },
+    ],
+    activity: [
+      { user: 'Абу Муҳаммад', action: 'Тавҳид китоби шарҳи - 15-дарсни қўшди', time: '10 дақиқа олдин' },
+      { user: 'Фотима ал-Заҳро', action: 'Илм талаб қилиш ҳақидаги фатвони кўриб чиқди', time: '25 дақиқа олдин' },
+      { user: 'Абдуллоҳ', action: 'Усулул фиқҳ - 7-дарсни таснифлади', time: '1 соат олдин' },
+    ],
+  },
+  ru: {
+    monthSuffix: 'по сравнению с прошлым месяцем',
+    viewsTitle: 'Аналитика просмотров',
+    last30: 'Последние 30 дней',
+    last7: 'Последние 7 дней',
+    popularTitle: 'Самые просматриваемые уроки',
+    importsTitle: 'Последние импорты с YouTube',
+    distributionTitle: 'Распределение контента',
+    usersTitle: 'Статистика пользователей',
+    activityTitle: 'Последние действия',
+    viewAll: 'Показать все',
+    totalContent: 'Всего контента',
+    userMetrics: ['Всего пользователей', 'Активные пользователи', 'Часы просмотра', 'Визиты страниц'],
+    imports: [
+      { title: 'Объяснение Книги Единобожия', lessons: '45 уроков', status: 'Импортировано', date: '16 мая 2025' },
+      { title: 'Основы фикха', lessons: '28 уроков', status: 'Импортировано', date: '15 мая 2025' },
+      { title: 'Тафсир суры Аль-Бакара', lessons: '50 уроков', status: 'В обработке', date: '15 мая 2025' },
+      { title: 'Сира Пророка', lessons: '35 уроков', status: 'На проверке', date: '14 мая 2025' },
+      { title: 'Фикх имущественных отношений', lessons: '22 урока', status: 'Ошибка', date: '14 мая 2025' },
+    ],
+    activity: [
+      { user: 'Абу Мухаммад', action: 'Добавил Книгу Единобожия - Урок 15', time: '10 минут назад' },
+      { user: 'Фатима аз-Захра', action: 'Проверила фетву об изучении знаний', time: '25 минут назад' },
+      { user: 'Абдуллах', action: 'Классифицировал Основы фикха - Урок 7', time: '1 час назад' },
+    ],
+  },
+}
 
 export function AdminDashboard() {
   const { language } = useLanguage()

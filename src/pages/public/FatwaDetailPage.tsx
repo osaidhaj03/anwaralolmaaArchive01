@@ -18,6 +18,8 @@ const detailCopy: Record<Language, Record<string, string>> = {
     duration: 'المدة',
     views: 'المشاهدات',
     related: 'فتاوى مرتبطة',
+    descriptionText: 'هذه الفتوى تعرض الجواب المعتمد في المسألة مع إحالة موجزة إلى أصل الباب والتنبيه على القيود المهمة المتعلقة بالحكم.',
+    successText: 'تم تسجيل بريدك في القائمة البريدية.',
   },
   en: {
     breadcrumb: 'Home / Fatwa / Fatwa details',
@@ -29,6 +31,47 @@ const detailCopy: Record<Language, Record<string, string>> = {
     duration: 'Duration',
     views: 'Views',
     related: 'Related fatwas',
+    descriptionText: 'This fatwa presents the relied-upon answer, with a brief pointer to the broader topic and the main legal qualifiers.',
+    successText: 'Your email has been added to the newsletter list.',
+  },
+  uz: {
+    breadcrumb: 'Bosh sahifa / Fatvolar / Tafsilotlar',
+    summary: 'Fatvo qisqacha mazmuni',
+    answer: 'Tegishli materiallar va asl yozuvga tezkor kirish imkoniyatiga ega qisqa javob.',
+    watch: 'Eshitish / Ko‘rish',
+    scholar: 'Ustoz',
+    category: 'Kategoriya',
+    duration: 'Davomiyligi',
+    views: 'Ko‘rishlar',
+    related: 'Tegishli fatvolar',
+    descriptionText: 'Ushbu fatvo ko‘rib chiqilayotgan masala bo‘yicha ishonchli javobni, uning ilmiy asoslari va muhim shartlari bilan birga taqdim etadi.',
+    successText: 'Emailingiz xabarnomalar ro‘yxatiga qo‘shildi.',
+  },
+  uzCyr: {
+    breadcrumb: 'Бош саҳифа / Фатволар / Тафсилотлар',
+    summary: 'Фатво қисқача мазмуни',
+    answer: 'Тегишли материаллар ва асл ёзувга тезкор кириш имкониятига эга қисқа жавоб.',
+    watch: 'Эшитиш / Кўриш',
+    scholar: 'Устоз',
+    category: 'Категория',
+    duration: 'Давомийлиги',
+    views: 'Кўришлар',
+    related: 'Тегишли фатволар',
+    descriptionText: 'Ушбу фатво кўриб чиқилаётган масала бўйича ишончли жавобни, унинг илмий асослари ва муҳим шартлари билан бирга тақдим этади.',
+    successText: 'Эмаилингиз хабарномалар рўйхатига қўшилди.',
+  },
+  ru: {
+    breadcrumb: 'Главная / Фетвы / Детали фетвы',
+    summary: 'Краткое содержание фетвы',
+    answer: 'Краткий ответ с возможностью перехода к похожим материалам и оригинальной записи.',
+    watch: 'Воспроизвести фетву',
+    scholar: 'Ученый',
+    category: 'Категория',
+    duration: 'Длительность',
+    views: 'Просмотры',
+    related: 'Похожие фетвы',
+    descriptionText: 'Эта фетва представляет собой авторитетный ответ на вопрос с краткой ссылкой на первоисточник и указанием важных правовых ограничений.',
+    successText: 'Ваш email добавлен в список рассылки.',
   },
 }
 
@@ -70,7 +113,7 @@ export function FatwaDetailPage() {
         <div className="fatwa-detail-main">
           <article className="fatwa-detail-card">
             <h2>{copy.summary}</h2>
-            <p>{language === 'ar' ? 'هذه الفتوى تعرض الجواب المعتمد في المسألة مع إحالة موجزة إلى أصل الباب والتنبيه على القيود المهمة المتعلقة بالحكم.' : 'This fatwa presents the relied-upon answer, with a brief pointer to the broader topic and the main legal qualifiers.'}</p>
+            <p>{copy.descriptionText}</p>
           </article>
           <article className="fatwa-detail-card">
             <h2>{copy.related}</h2>
@@ -112,7 +155,7 @@ export function FatwaDetailPage() {
           { label: pageCopy.nav[3].label, to: '/scholars' },
           { label: pageCopy.nav[5].label, to: '/library' },
         ]}
-        successText={language === 'ar' ? 'تم تسجيل بريدك في القائمة البريدية.' : 'Your email has been added to the newsletter list.'}
+        successText={copy.successText}
       />
     </main>
   )

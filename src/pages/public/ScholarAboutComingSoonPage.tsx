@@ -20,6 +20,13 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     outreach: 'الجواب والإفادة',
     outreachText: 'إجابات مختصرة ومطولة على الأسئلة المتكررة في أبواب العلم.',
     highlights: 'أبرز المؤشرات',
+    profile: 'الملف الشخصي',
+    field: 'التخصص',
+    country: 'البلد',
+    courses: 'الدورات',
+    lessons: 'الدروس',
+    rating: 'التقييم',
+    successText: 'تم تسجيل بريدك في القائمة البريدية.',
   },
   en: {
     breadcrumb: 'Home / Scholars / About',
@@ -34,6 +41,76 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     outreach: 'Answers and guidance',
     outreachText: 'Short and extended answers for recurring questions across key topics.',
     highlights: 'Highlights',
+    profile: 'Profile',
+    field: 'Field',
+    country: 'Country',
+    courses: 'Courses',
+    lessons: 'Lessons',
+    rating: 'Rating',
+    successText: 'Your email has been added to the newsletter list.',
+  },
+  uz: {
+    breadcrumb: 'Bosh sahifa / Ustozlar / Haqida',
+    title: 'Ustoz haqida ma’lumot',
+    text: 'Ustoz tizimli va bosqichma-bosqich darslar o‘tadi, ishonchli matnlar sharhiga e’tibor qaratadi va talabalarni ilm asoslari va olimlar so‘zlari bilan bog‘laydi.',
+    back: 'Ustozlar sahifasiga qaytish',
+    expertise: 'Asosiy yo‘nalishlar',
+    teaching: 'Tizimli ta’lim',
+    teachingText: 'Boshlang‘ich va o‘rta darajadagi talabalar uchun aniq yo‘nalishga ega bosqichma-bosqich ilmiy dasturlar.',
+    references: 'Sharh va tahlil',
+    referencesText: 'Matnlar sharhi, atamalar va umumiy masalalarni aniqlashtirishga qaratilgan e’tibor.',
+    outreach: 'Javob va yo‘riqnoma',
+    outreachText: 'Ilmiy mavzulardagi tez-tez so‘raladigan savollarga qisqa va batafsil javoblar.',
+    highlights: 'Asosiy ko‘rsatkichlar',
+    profile: 'Profil',
+    field: 'Yo‘nalish',
+    country: 'Mamlakat',
+    courses: 'Kurslar',
+    lessons: 'Darslar',
+    rating: 'Reyting',
+    successText: 'Emailingiz xabarnomalar ro‘yxatiga qo‘shildi.',
+  },
+  uzCyr: {
+    breadcrumb: 'Бош саҳифа / Устозлар / Ҳақида',
+    title: 'Устоз ҳақида маълумот',
+    text: 'Устоз тизимли ва босқичма-босқич дарслар ўтади, ишончли матнлар шарҳига эътибор қаратади ва талабаларни илм асослари ва олимлар сўзлари билан боғлайди.',
+    back: 'Устозлар саҳифасига қайтиш',
+    expertise: 'Асосий йўналишлар',
+    teaching: 'Тизимли таълим',
+    teachingText: 'Бошланғич ва ўрта даражадаги талабалар учун аниқ йўналишга эга босқичма-босқич илмий дастурлар.',
+    references: 'Шарҳ ва таҳлил',
+    referencesText: 'Матнлар шарҳи, атамалар ва умумий масалаларни аниқлаштиришга қаратилган эътибор.',
+    outreach: 'Жавоб ва йўриқнома',
+    outreachText: 'Илмий мавзулардаги тез-тез сўраладиган саволларга қисқа ва батафсил жавоблар.',
+    highlights: 'Асосий кўрсаткичлар',
+    profile: 'Профиль',
+    field: 'Йўналиш',
+    country: 'Мамлакат',
+    courses: 'Курслар',
+    lessons: 'Дарслар',
+    rating: 'Рейтинг',
+    successText: 'Эмаилингиз хабарномалар рўйхатига қўшилди.',
+  },
+  ru: {
+    breadcrumb: 'Главная / Ученые / Об ученом',
+    title: 'Об ученом',
+    text: 'Преподаватель проводит систематические уроки, уделяя внимание объяснению достоверных текстов, практическим вопросам и связывая студентов с основами знаний.',
+    back: 'Назад к списку ученых',
+    expertise: 'Области деятельности',
+    teaching: 'Систематическое преподавание',
+    teachingText: 'Поэтапные научные программы с понятными путями для начинающих и продолжающих.',
+    references: 'Объяснение и проверка',
+    referencesText: 'Фокус на объяснении текстов, терминологии и обобщающих вопросах.',
+    outreach: 'Ответы и руководство',
+    outreachText: 'Краткие и подробные ответы на часто задаваемые вопросы в различных областях знаний.',
+    highlights: 'Основные показатели',
+    profile: 'Профиль',
+    field: 'Специализация',
+    country: 'Страна',
+    courses: 'Курсы',
+    lessons: 'Уроки',
+    rating: 'Рейтинг',
+    successText: 'Ваш email добавлен в список рассылки.',
   },
 }
 
@@ -62,7 +139,7 @@ export function ScholarAboutComingSoonPage() {
               <h1>{copy.title}</h1>
               <p>{scholar.name}</p>
               <div className="scholar-profile-actions">
-                <Link to={`/scholars/${index + 1}`}>{language === 'ar' ? 'الملف الشخصي' : 'Profile'}</Link>
+                <Link to={`/scholars/${index + 1}`}>{copy.profile}</Link>
                 <Link to="/scholars">{copy.back}</Link>
               </div>
             </div>
@@ -101,11 +178,11 @@ export function ScholarAboutComingSoonPage() {
           <article className="scholar-profile-card">
             <h2>{copy.highlights}</h2>
             <dl className="scholar-profile-info">
-              <div><dt>{language === 'ar' ? 'التخصص' : 'Field'}</dt><dd>{scholar.field}</dd></div>
-              <div><dt>{language === 'ar' ? 'البلد' : 'Country'}</dt><dd><MapPin size={15} />{scholar.country}</dd></div>
-              <div><dt>{language === 'ar' ? 'الدورات' : 'Courses'}</dt><dd><GraduationCap size={15} />{scholar.courses}</dd></div>
-              <div><dt>{language === 'ar' ? 'الدروس' : 'Lessons'}</dt><dd><BookOpen size={15} />{scholar.lessons}</dd></div>
-              <div><dt>{language === 'ar' ? 'التقييم' : 'Rating'}</dt><dd><Star size={15} />{scholar.rating}</dd></div>
+              <div><dt>{copy.field}</dt><dd>{scholar.field}</dd></div>
+              <div><dt>{copy.country}</dt><dd><MapPin size={15} />{scholar.country}</dd></div>
+              <div><dt>{copy.courses}</dt><dd><GraduationCap size={15} />{scholar.courses}</dd></div>
+              <div><dt>{copy.lessons}</dt><dd><BookOpen size={15} />{scholar.lessons}</dd></div>
+              <div><dt>{copy.rating}</dt><dd><Star size={15} />{scholar.rating}</dd></div>
             </dl>
           </article>
         </aside>
@@ -124,7 +201,7 @@ export function ScholarAboutComingSoonPage() {
           { label: scholarsPageCopy.nav[4].label, to: '/fatwa' },
           { label: scholarsPageCopy.nav[5].label, to: '/library' },
         ]}
-        successText={language === 'ar' ? 'تم تسجيل بريدك في القائمة البريدية.' : 'Your email has been added to the newsletter list.'}
+        successText={copy.successText}
       />
     </main>
   )

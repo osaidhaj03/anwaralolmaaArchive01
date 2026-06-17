@@ -33,6 +33,10 @@ const detailCopy: Record<Language, Record<string, string>> = {
     level: 'المستوى',
     category: 'القسم',
     coursePlan: 'قائمة الدروس',
+    courseOutline: 'خطة الدورة',
+    visualMap: 'مخطط بصري للدروس',
+    open: 'فتح',
+    successText: 'تم تسجيل بريدك في القائمة البريدية.',
   },
   en: {
     breadcrumb: 'Home / Courses / Course details',
@@ -52,6 +56,79 @@ const detailCopy: Record<Language, Record<string, string>> = {
     level: 'Level',
     category: 'Category',
     coursePlan: 'Playlist Lessons',
+    courseOutline: 'Course outline',
+    visualMap: 'Visual lesson map',
+    open: 'Open',
+    successText: 'Your email has been added to the newsletter list.',
+  },
+  uz: {
+    breadcrumb: 'Bosh sahifa / Kurslar / Tafsilotlar',
+    overview: 'Kursga kirish va kitob taqdimoti',
+    description: 'Darslar, hamroh materiallar va ma’lumotlar bir joyda jamlangan tizimli sahifa.',
+    start: 'Tomosha qilishni boshlash',
+    save: 'Kursni saqlash',
+    content: 'Kurs tarkibi',
+    materials: 'Hamroh materiallar',
+    lessons: 'dars',
+    students: 'talaba',
+    hours: 'soat',
+    progress: 'Tugallanish foizi',
+    previous: 'Oldingi darslar',
+    downloadAll: 'Barcha darslarni yuklash',
+    teacher: 'Ma’ruzachi',
+    level: 'Daraja',
+    category: 'Kategoriya',
+    coursePlan: 'Darslar ro‘yxati',
+    courseOutline: 'Kurs rejasi',
+    visualMap: 'Darslarning vizual xaritasi',
+    open: 'Ochish',
+    successText: 'Emailingiz xabarnomalar ro‘yxatiga qo‘shildi.',
+  },
+  uzCyr: {
+    breadcrumb: 'Бош саҳифа / Курслар / Тафсилотлар',
+    overview: 'Курсга кириш ва китоб тақдимоти',
+    description: 'Дарслар, ҳамроҳ материаллар ва маълумотлар бир жойда жамланган тизимли саҳифа.',
+    start: 'Томоша қилишни бошлаш',
+    save: 'Курсни сақлаш',
+    content: 'Курс таркиби',
+    materials: 'Ҳамроҳ материаллар',
+    lessons: 'дарс',
+    students: 'талаба',
+    hours: 'соат',
+    progress: 'Тугалланиш фоизи',
+    previous: 'Олдинги дарслар',
+    downloadAll: 'Барча дарсларни юклаш',
+    teacher: 'Маърузачи',
+    level: 'Даража',
+    category: 'Категория',
+    coursePlan: 'Дарслар рўйхати',
+    courseOutline: 'Курс режаси',
+    visualMap: 'Дарсларнинг визуал харитаси',
+    open: 'Очиш',
+    successText: 'Эмаилингиз хабарномалар рўйхатига қўшилди.',
+  },
+  ru: {
+    breadcrumb: 'Главная / Курсы / Детали курса',
+    overview: 'Введение в курс и обзор книги',
+    description: 'Систематизированная страница курса с уроками, сопутствующими материалами и ссылками.',
+    start: 'Начать просмотр',
+    save: 'Сохранить курс',
+    content: 'Содержание курса',
+    materials: 'Сопутствующие материалы',
+    lessons: 'уроков',
+    students: 'студентов',
+    hours: 'часов',
+    progress: 'Прогресс',
+    previous: 'Предыдущие уроки',
+    downloadAll: 'Скачать все уроки',
+    teacher: 'Лектор',
+    level: 'Уровень',
+    category: 'Категория',
+    coursePlan: 'Список уроков',
+    courseOutline: 'План курса',
+    visualMap: 'Визуальная карта уроков',
+    open: 'Открыть',
+    successText: 'Ваш email добавлен в список рассылки.',
   },
 }
 
@@ -66,21 +143,30 @@ export function CourseDetailPage() {
   const course = archive.courses[index]
   const [audioMode, setAudioMode] = useState(false)
   const storedLessons = lessonsByCourse[String(index)] ?? []
-  const lessonCountLabel = language === 'ar' ? `${storedLessons.length} درس` : `${storedLessons.length} lessons`
+  const lessonCountLabel =
+    language === 'ar'
+      ? `${storedLessons.length} درس`
+      : language === 'uz'
+      ? `${storedLessons.length} dars`
+      : language === 'uzCyr'
+      ? `${storedLessons.length} дарс`
+      : language === 'ru'
+      ? `${storedLessons.length} уроков`
+      : `${storedLessons.length} lessons`
 
   const materialRows = [
     {
-      title: language === 'ar' ? `${course?.title ?? ''} - ${copy.materials}` : `${course?.title ?? ''} - ${copy.materials}`,
+      title: `${course?.title ?? ''} - ${copy.materials}`,
       meta: 'PDF · 4.2 MB',
       icon: FileText,
     },
     {
-      title: language === 'ar' ? 'خطة الدورة' : 'Course outline',
+      title: copy.courseOutline,
       meta: 'PDF · 620 KB',
       icon: FileText,
     },
     {
-      title: language === 'ar' ? 'مخطط بصري للدروس' : 'Visual lesson map',
+      title: copy.visualMap,
       meta: 'PNG · 1.1 MB',
       icon: FileImage,
     },
@@ -130,7 +216,7 @@ export function CourseDetailPage() {
                     <strong>{title}</strong>
                     <small>{meta}</small>
                   </div>
-                  <Link to="/login">{language === 'ar' ? 'فتح' : 'Open'}</Link>
+                  <Link to="/login">{copy.open}</Link>
                 </article>
               ))}
             </div>
@@ -161,7 +247,7 @@ export function CourseDetailPage() {
           { label: listCopy.nav[3].label, to: '/scholars' },
           { label: listCopy.nav[4].label, to: '/fatwa' },
         ]}
-        successText={language === 'ar' ? 'تم تسجيل بريدك في القائمة البريدية.' : 'Your email has been added to the newsletter list.'}
+        successText={copy.successText}
       />
     </main>
   )
