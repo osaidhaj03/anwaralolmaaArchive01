@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Languages, LogIn, Menu, Moon, Search, Sun, type LucideIcon } from 'lucide-react'
+import { ChevronDown, Languages, LogIn, Menu, Moon, Search, Sun, type LucideIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BrandMark } from './AdminIcons'
 import { useLanguage, type Language } from '../context/LanguageContext'
@@ -147,6 +147,8 @@ function HeaderActions({
   themeLabel: string
   toggleTheme: () => void
 }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+
   return (
     <div className="public-actions">
       <Link className="public-icon-button" to="/search" aria-label={searchLabel} onClick={onActionClick}>
@@ -155,20 +157,92 @@ function HeaderActions({
       <button className="public-icon-button" onClick={toggleTheme} type="button" aria-label={themeLabel}>
         {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
       </button>
-      <div className="public-language-select-wrap">
-        <Languages size={17} />
-        <select value={language} onChange={(e) => setLanguage(e.target.value as Language)}>
-          <option value="ar">العربية</option>
-          <option value="uz">O'zbekcha</option>
-          <option value="uzCyr">Ўзбекча</option>
-          <option value="ru">Русский</option>
-          <option value="en">English</option>
-        </select>
+      
+      <div className="public-language-dropdown-container">
+        <button
+          className="public-language-select-wrap"
+          type="button"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        >
+          <Languages size={17} />
+          <span className="selected-lang-label">{getLanguageLabel(language)}</span>
+          <ChevronDown size={14} className={`chevron-down-icon ${dropdownOpen ? 'is-open' : ''}`} />
+        </button>
+
+        {dropdownOpen && (
+          <>
+            <div className="public-language-dropdown-backdrop" onClick={() => setDropdownOpen(false)} />
+            <div className="public-language-dropdown-menu">
+              <button
+                type="button"
+                className={language === 'ar' ? 'is-active' : ''}
+                onClick={() => {
+                  setLanguage('ar')
+                  setDropdownOpen(false)
+                }}
+              >
+                العربية
+              </button>
+              <button
+                type="button"
+                className={language === 'uz' ? 'is-active' : ''}
+                onClick={() => {
+                  setLanguage('uz')
+                  setDropdownOpen(false)
+                }}
+              >
+                O'zbekcha
+              </button>
+              <button
+                type="button"
+                className={language === 'uzCyr' ? 'is-active' : ''}
+                onClick={() => {
+                  setLanguage('uzCyr')
+                  setDropdownOpen(false)
+                }}
+              >
+                Ўзбекча
+              </button>
+              <button
+                type="button"
+                className={language === 'ru' ? 'is-active' : ''}
+                onClick={() => {
+                  setLanguage('ru')
+                  setDropdownOpen(false)
+                }}
+              >
+                Русский
+              </button>
+              <button
+                type="button"
+                className={language === 'en' ? 'is-active' : ''}
+                onClick={() => {
+                  setLanguage('en')
+                  setDropdownOpen(false)
+                }}
+              >
+                English
+              </button>
+            </div>
+          </>
+        )}
       </div>
+
       <Link className="login-button" to="/login" onClick={onActionClick}>
         <LogIn size={17} />
         {login}
       </Link>
     </div>
   )
+}
+
+function getLanguageLabel(lang: Language) {
+  switch (lang) {
+    case 'ar': return 'العربية'
+    case 'uz': return 'O\'zbekcha'
+    case 'uzCyr': return 'Ўзбекча'
+    case 'ru': return 'Русский'
+    case 'en': return 'English'
+    default: return ''
+  }
 }

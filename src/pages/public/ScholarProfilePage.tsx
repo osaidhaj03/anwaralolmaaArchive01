@@ -1,7 +1,7 @@
-import { Mail } from 'lucide-react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { DetailInfoCard, DetailRelatedCard, DetailTextCard } from '../../components/public/DetailCards'
 import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
+import { ScholarProfileHero } from '../../components/public/ScholarProfileHero'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
@@ -55,7 +55,7 @@ const profileCopy: Record<Language, Record<string, string>> = {
   uzCyr: {
     breadcrumb: 'Бош саҳифа / Устозлар / Профиль',
     overview: 'Умумий маълумот',
-    bio: 'Устоз исломий илмлар бўйича тизимли дарслар, босқичма-босқич тушунтиришлар ва савол-жавоб машғулотларини олиб боради.',
+    bio: 'Устоз исломий илмлар бўйича тизимли дарслар, босқичма-босқич тушунтиркалар ва савол-жавоб машғулотларини олиб боради.',
     courses: 'Курслар',
     lessons: 'Дарслар',
     students: 'Талабалар',
@@ -109,25 +109,16 @@ export function ScholarProfilePage() {
     <main className="public-site" dir={dir}>
       <PublicPageHeader activeTo="/scholars" copy={pageCopy} />
 
-      <section className="scholar-profile-hero islamic-soft-pattern">
-        <div className="public-container scholar-profile-hero__inner">
-          <span>{copy.breadcrumb}</span>
-          <div className="scholar-profile-head">
-            <div className="scholar-profile-copy">
-              <small>{scholar.field}</small>
-              <h1>{scholar.name}</h1>
-              <p>{scholar.title}</p>
-              <div className="scholar-profile-actions">
-                <Link to={`/scholars/${index + 1}/about`}>{copy.about}</Link>
-                <Link to="/login"><Mail size={16} />{copy.contact}</Link>
-              </div>
-            </div>
-            <div className="scholar-profile-photo-card">
-              <img alt={scholar.name} src={scholar.image} />
-            </div>
-          </div>
-        </div>
-      </section>
+      <ScholarProfileHero
+        aboutLabel={copy.about}
+        aboutTo={`/scholars/${index + 1}/about`}
+        breadcrumb={copy.breadcrumb}
+        contactLabel={copy.contact}
+        field={scholar.field}
+        image={scholar.image}
+        name={scholar.name}
+        title={scholar.title}
+      />
 
       <section className="public-container scholar-profile-layout">
         <div className="scholar-profile-main">

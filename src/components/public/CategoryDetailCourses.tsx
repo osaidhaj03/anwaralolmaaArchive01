@@ -1,39 +1,24 @@
-import { Link } from 'react-router-dom'
-import { BrandMark } from '../AdminIcons'
-
-type CategoryCourse = {
-  lessons: string
-  teacher: string
-  title: string
-}
+import { CourseCard } from './CourseCard'
+import type { CourseItem } from '../../data/public/pageTypes'
 
 type CategoryCourseItem = {
-  course: CategoryCourse
+  course: CourseItem
   index: number
 }
 
 type CategoryDetailCoursesProps = {
   courses: CategoryCourseItem[]
-  openLabel: string
+  openLabel?: string // Keep optional to prevent strict compilation errors if caller passes it
   title: string
 }
 
-export function CategoryDetailCourses({ courses, openLabel, title }: CategoryDetailCoursesProps) {
+export function CategoryDetailCourses({ courses, title }: CategoryDetailCoursesProps) {
   return (
     <div className="category-detail-panel">
       <h2>{title}</h2>
-      <div className="category-detail-course-list">
+      <div className="public-course-grid">
         {courses.map(({ course, index }) => (
-          <article key={index}>
-            <div className="category-detail-course-icon">
-              <BrandMark />
-            </div>
-            <div>
-              <h3>{course.title}</h3>
-              <p>{`${course.teacher} · ${course.lessons}`}</p>
-            </div>
-            <Link to={`/courses/${index + 1}`}>{openLabel}</Link>
-          </article>
+          <CourseCard course={course} href={`/courses/${index + 1}`} key={course.title} />
         ))}
       </div>
     </div>

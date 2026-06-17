@@ -28,10 +28,16 @@ const loginCopy: Record<Language, Record<string, string>> = {
     books: 'آلاف الكتب الموثوقة',
     lessons: 'دروس علمية مبسطة',
     scholars: 'كوكبة من أهل العلم',
-    copyright: '2025 © أنوار العلماء - جميع الحقوق محفوظة',
+    copyright: '2026 © أنوار العلماء - جميع الحقوق محفوظة',
     demo: 'تم تنفيذ هذا الإجراء كواجهة تجريبية فقط.',
     hidden: 'إظهار كلمة المرور',
     visible: 'إخفاء كلمة المرور',
+    name: 'الاسم الكامل',
+    namePlaceholder: 'أدخل اسمك الكامل',
+    confirmPassword: 'تأكيد كلمة المرور',
+    confirmPasswordPlaceholder: 'أعد إدخال كلمة المرور',
+    signUp: 'إنشاء الحساب',
+    haveAccount: 'لديك حساب بالفعل؟',
   },
   en: {
     brand: 'Anwar Alolmaa',
@@ -55,10 +61,16 @@ const loginCopy: Record<Language, Record<string, string>> = {
     books: 'Trusted books',
     lessons: 'Clear lessons',
     scholars: 'Recognized scholars',
-    copyright: '2025 © Anwar Alolmaa - All rights reserved',
+    copyright: '2026 © Anwar Alolmaa - All rights reserved',
     demo: 'This action is available as a frontend demo only.',
     hidden: 'Show password',
     visible: 'Hide password',
+    name: 'Full Name',
+    namePlaceholder: 'Enter your full name',
+    confirmPassword: 'Confirm Password',
+    confirmPasswordPlaceholder: 'Re-enter your password',
+    signUp: 'Sign Up',
+    haveAccount: 'Already have an account?',
   },
   uz: {
     brand: 'Anvar al-Ulamo',
@@ -82,10 +94,16 @@ const loginCopy: Record<Language, Record<string, string>> = {
     books: 'Ishonchli kitoblar',
     lessons: 'Tizimli darslar',
     scholars: 'Mo‘tabar olimlar',
-    copyright: '2025 © Anvar al-Ulamo - Barcha huquqlar himoyalangan',
+    copyright: '2026 © Anvar al-Ulamo - Barcha huquqlar himoyalangan',
     demo: 'Ushbu harakat faqat demo rejimida ishlaydi.',
     hidden: 'Parolni ko‘rsatish',
     visible: 'Parolni yashirish',
+    name: 'To‘liq ism',
+    namePlaceholder: 'To‘liq ismingizni kiriting',
+    confirmPassword: 'Parolni tasdiqlash',
+    confirmPasswordPlaceholder: 'Parolni qayta kiriting',
+    signUp: 'Ro‘yxatdan o‘tish',
+    haveAccount: 'Hisobingiz bormi?',
   },
   uzCyr: {
     brand: 'Анвар ал-Уламо',
@@ -109,10 +127,16 @@ const loginCopy: Record<Language, Record<string, string>> = {
     books: 'Ишончли китоблар',
     lessons: 'Тизимли дарслар',
     scholars: 'Мўътабар олимлар',
-    copyright: '2025 © Анвар ал-Уламо - Барча ҳуқуқлар ҳимояланган',
+    copyright: '2026 © Анвар ал-Уламо - Барча ҳуқуқлар ҳимояланган',
     demo: 'Ушбу ҳаракат фақат демо режимида ишлайди.',
     hidden: 'Паролни кўрсатиш',
     visible: 'Паролни яшириш',
+    name: 'Тўлиқ исм',
+    namePlaceholder: 'Тўлиқ исмингизни киритинг',
+    confirmPassword: 'Паролни тасдиқлаш',
+    confirmPasswordPlaceholder: 'Паролингизни қайта киритинг',
+    signUp: 'Рўйхатдан ўтиш',
+    haveAccount: 'Ҳисобингиз борми?',
   },
   ru: {
     brand: 'Анвар аль-Улама',
@@ -136,10 +160,16 @@ const loginCopy: Record<Language, Record<string, string>> = {
     books: 'Проверенные книги',
     lessons: 'Понятные уроки',
     scholars: 'Признанные ученые',
-    copyright: '2025 © Анвар аль-Улама - Все права защищены',
+    copyright: '2026 © Анвар аль-Улама - Все права защищены',
     demo: 'Это действие доступно только в демонстрационном режиме.',
     hidden: 'Показать пароль',
     visible: 'Скрыть пароль',
+    name: 'Полное имя',
+    namePlaceholder: 'Введите ваше полное имя',
+    confirmPassword: 'Подтверждение пароля',
+    confirmPasswordPlaceholder: 'Введите пароль еще раз',
+    signUp: 'Зарегистрироваться',
+    haveAccount: 'Уже есть аккаунт?',
   },
 }
 
@@ -149,6 +179,7 @@ export function LoginPage() {
   const copy = loginCopy[language]
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [isSignUp, setIsSignUp] = useState(false)
   const [message, setMessage] = useState('')
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -164,7 +195,19 @@ export function LoginPage() {
   return (
     <main className="login-page" dir={dir}>
       <section className="login-panel">
-        <LoginForm copy={copy} message={message} onMockAction={handleMockAction} onPasswordToggle={() => setShowPassword((current) => !current)} onSubmit={handleSubmit} showPassword={showPassword} />
+        <LoginForm
+          copy={copy}
+          message={message}
+          showPassword={showPassword}
+          isSignUp={isSignUp}
+          onToggleSignUp={() => {
+            setIsSignUp(!isSignUp)
+            setMessage('') // Clear demo message when switching mode
+          }}
+          onMockAction={handleMockAction}
+          onPasswordToggle={() => setShowPassword((current) => !current)}
+          onSubmit={handleSubmit}
+        />
 
         <p className="login-copyright">{copy.copyright}</p>
       </section>
