@@ -22,7 +22,7 @@ type PublicHeaderProps = {
   themeLabel: string
 }
 
-export function PublicHeader({ activeTo, brand, languageLabel: _languageLabel, login, nav, searchLabel, subtitle, themeLabel }: PublicHeaderProps) {
+export function PublicHeader({ activeTo, brand, login, nav, searchLabel, subtitle, themeLabel }: PublicHeaderProps) {
   const { language, setLanguage } = useLanguage()
   const { theme, toggleTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)

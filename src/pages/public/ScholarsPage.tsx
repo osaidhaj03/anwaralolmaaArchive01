@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Search, SlidersHorizontal } from 'lucide-react'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
 import { ScholarsGrid } from '../../components/public/ScholarsGrid'
 import { ScholarsHeroStats } from '../../components/public/ScholarsHeroStats'
@@ -9,6 +8,7 @@ import { PublicFilterSelect } from '../../components/public/PublicFilterSelect'
 import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
+import { compactNumber, uniqueValues } from '../../utils/publicFormat'
 
 export function ScholarsPage() {
   const { dir, language } = useLanguage()
@@ -26,7 +26,7 @@ export function ScholarsPage() {
   ]
   const heroStats = copy.stats.map((item, index) => ({ ...item, value: normalizedStats[index] }))
 
-  const fields = useMemo(() => unique(archive.scholars.map((scholar) => scholar.field)), [archive.scholars])
+  const fields = useMemo(() => uniqueValues(archive.scholars.map((scholar) => scholar.field)), [archive.scholars])
   const scholars = useMemo(() => {
     const query = search.trim().toLowerCase()
     return archive.scholars.filter((scholar) => {
@@ -36,7 +36,7 @@ export function ScholarsPage() {
   }, [archive.scholars, field, search])
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/scholars" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
+      <PublicPageHeader activeTo="/scholars" copy={copy} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="scholars-hero" description={copy.description} title={copy.title}>
         <div className="courses-searchbar">
@@ -69,14 +69,8 @@ export function ScholarsPage() {
         <ScholarsGrid allScholars={archive.scholars} emptyLabel={copy.empty} scholars={scholars} />
       </section>
 
-      <PublicFooter
-        brand={copy.brand}
-        footerText={copy.footerText}
-        newsletterButton={copy.newsletterButton}
-        newsletterPlaceholder={copy.newsletterPlaceholder}
-        newsletterText={copy.newsletterText}
-        newsletterTitle={copy.newsletterTitle}
-        quickLinks={copy.quickLinks}
+      <PublicPageFooter
+        copy={copy}
         quickLinksItems={[
           { label: copy.nav[2].label, to: '/courses' },
           { label: copy.title, to: '/scholars' },
@@ -89,13 +83,3 @@ export function ScholarsPage() {
   )
 }
 
-function unique(values: string[]) {
-  return Array.from(new Set(values))
-}
-
-function compactNumber(value: number) {
-  if (value >= 1000) {
-    return `${Math.round(value / 1000)}K`
-  }
-  return String(value)
-}

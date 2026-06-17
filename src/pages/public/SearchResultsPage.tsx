@@ -1,18 +1,12 @@
 import { BookOpen, GraduationCap, LibraryBig, MessageCircleQuestion, PlaySquare, Search, UsersRound } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
+import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
+import { SearchResultsHero } from '../../components/public/SearchResultsHero'
+import { SearchResultsList, type SearchResultItem } from '../../components/public/SearchResultsList'
 import { useArchiveData, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { coursesCopy } from '../../data/public/courses'
-
-type SearchResult = {
-  title: string
-  meta: string
-  type: string
-  to: string
-}
 
 const searchCopy: Record<Language, Record<string, string>> = {
   ar: {
@@ -105,14 +99,10 @@ export function SearchResultsPage() {
   const { lessonsByCourse } = useArchiveData()
   const courses = coursesCopy[language]
   const [filter, setFilter] = useState('all')
-  const [query, setQuery] = useState(params.get('q') ?? '')
-
-  useEffect(() => {
-    setQuery(params.get('q') ?? '')
-  }, [params])
+  const query = params.get('q') ?? ''
 
   const results = useMemo(() => {
-    const lessonItems: SearchResult[] = Object.entries(lessonsByCourse).flatMap(([courseIndex, lessons]) =>
+    const lessonItems: SearchResultItem[] = Object.entries(lessonsByCourse).flatMap(([courseIndex, lessons]) =>
       lessons.map((lesson, lessonIndex) => ({
         title: lesson.title,
         meta: `${lesson.teacher} · ${lesson.duration}`,
@@ -121,7 +111,7 @@ export function SearchResultsPage() {
       })),
     )
 
-    const items: SearchResult[] = [
+    const items: SearchResultItem[] = [
       ...archive.courses.map((item, index) => ({ title: item.title, meta: item.teacher, type: 'courses', to: `/courses/${index + 1}` })),
       ...lessonItems,
       ...archive.scholars.map((item, index) => ({ title: item.name, meta: item.field, type: 'scholars', to: `/scholars/${index + 1}` })),
@@ -137,8 +127,12 @@ export function SearchResultsPage() {
   }, [archive.books, archive.categories, archive.courses, archive.fatwas, archive.scholars, filter, lessonsByCourse, query])
 
   function handleSubmit() {
+    updateQuery(query)
+  }
+
+  function updateQuery(value: string) {
     const next = new URLSearchParams(params)
-    if (query.trim()) next.set('q', query.trim())
+    if (value.trim()) next.set('q', value.trim())
     else next.delete('q')
     setParams(next)
   }
@@ -155,63 +149,32 @@ export function SearchResultsPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="" brand={courses.brand} languageLabel={courses.languageLabel} login={courses.login} nav={courses.nav} searchLabel={courses.searchLabel} subtitle={courses.subtitle} themeLabel={courses.themeLabel} />
+      <PublicPageHeader activeTo="" copy={courses} />
 
-      <section className="search-results-hero islamic-soft-pattern">
-        <div className="public-container search-results-hero__inner">
-          <span>{copy.breadcrumb}</span>
-          <h1>{copy.title}</h1>
-          <p>{copy.description}</p>
-          <div className="search-results-input">
-            <Search size={19} />
-            <input onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === 'Enter' ? handleSubmit() : undefined} placeholder={copy.placeholder} value={query} />
-            <button onClick={handleSubmit} type="button">{copy.open}</button>
-          </div>
-          <div className="search-results-filters">
-            {filterButtons.map(({ key, label, icon: Icon }) => (
-              <button className={filter === key ? 'is-active' : ''} key={key} onClick={() => setFilter(key)} type="button">
-                <Icon size={16} />
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+      <SearchResultsHero
+        activeFilter={filter}
+        breadcrumb={copy.breadcrumb}
+        description={copy.description}
+        filters={filterButtons}
+        onFilterChange={setFilter}
+        onQueryChange={updateQuery}
+        onSubmit={handleSubmit}
+        openLabel={copy.open}
+        placeholder={copy.placeholder}
+        query={query}
+        title={copy.title}
+      />
 
-      <section className="public-container search-results-layout">
-        <div className="search-results-summary">
-          <strong>{results.length}</strong>
-          <span>{copy.results}</span>
-        </div>
-        <div className="search-results-list">
-          {results.map((item) => (
-            <article className="search-results-card" key={`${item.type}-${item.to}`}>
-              <div>
-                <small>{filterButtons.find((entry) => entry.key === item.type)?.label}</small>
-                <h2>{item.title}</h2>
-                <p>{item.meta}</p>
-              </div>
-              <Link to={item.to}>{copy.open}</Link>
-            </article>
-          ))}
-          {results.length === 0 ? <p className="courses-empty">{copy.empty}</p> : null}
-        </div>
-      </section>
+      <SearchResultsList emptyLabel={copy.empty} filters={filterButtons} openLabel={copy.open} results={results} resultsLabel={copy.results} />
 
-      <PublicFooter
-        brand={courses.brand}
-        footerText={courses.footerText}
-        newsletterButton={courses.newsletterButton}
-        newsletterPlaceholder={courses.newsletterPlaceholder}
-        newsletterText={courses.newsletterText}
-        newsletterTitle={courses.newsletterTitle}
-        quickLinks={courses.quickLinks}
+      <PublicPageFooter
+        copy={courses}
         quickLinksItems={[
           { label: courses.nav[2].label, to: '/courses' },
           { label: courses.nav[3].label, to: '/scholars' },
           { label: courses.nav[5].label, to: '/library' },
         ]}
-        successText={language === 'ar' ? 'تم تسجيل بريدك في القائمة البريدية.' : 'Your email has been added to the newsletter list.'}
+        successText={courses.newsletterSuccess}
       />
     </main>
   )

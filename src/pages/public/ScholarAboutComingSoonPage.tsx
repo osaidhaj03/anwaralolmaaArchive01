@@ -1,7 +1,8 @@
-import { BookOpen, GraduationCap, Landmark, MapPin, Star } from 'lucide-react'
-import { Link, Navigate, useParams } from 'react-router-dom'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
+import { Navigate, useParams } from 'react-router-dom'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
+import { ScholarAboutContent } from '../../components/public/ScholarAboutContent'
+import { ScholarAboutHero } from '../../components/public/ScholarAboutHero'
+import { ScholarAboutHighlights } from '../../components/public/ScholarAboutHighlights'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
@@ -129,73 +130,17 @@ export function ScholarAboutComingSoonPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/scholars" brand={scholarsPageCopy.brand} languageLabel={scholarsPageCopy.languageLabel} login={scholarsPageCopy.login} nav={scholarsPageCopy.nav} searchLabel={scholarsPageCopy.searchLabel} subtitle={scholarsPageCopy.subtitle} themeLabel={scholarsPageCopy.themeLabel} />
-      <section className="scholar-profile-hero islamic-soft-pattern">
-        <div className="public-container scholar-profile-hero__inner">
-          <span>{copy.breadcrumb}</span>
-          <div className="scholar-profile-head">
-            <div className="scholar-profile-copy">
-              <small>{scholar.field}</small>
-              <h1>{copy.title}</h1>
-              <p>{scholar.name}</p>
-              <div className="scholar-profile-actions">
-                <Link to={`/scholars/${index + 1}`}>{copy.profile}</Link>
-                <Link to="/scholars">{copy.back}</Link>
-              </div>
-            </div>
-            <div className="scholar-profile-photo-card">
-              <img alt={scholar.name} src={scholar.image} />
-            </div>
-          </div>
-        </div>
-      </section>
+      <PublicPageHeader activeTo="/scholars" copy={scholarsPageCopy} />
+
+      <ScholarAboutHero backLabel={copy.back} breadcrumb={copy.breadcrumb} field={scholar.field} image={scholar.image} name={scholar.name} profileLabel={copy.profile} profileTo={`/scholars/${index + 1}`} title={copy.title} />
 
       <section className="public-container scholar-profile-layout">
-        <div className="scholar-profile-main">
-          <article className="scholar-profile-card">
-            <h2>{copy.title}</h2>
-            <p>{copy.text}</p>
-          </article>
-          <article className="scholar-profile-card">
-            <h2>{copy.expertise}</h2>
-            <div className="scholar-profile-course-list">
-              <article>
-                <div className="scholar-profile-course-mark"><GraduationCap size={22} /></div>
-                <div><h3>{copy.teaching}</h3><p>{copy.teachingText}</p></div>
-              </article>
-              <article>
-                <div className="scholar-profile-course-mark"><BookOpen size={22} /></div>
-                <div><h3>{copy.references}</h3><p>{copy.referencesText}</p></div>
-              </article>
-              <article>
-                <div className="scholar-profile-course-mark"><Landmark size={22} /></div>
-                <div><h3>{copy.outreach}</h3><p>{copy.outreachText}</p></div>
-              </article>
-            </div>
-          </article>
-        </div>
-        <aside className="scholar-profile-side">
-          <article className="scholar-profile-card">
-            <h2>{copy.highlights}</h2>
-            <dl className="scholar-profile-info">
-              <div><dt>{copy.field}</dt><dd>{scholar.field}</dd></div>
-              <div><dt>{copy.country}</dt><dd><MapPin size={15} />{scholar.country}</dd></div>
-              <div><dt>{copy.courses}</dt><dd><GraduationCap size={15} />{scholar.courses}</dd></div>
-              <div><dt>{copy.lessons}</dt><dd><BookOpen size={15} />{scholar.lessons}</dd></div>
-              <div><dt>{copy.rating}</dt><dd><Star size={15} />{scholar.rating}</dd></div>
-            </dl>
-          </article>
-        </aside>
+        <ScholarAboutContent copy={copy} />
+        <ScholarAboutHighlights copy={copy} scholar={scholar} />
       </section>
 
-      <PublicFooter
-        brand={scholarsPageCopy.brand}
-        footerText={scholarsPageCopy.footerText}
-        newsletterButton={scholarsPageCopy.newsletterButton}
-        newsletterPlaceholder={scholarsPageCopy.newsletterPlaceholder}
-        newsletterText={scholarsPageCopy.newsletterText}
-        newsletterTitle={scholarsPageCopy.newsletterTitle}
-        quickLinks={scholarsPageCopy.quickLinks}
+      <PublicPageFooter
+        copy={scholarsPageCopy}
         quickLinksItems={[
           { label: scholarsPageCopy.nav[2].label, to: '/courses' },
           { label: scholarsPageCopy.nav[4].label, to: '/fatwa' },

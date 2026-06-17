@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
 import { LandingHero } from '../../components/public/LandingHero'
 import { LandingPreviewSection } from '../../components/public/LandingPreviewSection'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useNavigate } from 'react-router-dom'
 import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
@@ -35,7 +34,7 @@ export function LandingPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
+      <PublicPageHeader activeTo="/" copy={copy} />
 
       <LandingHero
         accent={heroAccent}
@@ -71,14 +70,8 @@ export function LandingPage() {
         title={copy.booksTitle}
       />
 
-      <PublicFooter
-        brand={copy.brand}
-        footerText={copy.footerText}
-        newsletterButton={copy.newsletterButton}
-        newsletterPlaceholder={copy.newsletterPlaceholder}
-        newsletterText={copy.newsletterText}
-        newsletterTitle={copy.newsletterTitle}
-        quickLinks={copy.quickLinks}
+      <PublicPageFooter
+        copy={copy}
         quickLinksItems={[
           { label: copy.coursesTitle, to: '/courses' },
           { label: copy.scholarsTitle, to: '/scholars' },

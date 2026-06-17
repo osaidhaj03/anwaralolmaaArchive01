@@ -1,9 +1,7 @@
 import { Clock3, Eye, MessageCircleQuestion, Play, UserRound } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
-import { DetailInfoList } from '../../components/public/DetailInfoList'
-import { DetailRelatedLinks } from '../../components/public/DetailRelatedLinks'
+import { DetailInfoCard, DetailRelatedCard, DetailTextCard } from '../../components/public/DetailCards'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { fatwaCopy } from '../../data/public/fatwa'
 
@@ -89,7 +87,7 @@ export function FatwaDetailPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/fatwa" brand={pageCopy.brand} languageLabel={pageCopy.languageLabel} login={pageCopy.login} nav={pageCopy.nav} searchLabel={pageCopy.searchLabel} subtitle={pageCopy.subtitle} themeLabel={pageCopy.themeLabel} />
+      <PublicPageHeader activeTo="/fatwa" copy={pageCopy} />
 
       <section className="fatwa-detail-hero islamic-soft-pattern">
         <div className="public-container fatwa-detail-hero__inner">
@@ -111,52 +109,35 @@ export function FatwaDetailPage() {
 
       <section className="public-container fatwa-detail-layout">
         <div className="fatwa-detail-main">
-          <article className="fatwa-detail-card">
-            <h2>{copy.summary}</h2>
+          <DetailTextCard className="fatwa-detail-card" title={copy.summary}>
             <p>{copy.descriptionText}</p>
-          </article>
-          <article className="fatwa-detail-card">
-            <h2>{copy.related}</h2>
-            <DetailRelatedLinks
-              className="fatwa-detail-related"
-              items={pageCopy.items.filter((candidate) => candidate.category === item.category && candidate.title !== item.title).slice(0, 3).map((related) => ({
+          </DetailTextCard>
+          <DetailRelatedCard
+            cardClassName="fatwa-detail-card"
+            linkClassName="fatwa-detail-related"
+            title={copy.related}
+            items={pageCopy.items.filter((candidate) => candidate.category === item.category && candidate.title !== item.title).slice(0, 3).map((related) => ({
                 description: related.scholar,
                 title: related.title,
                 to: `/fatwa/${pageCopy.items.findIndex((candidate) => candidate.title === related.title) + 1}`,
-              }))}
-            />
-          </article>
+            }))}
+          />
         </div>
         <aside className="fatwa-detail-side">
-          <article className="fatwa-detail-card">
-            <DetailInfoList
-              className="fatwa-detail-info"
-              items={[
+          <DetailInfoCard
+            cardClassName="fatwa-detail-card"
+            listClassName="fatwa-detail-info"
+            items={[
                 { label: copy.scholar, value: <><UserRound size={15} />{item.scholar}</> },
                 { label: copy.category, value: item.category },
                 { label: copy.duration, value: <><Clock3 size={15} />{item.duration}</> },
                 { label: copy.views, value: <><Eye size={15} />{item.views}</> },
-              ]}
-            />
-          </article>
+            ]}
+          />
         </aside>
       </section>
 
-      <PublicFooter
-        brand={pageCopy.brand}
-        footerText={pageCopy.footerText}
-        newsletterButton={pageCopy.newsletterButton}
-        newsletterPlaceholder={pageCopy.newsletterPlaceholder}
-        newsletterText={pageCopy.newsletterText}
-        newsletterTitle={pageCopy.newsletterTitle}
-        quickLinks={pageCopy.quickLinks}
-        quickLinksItems={[
-          { label: pageCopy.nav[2].label, to: '/courses' },
-          { label: pageCopy.nav[3].label, to: '/scholars' },
-          { label: pageCopy.nav[5].label, to: '/library' },
-        ]}
-        successText={copy.successText}
-      />
+      <PublicPageFooter copy={pageCopy} successText={copy.successText} />
     </main>
   )
 }

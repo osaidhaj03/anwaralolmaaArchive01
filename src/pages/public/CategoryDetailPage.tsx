@@ -1,8 +1,8 @@
-import { BookOpen, GraduationCap, PlayCircle, UsersRound } from 'lucide-react'
-import { Link, Navigate, useParams } from 'react-router-dom'
-import { BrandMark } from '../../components/AdminIcons'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
+import { Navigate, useParams } from 'react-router-dom'
+import { CategoryDetailCourses } from '../../components/public/CategoryDetailCourses'
+import { CategoryDetailHero } from '../../components/public/CategoryDetailHero'
+import { CategoryDetailLinks } from '../../components/public/CategoryDetailLinks'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { categoriesCopy } from '../../data/public/categories'
@@ -77,74 +77,28 @@ export function CategoryDetailPage() {
     return <Navigate to="/categories" replace />
   }
 
-  const Icon = category.icon
   const relatedCourses = archive.courses
     .map((course, index) => ({ course, index }))
     .filter(({ course }) => course.categoryId === category.id)
     .slice(0, 4)
+  const featuredCourses = relatedCourses.length ? relatedCourses : archive.courses.map((course, index) => ({ course, index })).slice(0, 4)
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/categories" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
+      <PublicPageHeader activeTo="/categories" copy={copy} />
 
-      <section className="category-detail-hero islamic-soft-pattern">
-        <div className="public-container category-detail-hero__inner">
-          <span>{detail.breadcrumb}</span>
-          <div className="category-detail-head">
-            <div className="category-detail-copy">
-              <div className="category-detail-badge">
-                <Icon size={26} />
-                <strong>{category.title}</strong>
-              </div>
-              <h1>{category.title}</h1>
-              <p>{category.text}</p>
-            </div>
-            <div className="category-detail-stats">
-              <div><GraduationCap size={18} /><strong>{category.courses}</strong><span>{detail.courses}</span></div>
-              <div><PlayCircle size={18} /><strong>{category.lessons}</strong><span>{detail.lessons}</span></div>
-              <div><BookOpen size={18} /><strong>{category.books}</strong><span>{detail.books}</span></div>
-              <div><UsersRound size={18} /><strong>{Math.max(12, Math.round(category.courses / 3))}</strong><span>{detail.scholars}</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CategoryDetailHero breadcrumb={detail.breadcrumb} category={category} copy={detail} />
 
       <section className="public-container category-detail-layout">
         <div className="category-detail-main">
-          <div className="category-detail-panel">
-            <h2>{detail.topCourses}</h2>
-            <div className="category-detail-course-list">
-              {(relatedCourses.length ? relatedCourses : archive.courses.map((course, index) => ({ course, index })).slice(0, 4)).map(({ course, index }) => (
-                <article key={index}>
-                  <div className="category-detail-course-icon"><BrandMark /></div>
-                  <div>
-                    <h3>{course.title}</h3>
-                    <p>{`${course.teacher} · ${course.lessons}`}</p>
-                  </div>
-                  <Link to={`/courses/${index + 1}`}>{detail.open}</Link>
-                </article>
-              ))}
-            </div>
-          </div>
+          <CategoryDetailCourses courses={featuredCourses} openLabel={detail.open} title={detail.topCourses} />
         </div>
 
-        <aside className="category-detail-side-panel">
-          <h2>{detail.related}</h2>
-          <Link to="/courses">{detail.viewAll}</Link>
-          <Link to="/library">{detail.books}</Link>
-          <Link to="/scholars">{detail.scholars}</Link>
-          <Link to="/fatwa">{language === 'ar' ? 'فتاوى مرتبطة' : 'Related fatwas'}</Link>
-        </aside>
+        <CategoryDetailLinks booksLabel={detail.books} fatwaLabel={language === 'ar' ? 'فتاوى مرتبطة' : 'Related fatwas'} relatedLabel={detail.related} scholarsLabel={detail.scholars} viewAllLabel={detail.viewAll} />
       </section>
 
-      <PublicFooter
-        brand={copy.brand}
-        footerText={copy.footerText}
-        newsletterButton={copy.newsletterButton}
-        newsletterPlaceholder={copy.newsletterPlaceholder}
-        newsletterText={copy.newsletterText}
-        newsletterTitle={copy.newsletterTitle}
-        quickLinks={copy.quickLinks}
+      <PublicPageFooter
+        copy={copy}
         quickLinksItems={[
           { label: copy.nav[2].label, to: '/courses' },
           { label: copy.nav[3].label, to: '/scholars' },

@@ -1,6 +1,10 @@
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock3, Edit3, PlaySquare, Plus, Search, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { AdminCourseLessonModal } from '../../components/admin/AdminCourseLessonModal'
+import { AdminCourseLessonsHero } from '../../components/admin/AdminCourseLessonsHero'
+import { AdminCourseLessonsStats } from '../../components/admin/AdminCourseLessonsStats'
+import { AdminCourseLessonsTable } from '../../components/admin/AdminCourseLessonsTable'
 import { useArchiveData, type CourseLesson } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import type { AdminPageSeed } from '../../data/adminSeed'
@@ -82,159 +86,34 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
 
   return (
     <div className="admin-page">
-      <section className="management-hero course-detail-hero">
-        <div>
-          <span>{copy.parent}</span>
-          <h2>{course.title}</h2>
-          <p>
-            {copy.description} {course.teacher} · {course.category}
-          </p>
-        </div>
-        <div className="management-hero__actions">
-          <Link className="ghost-link" to="/admin/courses">
-            <BackIcon size={17} />
-            {copy.back}
-          </Link>
-          <button className="gold-button" onClick={openAddLesson} type="button">
-            <Plus size={17} />
-            {copy.addLesson}
-          </button>
-        </div>
-      </section>
+      <AdminCourseLessonsHero BackIcon={BackIcon} addLabel={copy.addLesson} backLabel={copy.back} copy={copy} course={course} onAddLesson={openAddLesson} />
 
-      <section className="stats-grid stats-grid--compact">
-        <article className="stat-card tone-blue">
-          <span className="stat-icon">
-            <PlaySquare size={22} />
-          </span>
-          <div>
-            <span>{copy.lessonCount}</span>
-            <strong>{lessons.length}</strong>
-            <small>{copy.lessonCountHint}</small>
-          </div>
-        </article>
-        <article className="stat-card tone-green">
-          <span className="stat-icon">
-            <CheckCircle2 size={22} />
-          </span>
-          <div>
-            <span>{copy.status}</span>
-            <strong>{course.status}</strong>
-            <small>{copy.statusHint}</small>
-          </div>
-        </article>
-        <article className="stat-card tone-amber">
-          <span className="stat-icon">
-            <Clock3 size={22} />
-          </span>
-          <div>
-            <span>{copy.level}</span>
-            <strong>{course.level}</strong>
-            <small>{copy.levelHint}</small>
-          </div>
-        </article>
-        <article className="stat-card tone-violet">
-          <span className="stat-icon">
-            <BookOpen size={22} />
-          </span>
-          <div>
-            <span>{copy.category}</span>
-            <strong>{course.category}</strong>
-            <small>{copy.categoryHint}</small>
-          </div>
-        </article>
-      </section>
+      <AdminCourseLessonsStats copy={copy} course={course} lessonsCount={lessons.length} />
 
-      <section className="admin-panel table-panel">
-        <div className="course-lessons-header">
-          <div>
-            <h2>{copy.lessonsTitle}</h2>
-            <p>{copy.lessonsSubtitle}</p>
-          </div>
-          <div className="course-lessons-tools">
-            <label className="admin-search">
-              <Search size={17} />
-              <input onChange={(event) => setQuery(event.target.value)} placeholder={copy.search} value={query} />
-            </label>
-            <button onClick={reorderLessons} type="button">
-              {copy.reorder}
-            </button>
-          </div>
-        </div>
-        <div className="admin-table-wrap">
-          <table className="admin-data-table">
-            <thead>
-              <tr>
-                {lessonsPage.columns.map((column) => (
-                  <th key={column.key}>{column.label}</th>
-                ))}
-                <th>{copy.actions}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleLessons.map((lesson, lessonIndex) => (
-                <tr key={`${course.title}-${lesson.title}`}>
-                  {lessonsPage.columns.map((column) => (
-                    <td key={column.key}>
-                      {column.key === 'course' ? course.title : column.key === 'number' ? `${lessonIndex + 1}` : String(lesson[column.key as keyof CourseLesson] ?? '')}
-                    </td>
-                  ))}
-                  <td>
-                    <div className="row-actions">
-                      <button onClick={() => openEditLesson(lesson)} title={copy.edit} type="button">
-                        <Edit3 size={16} />
-                      </button>
-                      <button onClick={() => deleteLessonRow(index, lessons.indexOf(lesson))} title={copy.delete} type="button">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {visibleLessons.length === 0 ? (
-                <tr>
-                  <td colSpan={lessonsPage.columns.length + 1}>
-                    <div className="empty-state">{copy.empty}</div>
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <AdminCourseLessonsTable
+        copy={copy}
+        course={course}
+        lessonsPage={lessonsPage}
+        onDeleteLesson={(lesson) => deleteLessonRow(index, lessons.indexOf(lesson))}
+        onEditLesson={openEditLesson}
+        onQueryChange={setQuery}
+        onReorderLessons={reorderLessons}
+        query={query}
+        visibleLessons={visibleLessons}
+      />
 
       {editingLesson ? (
-        <div className="modal-backdrop" role="presentation">
-          <section className="admin-modal" role="dialog" aria-modal="true" aria-label={editingIndex === null ? copy.addLesson : copy.edit}>
-            <header>
-              <h2>{editingIndex === null ? copy.addLesson : copy.edit}</h2>
-              <button onClick={() => setEditingLesson(null)} type="button">
-                ×
-              </button>
-            </header>
-            <div className="modal-form">
-              {lessonsPage.columns.map((column) => (
-                <label key={column.key}>
-                  {column.label}
-                  <input
-                    onChange={(event) =>
-                      setEditingLesson((current) => (current ? { ...current, [column.key]: event.target.value } : current))
-                    }
-                    value={editingLesson[column.key] ?? ''}
-                  />
-                </label>
-              ))}
-            </div>
-            <footer>
-              <button onClick={() => setEditingLesson(null)} type="button">
-                {copy.cancel}
-              </button>
-              <button className="gold-button" onClick={saveLesson} type="button">
-                {copy.save}
-              </button>
-            </footer>
-          </section>
-        </div>
+        <AdminCourseLessonModal
+          cancelLabel={copy.cancel}
+          isAddMode={editingIndex === null}
+          lesson={editingLesson}
+          lessonsPage={lessonsPage}
+          onChange={setEditingLesson}
+          onClose={() => setEditingLesson(null)}
+          onSave={saveLesson}
+          saveLabel={copy.save}
+          title={editingIndex === null ? copy.addLesson : copy.edit}
+        />
       ) : null}
     </div>
   )

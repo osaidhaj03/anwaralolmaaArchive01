@@ -1,8 +1,7 @@
 import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
 import { CategoryCard } from '../../components/public/CategoryCard'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
@@ -21,7 +20,7 @@ export function CategoriesPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/categories" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
+      <PublicPageHeader activeTo="/categories" copy={copy} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="categories-hero" description={copy.description} title={copy.title}>
         <div className="courses-searchbar">
@@ -39,21 +38,7 @@ export function CategoriesPage() {
         {items.length === 0 ? <p className="courses-empty">{copy.empty}</p> : null}
       </section>
 
-      <PublicFooter
-        brand={copy.brand}
-        footerText={copy.footerText}
-        newsletterButton={copy.newsletterButton}
-        newsletterPlaceholder={copy.newsletterPlaceholder}
-        newsletterText={copy.newsletterText}
-        newsletterTitle={copy.newsletterTitle}
-        quickLinks={copy.quickLinks}
-        quickLinksItems={[
-          { label: copy.nav[2].label, to: '/courses' },
-          { label: copy.nav[3].label, to: '/scholars' },
-          { label: copy.nav[5].label, to: '/library' },
-        ]}
-        successText={copy.newsletterSuccess}
-      />
+      <PublicPageFooter copy={copy} successText={copy.newsletterSuccess} />
     </main>
   )
 }

@@ -12,6 +12,11 @@ button {
   cursor: pointer;
 }
 
+.route-loader {
+  min-height: 100vh;
+  background: var(--public-bg, #f8f6f0);
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -3742,6 +3747,15 @@ button {
 
 .course-tabs-card {
   padding: 16px;
+}
+
+.materials-title {
+  margin: 0;
+  border-bottom: 1px solid rgba(13, 38, 61, 0.06);
+  padding: 16px 20px;
+  color: #0d263d;
+  font-size: 15px;
+  font-weight: 900;
 }
 
 .course-tabs {
@@ -7734,8 +7748,8 @@ button {
 }
 
 :root[data-theme='dark'] .materials-title {
-  color: #e8eef6 !important;
-  border-bottom-color: rgba(224, 189, 115, 0.14) !important;
+  color: #e8eef6;
+  border-bottom-color: rgba(224, 189, 115, 0.14);
 }
 
 /* Language select wrapper */

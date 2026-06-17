@@ -30,7 +30,7 @@ export function WatchVideoPlayer({ audioMode, courseTone, language, setAudioMode
           event.preventDefault()
           setVolume((prev) => !prev)
           break
-        case 'f':
+        case 'f': {
           event.preventDefault()
           const playerEl = document.querySelector('.new-player-card')
           if (playerEl) {
@@ -41,6 +41,7 @@ export function WatchVideoPlayer({ audioMode, courseTone, language, setAudioMode
             }
           }
           break
+        }
         default:
           break
       }

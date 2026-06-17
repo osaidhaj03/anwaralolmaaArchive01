@@ -1,9 +1,7 @@
 import { BookOpen, Eye, FileText, UserRound } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
-import { DetailInfoList } from '../../components/public/DetailInfoList'
-import { DetailRelatedLinks } from '../../components/public/DetailRelatedLinks'
+import { DetailInfoCard, DetailRelatedCard, DetailTextCard } from '../../components/public/DetailCards'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { libraryCopy } from '../../data/public/library'
@@ -86,7 +84,7 @@ export function LibraryDetailPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/library" brand={pageCopy.brand} languageLabel={pageCopy.languageLabel} login={pageCopy.login} nav={pageCopy.nav} searchLabel={pageCopy.searchLabel} subtitle={pageCopy.subtitle} themeLabel={pageCopy.themeLabel} />
+      <PublicPageHeader activeTo="/library" copy={pageCopy} />
 
       <section className="library-detail-hero islamic-soft-pattern">
         <div className="public-container library-detail-hero__inner">
@@ -107,52 +105,43 @@ export function LibraryDetailPage() {
 
       <section className="public-container library-detail-layout">
         <div className="library-detail-main">
-          <article className="library-detail-card">
-            <h2>{copy.overview}</h2>
+          <DetailTextCard className="library-detail-card" title={copy.overview}>
             <p>{language === 'ar' ? 'يُستخدم هذا الكتاب في الدراسة التمهيدية والمراجعة المنهجية، مع ترتيب واضح للأبواب وسهولة في الرجوع إلى المسائل.' : 'This title is used for guided study and structured review, with clearly arranged chapters and easy reference points.'}</p>
-          </article>
-          <article className="library-detail-card">
-            <h2>{copy.related}</h2>
-            <DetailRelatedLinks
-              className="library-detail-related"
-              items={archive.books.filter((candidate) => candidate.category === item.category && candidate.title !== item.title).slice(0, 3).map((related) => ({
+          </DetailTextCard>
+          <DetailRelatedCard
+            cardClassName="library-detail-card"
+            linkClassName="library-detail-related"
+            title={copy.related}
+            items={archive.books.filter((candidate) => candidate.category === item.category && candidate.title !== item.title).slice(0, 3).map((related) => ({
                 description: related.author,
                 title: related.title,
                 to: `/library/${archive.books.findIndex((candidate) => candidate.title === related.title) + 1}`,
-              }))}
-            />
-          </article>
+            }))}
+          />
         </div>
         <aside className="library-detail-side">
-          <article className="library-detail-card">
-            <DetailInfoList
-              className="library-detail-info"
-              items={[
+          <DetailInfoCard
+            cardClassName="library-detail-card"
+            listClassName="library-detail-info"
+            items={[
                 { label: copy.author, value: <><UserRound size={15} />{item.author}</> },
                 { label: copy.category, value: item.category },
                 { label: copy.type, value: item.type },
                 { label: copy.pages, value: <><FileText size={15} />{item.pages}</> },
                 { label: copy.reads, value: <><Eye size={15} />{item.views}</> },
-              ]}
-            />
-          </article>
+            ]}
+          />
         </aside>
       </section>
 
-      <PublicFooter
-        brand={pageCopy.brand}
-        footerText={pageCopy.footerText}
-        newsletterButton={pageCopy.newsletterButton}
-        newsletterPlaceholder={pageCopy.newsletterPlaceholder}
-        newsletterText={pageCopy.newsletterText}
-        newsletterTitle={pageCopy.newsletterTitle}
-        quickLinks={pageCopy.quickLinks}
+      <PublicPageFooter
+        copy={pageCopy}
         quickLinksItems={[
           { label: pageCopy.nav[2].label, to: '/courses' },
           { label: pageCopy.nav[3].label, to: '/scholars' },
           { label: pageCopy.nav[4].label, to: '/fatwa' },
         ]}
-        successText={language === 'ar' ? 'تم تسجيل بريدك في القائمة البريدية.' : 'Your email has been added to the newsletter list.'}
+        successText={pageCopy.newsletterSuccess}
       />
     </main>
   )

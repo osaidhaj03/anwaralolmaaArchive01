@@ -1,6 +1,9 @@
-import { Link } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
-import { Download, Edit3, Eye, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react'
+import { AdminManagementHero } from '../../components/admin/AdminManagementHero'
+import { AdminManagementModal } from '../../components/admin/AdminManagementModal'
+import { AdminManagementSidePanels } from '../../components/admin/AdminManagementSidePanels'
+import { AdminManagementStats } from '../../components/admin/AdminManagementStats'
+import { AdminManagementTable } from '../../components/admin/AdminManagementTable'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import type { AdminPageSeed } from '../../data/adminSeed'
 
@@ -118,213 +121,57 @@ export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, 
 
   return (
     <div className="admin-page">
-      <section className="management-hero">
-        <div>
-          <span>{copy.admin}</span>
-          <h2>{page.title}</h2>
-          <p>{page.description}</p>
-        </div>
-        <div className="management-hero__actions">
-          <button onClick={exportRows} type="button">
-            <Download size={17} />
-            {copy.export}
-          </button>
-          <button className="gold-button" onClick={openAddDialog} type="button">
-            <Plus size={17} />
-            {page.actionLabel}
-          </button>
-        </div>
-      </section>
+      <AdminManagementHero actionLabel={page.actionLabel} adminLabel={copy.admin} description={page.description} exportLabel={copy.export} onAdd={openAddDialog} onExport={exportRows} title={page.title} />
 
-      <section className="stats-grid stats-grid--compact" aria-label={`ملخص ${page.title}`}>
-        {page.stats.map((stat) => {
-          const Icon = stat.icon
-          return (
-            <article className={`stat-card tone-${stat.tone}`} key={stat.label}>
-              <span className="stat-icon">
-                <Icon size={22} />
-              </span>
-              <div>
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-                <small>{stat.change}</small>
-              </div>
-            </article>
-          )
-        })}
-      </section>
+      <AdminManagementStats stats={page.stats} title={page.title} />
 
       <section className="management-layout">
-        <article className="admin-panel table-panel">
-          <div className="filter-toolbar">
-            <label className="admin-search">
-              <Search size={18} />
-              <input onChange={(event) => setQuery(event.target.value)} placeholder={page.searchPlaceholder} value={query} />
-            </label>
-            <div className="filter-chips">
-              {page.filters.map((filter) => (
-                <button
-                  className={activeFilter === filter ? 'is-active' : ''}
-                  key={filter}
-                  onClick={() => {
-                    setActiveFilter(filter)
-                    setPageNumber(1)
-                  }}
-                  type="button"
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-          </div>
+        <AdminManagementTable
+          activeFilter={activeFilter}
+          columns={page.columns}
+          copy={copy}
+          filteredRows={filteredRows}
+          filters={page.filters}
+          getRowHref={getRowHref}
+          onDeleteRow={deleteRow}
+          onEditRow={openEditDialog}
+          onFilterChange={(filter) => {
+            setActiveFilter(filter)
+            setPageNumber(1)
+          }}
+          onPageChange={setPageNumber}
+          onQueryChange={setQuery}
+          onToggleRowStatus={toggleRowStatus}
+          pageNumber={pageNumber}
+          pageSize={pageSize}
+          query={query}
+          searchPlaceholder={page.searchPlaceholder}
+          sourceRows={sourceRows}
+          title={page.title}
+          totalPages={totalPages}
+          visibleRows={visibleRows}
+        />
 
-          <div className="admin-table-wrap">
-            <table className="admin-data-table">
-              <thead>
-                <tr>
-                  {page.columns.map((column) => (
-                    <th key={column.key}>{column.label}</th>
-                  ))}
-                  <th>{copy.actions}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visibleRows.map((row, index) => (
-                  <tr key={`${page.title}-${index}`}>
-                    {page.columns.map((column) => (
-                      <td key={column.key}>
-                        {column.key === 'image' ? (
-                          <img className="table-avatar" alt={row.name ?? copy.imageAlt} src={row[column.key]} />
-                        ) : isStatusColumn(column.key) ? (
-                          <span className={`table-status ${statusTone(row[column.key])}`}>{row[column.key]}</span>
-                        ) : (
-                          row[column.key]
-                        )}
-                      </td>
-                    ))}
-                    <td>
-                      <div className="row-actions">
-                        {getRowHref ? (
-                          <Link title={copy.open} to={getRowHref(row, sourceRows.indexOf(row))}>
-                            <Eye size={16} />
-                          </Link>
-                        ) : null}
-                        <button onClick={() => openEditDialog(row)} title={copy.edit} type="button">
-                          <Edit3 size={16} />
-                        </button>
-                        <button onClick={() => deleteRow(row, sourceRows.indexOf(row))} title={copy.delete} type="button">
-                          <Trash2 size={16} />
-                        </button>
-                        <button onClick={() => toggleRowStatus(row, sourceRows.indexOf(row))} title={copy.more} type="button">
-                          <MoreHorizontal size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {visibleRows.length === 0 ? (
-                  <tr>
-                    <td colSpan={page.columns.length + 1}>
-                      <div className="empty-state">{copy.empty}</div>
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
-
-          <footer className="table-footer">
-            <span>
-              {copy.showing} {filteredRows.length === 0 ? 0 : (pageNumber - 1) * pageSize + 1} {copy.to}{' '}
-              {Math.min(pageNumber * pageSize, filteredRows.length)} {copy.of} {filteredRows.length} {copy.items}
-            </span>
-            <div>
-              <button disabled={pageNumber === 1} onClick={() => setPageNumber((current) => Math.max(1, current - 1))} type="button">
-                {copy.previous}
-              </button>
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  className={pageNumber === index + 1 ? 'is-current' : ''}
-                  key={index + 1}
-                  onClick={() => setPageNumber(index + 1)}
-                  type="button"
-                >
-                  {index + 1}
-                </button>
-              ))}
-              <button disabled={pageNumber === totalPages} onClick={() => setPageNumber((current) => Math.min(totalPages, current + 1))} type="button">
-                {copy.next}
-              </button>
-            </div>
-          </footer>
-        </article>
-
-        <aside className="management-side">
-          <article className="admin-panel">
-            <div className="admin-panel__header">
-              <h2>{copy.insights}</h2>
-            </div>
-            <div className="note-list">
-              {page.insights.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          </article>
-
-          <article className="admin-panel">
-            <div className="admin-panel__header">
-              <h2>{copy.notes}</h2>
-            </div>
-            <div className="work-notes">
-              {page.notes.map((item) => (
-                <span key={item}>{item}</span>
-              ))}
-            </div>
-          </article>
-        </aside>
+        <AdminManagementSidePanels insights={page.insights} insightsTitle={copy.insights} notes={page.notes} notesTitle={copy.notes} />
       </section>
 
       {editingRow ? (
-        <div className="modal-backdrop" role="presentation">
-          <section className="admin-modal" role="dialog" aria-modal="true" aria-label={editingIndex === null ? page.actionLabel : copy.edit}>
-            <header>
-              <h2>{editingIndex === null ? page.actionLabel : copy.edit}</h2>
-              <button onClick={() => setEditingRow(null)} type="button">
-                ×
-              </button>
-            </header>
-            <div className="modal-form">
-              {page.columns.map((column) => (
-                <label className={column.key === 'image' ? 'image-field' : ''} key={column.key}>
-                  {column.label}
-                  {column.key === 'image' ? (
-                    <img className="image-preview" alt={editingRow.name ?? copy.imageAlt} src={editingRow[column.key] || 'https://i.pravatar.cc/96?img=1'} />
-                  ) : null}
-                  <input
-                    onChange={(event) => setEditingRow((current) => (current ? { ...current, [column.key]: event.target.value } : current))}
-                    placeholder={column.key === 'image' ? copy.imagePlaceholder : undefined}
-                    value={editingRow[column.key] ?? ''}
-                  />
-                </label>
-              ))}
-            </div>
-            <footer>
-              <button onClick={() => setEditingRow(null)} type="button">
-                {copy.cancel}
-              </button>
-              <button className="gold-button" onClick={saveDialog} type="button">
-                {copy.save}
-              </button>
-            </footer>
-          </section>
-        </div>
+        <AdminManagementModal
+          cancelLabel={copy.cancel}
+          columns={page.columns}
+          imageAlt={copy.imageAlt}
+          imagePlaceholder={copy.imagePlaceholder}
+          isAddMode={editingIndex === null}
+          onChange={setEditingRow}
+          onClose={() => setEditingRow(null)}
+          onSave={saveDialog}
+          row={editingRow}
+          saveLabel={copy.save}
+          title={editingIndex === null ? page.actionLabel : copy.edit}
+        />
       ) : null}
     </div>
   )
-}
-
-function isStatusColumn(key: string) {
-  return key === 'status' || key === 'file'
 }
 
 function nextStatusValue(status: string, language: Language) {
@@ -342,19 +189,6 @@ function nextStatusValue(status: string, language: Language) {
 
   const index = statuses.indexOf(status)
   return statuses[index === -1 ? 0 : (index + 1) % statuses.length]
-}
-
-function statusTone(value: string) {
-  if (['منشور', 'مكتمل', 'مفعل', 'جاهز', 'PDF', 'تم الاستيراد', 'مفهرس', 'Published', 'Faol', 'Фаол', 'Опубликовано', 'Chop etilgan', 'Чоп этилган', 'Import qilingan', 'Импорт қилинган', 'Импортировано'].includes(value)) {
-    return 'is-good'
-  }
-  if (['مراجعة', 'قيد المعالجة', 'يحتاج مراجعة', 'بانتظار رد', 'ناقص', 'Review', 'Ko‘rib chiqilmoqda', 'Кўриб чиқилмоқда', 'На проверке', 'Ishlanmoqda', 'Ишланмоқда', 'В обработке'].includes(value)) {
-    return 'is-warn'
-  }
-  if (['مسودة', 'ناقص', 'فشل', 'حرج', 'Draft', 'Missing', 'Xato', 'Хато', 'Ошибка', 'Loyiha', 'Лойиҳа', 'Черновик'].includes(value)) {
-    return 'is-bad'
-  }
-  return 'is-neutral'
 }
 
 const managementCopy: Record<Language, Record<string, string>> = {

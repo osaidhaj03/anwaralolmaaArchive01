@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
-import { Clipboard, FileText, Image, Link2, PlayCircle, RotateCcw } from 'lucide-react'
+import { AdminImportForm, type AdminImportFormState } from '../../components/admin/AdminImportForm'
+import { AdminImportSummary } from '../../components/admin/AdminImportSummary'
 import { useLanguage, type Language } from '../../context/LanguageContext'
+
+const defaultImportState: AdminImportFormState = {
+  checkDuplicates: true,
+  importSubtitles: true,
+  mergePdfs: false,
+  preset: 'course',
+  sourceType: 'playlist',
+  sourceUrl: '',
+  targetCategory: '',
+  targetTeacher: '',
+  thumbnailMode: 'youtube',
+}
 
 export function AdminYouTubeImportPage() {
   const { language } = useLanguage()
   const copy = youtubeImportCopy[language]
-  const [sourceUrl, setSourceUrl] = useState('')
-  const [sourceType, setSourceType] = useState('playlist')
-  const [targetCategory, setTargetCategory] = useState('')
-  const [targetTeacher, setTargetTeacher] = useState('')
-  const [preset, setPreset] = useState('course')
-  const [thumbnailMode, setThumbnailMode] = useState('youtube')
-  const [importSubtitles, setImportSubtitles] = useState(true)
-  const [mergePdfs, setMergePdfs] = useState(false)
-  const [checkDuplicates, setCheckDuplicates] = useState(true)
+  const [importState, setImportState] = useState(defaultImportState)
   const [message, setMessage] = useState('')
 
-  const videosFound = sourceUrl.trim() ? getMockVideoCount(sourceType, sourceUrl) : 0
+  const videosFound = importState.sourceUrl.trim() ? getMockVideoCount(importState.sourceType, importState.sourceUrl) : 0
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -30,7 +35,7 @@ export function AdminYouTubeImportPage() {
   }, [])
 
   function startImport() {
-    if (!sourceUrl.trim()) {
+    if (!importState.sourceUrl.trim()) {
       setMessage(copy.urlRequired)
       return
     }
@@ -39,22 +44,14 @@ export function AdminYouTubeImportPage() {
   }
 
   function resetForm() {
-    setSourceUrl('')
-    setSourceType('playlist')
-    setTargetCategory('')
-    setTargetTeacher('')
-    setPreset('course')
-    setThumbnailMode('youtube')
-    setImportSubtitles(true)
-    setMergePdfs(false)
-    setCheckDuplicates(true)
+    setImportState(defaultImportState)
     setMessage('')
   }
 
   async function pasteUrl() {
     try {
       const text = await navigator.clipboard.readText()
-      setSourceUrl(text)
+      setImportState((current) => ({ ...current, sourceUrl: text }))
       setMessage('')
     } catch {
       setMessage(copy.pasteFailed)
@@ -72,149 +69,9 @@ export function AdminYouTubeImportPage() {
       </section>
 
       <section className="import-layout">
-        <div className="admin-panel youtube-import-card">
-          <div className="youtube-import-icon">
-            <PlayCircle size={30} />
-          </div>
+        <AdminImportForm copy={copy} message={message} onPaste={pasteUrl} onReset={resetForm} onStart={startImport} onStateChange={setImportState} state={importState} videosFound={videosFound} />
 
-          <label>
-            {copy.urlLabel}
-            <div className="import-input-row">
-              <Link2 size={18} />
-              <input
-                onChange={(event) => setSourceUrl(event.target.value)}
-                placeholder={copy.urlPlaceholder}
-                value={sourceUrl}
-              />
-              <button onClick={pasteUrl} type="button">
-                <Clipboard size={16} />
-                {copy.paste}
-              </button>
-            </div>
-          </label>
-
-          {sourceUrl.trim() ? (
-            <p className="found-count">
-              <PlayCircle size={16} />
-              {videosFound} {copy.videosFound}
-            </p>
-          ) : null}
-
-          <div className="compact-form-grid">
-            <label>
-              {copy.typeLabel}
-              <select onChange={(event) => setSourceType(event.target.value)} value={sourceType}>
-                <option value="playlist">{copy.playlist}</option>
-                <option value="channel">{copy.channel}</option>
-                <option value="video">{copy.video}</option>
-              </select>
-            </label>
-
-            <label>
-              {copy.presetLabel}
-              <select onChange={(event) => setPreset(event.target.value)} value={preset}>
-                <option value="course">{copy.coursePreset}</option>
-                <option value="lecture">{copy.lecturePreset}</option>
-                <option value="fatwa">{copy.fatwaPreset}</option>
-                <option value="book">{copy.bookPreset}</option>
-              </select>
-            </label>
-
-            <label>
-              {copy.thumbnailLabel}
-              <select onChange={(event) => setThumbnailMode(event.target.value)} value={thumbnailMode}>
-                <option value="youtube">{copy.youtubeThumbnail}</option>
-                <option value="custom">{copy.customThumbnail}</option>
-                <option value="placeholder">{copy.placeholderThumbnail}</option>
-              </select>
-            </label>
-
-            <label>
-              {copy.categoryLabel}
-              <input onChange={(event) => setTargetCategory(event.target.value)} placeholder={copy.optional} value={targetCategory} />
-            </label>
-
-            <label>
-              {copy.teacherLabel}
-              <input onChange={(event) => setTargetTeacher(event.target.value)} placeholder={copy.optional} value={targetTeacher} />
-            </label>
-          </div>
-
-          <div className="import-checks">
-            <label>
-              <input checked={importSubtitles} onChange={(event) => setImportSubtitles(event.target.checked)} type="checkbox" />
-              <span>
-                <FileText size={16} />
-                {copy.subtitles}
-              </span>
-            </label>
-            <label>
-              <input checked={mergePdfs} onChange={(event) => setMergePdfs(event.target.checked)} type="checkbox" />
-              <span>
-                <FileText size={16} />
-                {copy.mergePdfs}
-              </span>
-            </label>
-            <label>
-              <input checked={checkDuplicates} onChange={(event) => setCheckDuplicates(event.target.checked)} type="checkbox" />
-              <span>
-                <Image size={16} />
-                {copy.duplicates}
-              </span>
-            </label>
-          </div>
-
-          {message ? <p className="form-message">{message}</p> : null}
-
-          <div className="youtube-import-actions">
-            <button className="gold-button" onClick={startImport} type="button">
-              <PlayCircle size={18} />
-              {copy.start}
-            </button>
-            <button onClick={resetForm} type="button">
-              <RotateCcw size={17} />
-              {copy.reset}
-            </button>
-          </div>
-        </div>
-
-        <aside className="admin-panel import-summary">
-          <h3>{copy.summary}</h3>
-          <dl>
-            <div>
-              <dt>{copy.typeLabel}</dt>
-              <dd>{sourceType}</dd>
-            </div>
-            <div>
-              <dt>{copy.videos}</dt>
-              <dd>{sourceUrl.trim() ? videosFound : '-'}</dd>
-            </div>
-            <div>
-              <dt>{copy.subtitlesShort}</dt>
-              <dd>{importSubtitles ? copy.enabled : copy.disabled}</dd>
-            </div>
-            <div>
-              <dt>{copy.pdfShort}</dt>
-              <dd>{mergePdfs ? copy.enabled : copy.disabled}</dd>
-            </div>
-            <div>
-              <dt>{copy.duplicatesShort}</dt>
-              <dd>{checkDuplicates ? copy.enabled : copy.disabled}</dd>
-            </div>
-            <div>
-              <dt>{copy.thumbnailLabel}</dt>
-              <dd>{thumbnailMode}</dd>
-            </div>
-            <div>
-              <dt>{copy.categoryLabel}</dt>
-              <dd>{targetCategory || '-'}</dd>
-            </div>
-            <div>
-              <dt>{copy.teacherLabel}</dt>
-              <dd>{targetTeacher || '-'}</dd>
-            </div>
-          </dl>
-        </aside>
+        <AdminImportSummary copy={copy} state={importState} videosFound={videosFound} />
       </section>
     </div>
   )

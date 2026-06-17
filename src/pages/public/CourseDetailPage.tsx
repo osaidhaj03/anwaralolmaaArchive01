@@ -1,18 +1,11 @@
-import {
-  FileText,
-  FileImage,
-} from 'lucide-react'
-import { useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
-import { WatchBreadcrumbs } from '../../components/public/WatchBreadcrumbs'
-import { WatchVideoPlayer } from '../../components/public/WatchVideoPlayer'
-import { WatchLessonInfo } from '../../components/public/WatchLessonInfo'
-import { WatchPlaylistSidebar } from '../../components/public/WatchPlaylistSidebar'
+import { Navigate, useParams } from 'react-router-dom'
+import { CourseDetailHero } from '../../components/public/CourseDetailHero'
+import { CourseDetailWatchLayout } from '../../components/public/CourseDetailWatchLayout'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useArchiveData, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { coursesCopy } from '../../data/public/courses'
+import { getCourseLessonCountLabel, getCourseMaterialRows } from '../../utils/courseDetail'
 
 const detailCopy: Record<Language, Record<string, string>> = {
   ar: {
@@ -141,107 +134,25 @@ export function CourseDetailPage() {
   const copy = detailCopy[language]
   const index = Number(courseId) - 1
   const course = archive.courses[index]
-  const [audioMode, setAudioMode] = useState(false)
   const storedLessons = lessonsByCourse[String(index)] ?? []
-  const lessonCountLabel =
-    language === 'ar'
-      ? `${storedLessons.length} درس`
-      : language === 'uz'
-      ? `${storedLessons.length} dars`
-      : language === 'uzCyr'
-      ? `${storedLessons.length} дарс`
-      : language === 'ru'
-      ? `${storedLessons.length} уроков`
-      : `${storedLessons.length} lessons`
-
-  const materialRows = [
-    {
-      title: `${course?.title ?? ''} - ${copy.materials}`,
-      meta: 'PDF · 4.2 MB',
-      icon: FileText,
-    },
-    {
-      title: copy.courseOutline,
-      meta: 'PDF · 620 KB',
-      icon: FileText,
-    },
-    {
-      title: copy.visualMap,
-      meta: 'PNG · 1.1 MB',
-      icon: FileImage,
-    },
-  ]
 
   if (!course) {
     return <Navigate to="/courses" replace />
   }
 
+  const lessonCountLabel = getCourseLessonCountLabel(storedLessons.length, language)
+  const materialRows = getCourseMaterialRows(course.title, copy)
+
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/courses" brand={listCopy.brand} languageLabel={listCopy.languageLabel} login={listCopy.login} nav={listCopy.nav} searchLabel={listCopy.searchLabel} subtitle={listCopy.subtitle} themeLabel={listCopy.themeLabel} />
+      <PublicPageHeader activeTo="/courses" copy={listCopy} />
 
-      <section className="course-detail-hero islamic-soft-pattern">
-        <div className="public-container course-detail-hero__inner">
-          <WatchBreadcrumbs category={course.category} courseTitle={course.title} language={language} />
-        </div>
-      </section>
+      <CourseDetailHero category={course.category} courseTitle={course.title} language={language} />
 
-      <section className="public-container course-detail-layout youtube-style">
-        <div className="course-detail-main">
-          {/* Custom Video Player Block */}
-          <WatchVideoPlayer
-            audioMode={audioMode}
-            courseTone={course.tone}
-            language={language}
-            setAudioMode={setAudioMode}
-          />
+      <CourseDetailWatchLayout course={course} language={language} lessonCountLabel={lessonCountLabel} materials={materialRows} materialsTitle={copy.materials} openLabel={copy.open} storedLessons={storedLessons} />
 
-          {/* Lesson Metadata Block */}
-          <WatchLessonInfo
-            category={course.category}
-            courseTitle={course.title}
-            language={language}
-            teacher={course.teacher}
-          />
-
-          <div className="course-tabs-card">
-            <h3 className="materials-title" style={{ padding: '16px 20px', margin: 0, fontSize: '15px', color: '#0d263d', borderBottom: '1px solid rgba(13, 38, 61, 0.06)' }}>
-              {copy.materials}
-            </h3>
-            <div className="course-resource-list">
-              {materialRows.map(({ icon: Icon, meta, title }) => (
-                <article key={title}>
-                  <span><Icon size={18} /></span>
-                  <div>
-                    <strong>{title}</strong>
-                    <small>{meta}</small>
-                  </div>
-                  <Link to="/login">{copy.open}</Link>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* YouTube Watch Playlist Sidebar */}
-        <WatchPlaylistSidebar
-          courseTeacher={course.teacher}
-          courseTitle={course.title}
-          courseTone={course.tone}
-          language={language}
-          lessonCountLabel={lessonCountLabel}
-          storedLessons={storedLessons}
-        />
-      </section>
-
-      <PublicFooter
-        brand={listCopy.brand}
-        footerText={listCopy.footerText}
-        newsletterButton={listCopy.newsletterButton}
-        newsletterPlaceholder={listCopy.newsletterPlaceholder}
-        newsletterText={listCopy.newsletterText}
-        newsletterTitle={listCopy.newsletterTitle}
-        quickLinks={listCopy.quickLinks}
+      <PublicPageFooter
+        copy={listCopy}
         quickLinksItems={[
           { label: listCopy.title, to: '/courses' },
           { label: listCopy.nav[3].label, to: '/scholars' },

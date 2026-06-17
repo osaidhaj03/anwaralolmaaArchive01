@@ -3,14 +3,17 @@ import {
   Eye,
   FileQuestion,
   GraduationCap,
-  LibraryBig,
   PlaySquare,
-  TrendingUp,
   UsersRound,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { DashboardActivityPanel } from '../../components/admin/DashboardActivityPanel'
+import { DashboardChartPanel } from '../../components/admin/DashboardChartPanel'
+import { DashboardDistributionPanel } from '../../components/admin/DashboardDistributionPanel'
+import { DashboardImportsPanel } from '../../components/admin/DashboardImportsPanel'
+import { DashboardRankPanel } from '../../components/admin/DashboardRankPanel'
+import { DashboardUserMetricsPanel } from '../../components/admin/DashboardUserMetricsPanel'
 import { AdminDashboardModal } from '../../components/admin/AdminDashboardModal'
-import { AdminPanelHeader } from '../../components/admin/AdminPanelHeader'
 import { AdminStatGrid } from '../../components/admin/AdminStatGrid'
 import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
@@ -232,113 +235,26 @@ export function AdminDashboard() {
       <AdminStatGrid items={dashboardStats} monthSuffix={data.monthSuffix} />
 
       <section className="admin-grid">
-        <article className="admin-panel chart-panel">
-          <AdminPanelHeader title={data.viewsTitle}>
-            <select onChange={(event) => setChartRange(event.target.value)} value={chartRange}>
-              <option value="30">{data.last30}</option>
-              <option value="7">{data.last7}</option>
-            </select>
-          </AdminPanelHeader>
-          <div className="mock-chart" aria-label="رسم بياني للمشاهدات">
-            {Array.from({ length: chartRange === '30' ? 18 : 7 }, (_, index) => (
-              <span key={index} style={{ height: `${34 + ((index * 19) % 58)}%` }} />
-            ))}
-          </div>
-        </article>
+        <DashboardChartPanel last30Label={data.last30} last7Label={data.last7} onRangeChange={setChartRange} range={chartRange} title={data.viewsTitle} />
 
-        <article className="admin-panel">
-          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('popular')} title={data.popularTitle} />
-          <div className="rank-list">
-            {popularLessons.slice(0, 3).map((lesson, index) => (
-              <div className="rank-item" key={lesson.title}>
-                <span>{index + 1}</span>
-                <div>
-                  <strong>{lesson.title}</strong>
-                  <small>{lesson.teacher}</small>
-                </div>
-                <b>{lesson.views}</b>
-              </div>
-            ))}
-          </div>
-        </article>
+        <DashboardRankPanel actionLabel={data.viewAll} lessons={popularLessons} onOpen={() => setModalPanel('popular')} title={data.popularTitle} />
 
-        <article className="admin-panel">
-          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('imports')} title={data.importsTitle} />
-          <div className="import-list">
-            {data.imports.slice(0, 3).map((item, index) => (
-              <div className="import-row" key={`${item.title}-${index}`}>
-                <div>
-                  <strong>{item.title}</strong>
-                  <small>{item.lessons}</small>
-                </div>
-                <span className={`import-status ${statusClass(item.status)}`}>{item.status}</span>
-                <time>{item.date}</time>
-              </div>
-            ))}
-          </div>
-        </article>
+        <DashboardImportsPanel actionLabel={data.viewAll} imports={data.imports} onOpen={() => setModalPanel('imports')} title={data.importsTitle} />
       </section>
 
       <section className="admin-grid admin-grid--bottom">
-        <article className="admin-panel">
-          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('distribution')} title={data.distributionTitle} />
-          <div className="distribution">
-            <div className="donut">
-              <strong>{formatNumber(totalContent(stats))}</strong>
-              <span>{data.totalContent}</span>
-            </div>
-            <div className="distribution-list">
-              {distribution.map((item) => (
-                <div key={item.label}>
-                  <span style={{ backgroundColor: item.color }} />
-                  <strong>{item.label}</strong>
-                  <small>
-                    {item.value} ({item.percent}%)
-                  </small>
-                </div>
-              ))}
-            </div>
-          </div>
-        </article>
+        <DashboardDistributionPanel
+          actionLabel={data.viewAll}
+          distribution={distribution}
+          onOpen={() => setModalPanel('distribution')}
+          title={data.distributionTitle}
+          totalContentLabel={data.totalContent}
+          totalContentValue={formatNumber(totalContent(stats))}
+        />
 
-        <article className="admin-panel">
-          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('users')} title={data.usersTitle} />
-          <div className="user-metrics">
-            <div>
-              <UsersRound size={18} />
-              <span>{data.userMetrics[0]}</span>
-              <strong>{userMetricValues[0]}</strong>
-            </div>
-            <div>
-              <TrendingUp size={18} />
-              <span>{data.userMetrics[1]}</span>
-              <strong>{userMetricValues[1]}</strong>
-            </div>
-            <div>
-              <LibraryBig size={18} />
-              <span>{data.userMetrics[2]}</span>
-              <strong>{userMetricValues[2]}</strong>
-            </div>
-          </div>
-        </article>
+        <DashboardUserMetricsPanel actionLabel={data.viewAll} labels={data.userMetrics} onOpen={() => setModalPanel('users')} title={data.usersTitle} values={userMetricValues} />
 
-        <article className="admin-panel">
-          <AdminPanelHeader actionLabel={data.viewAll} onAction={() => setModalPanel('activity')} title={data.activityTitle} />
-          <div className="activity-feed">
-            {data.activity.slice(0, 2).map((item, index) => (
-              <div key={`${item.user}-${item.time}-${index}`}>
-                <span className="avatar avatar--small">
-                  <UsersRound size={15} />
-                </span>
-                <div>
-                  <strong>{item.user}</strong>
-                  <small>{item.action}</small>
-                </div>
-                <time>{item.time}</time>
-              </div>
-            ))}
-          </div>
-        </article>
+        <DashboardActivityPanel actionLabel={data.viewAll} activity={data.activity} onOpen={() => setModalPanel('activity')} title={data.activityTitle} />
       </section>
 
       {modalPanel ? (
@@ -364,9 +280,3 @@ function totalContent(stats: ReturnType<typeof useArchiveStats>) {
   return stats.public.lessons + stats.public.books + stats.public.fatwas + stats.public.courses
 }
 
-function statusClass(status: string) {
-  if (status === 'تم الاستيراد' || status === 'Imported') return 'is-success'
-  if (status === 'جاري المعالجة' || status === 'Processing') return 'is-info'
-  if (status === 'قيد المراجعة' || status === 'In review') return 'is-warning'
-  return 'is-danger'
-}

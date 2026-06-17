@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { adminPages } from './data/adminSeed'
@@ -6,31 +6,34 @@ import { adminPagesEn } from './data/adminSeedEn'
 import { ArchiveDataProvider, useArchiveData } from './context/ArchiveDataContext'
 import { pickLocalizedText } from './data/shared/archive'
 import { useLanguage } from './context/LanguageContext'
-import { AdminShell } from './layouts/AdminShell'
-import { AdminCourseLessonsPage } from './pages/admin/AdminCourseLessonsPage'
-import { AdminDashboard } from './pages/admin/AdminDashboard'
-import { AdminManagementPage } from './pages/admin/AdminManagementPage'
-import { AdminPlaceholderPage } from './pages/admin/AdminPlaceholderPage'
-import { AdminYouTubeImportPage } from './pages/admin/AdminYouTubeImportPage'
-import { CategoriesPage } from './pages/public/CategoriesPage'
-import { CategoryDetailPage } from './pages/public/CategoryDetailPage'
-import { CourseDetailPage } from './pages/public/CourseDetailPage'
-import { CoursesPage } from './pages/public/CoursesPage'
-import { FatwaPage } from './pages/public/FatwaPage'
-import { FatwaDetailPage } from './pages/public/FatwaDetailPage'
-import { LandingPage } from './pages/public/LandingPage'
-import { LibraryPage } from './pages/public/LibraryPage'
-import { LibraryDetailPage } from './pages/public/LibraryDetailPage'
-import { LoginPage } from './pages/public/LoginPage'
-import { ScholarProfilePage } from './pages/public/ScholarProfilePage'
-import { ScholarAboutComingSoonPage } from './pages/public/ScholarAboutComingSoonPage'
-import { SearchResultsPage } from './pages/public/SearchResultsPage'
-import { ScholarsPage } from './pages/public/ScholarsPage'
+
+const AdminShell = lazy(() => import('./layouts/AdminShell').then((module) => ({ default: module.AdminShell })))
+const AdminCourseLessonsPage = lazy(() => import('./pages/admin/AdminCourseLessonsPage').then((module) => ({ default: module.AdminCourseLessonsPage })))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then((module) => ({ default: module.AdminDashboard })))
+const AdminManagementPage = lazy(() => import('./pages/admin/AdminManagementPage').then((module) => ({ default: module.AdminManagementPage })))
+const AdminPlaceholderPage = lazy(() => import('./pages/admin/AdminPlaceholderPage').then((module) => ({ default: module.AdminPlaceholderPage })))
+const AdminYouTubeImportPage = lazy(() => import('./pages/admin/AdminYouTubeImportPage').then((module) => ({ default: module.AdminYouTubeImportPage })))
+const CategoriesPage = lazy(() => import('./pages/public/CategoriesPage').then((module) => ({ default: module.CategoriesPage })))
+const CategoryDetailPage = lazy(() => import('./pages/public/CategoryDetailPage').then((module) => ({ default: module.CategoryDetailPage })))
+const CourseDetailPage = lazy(() => import('./pages/public/CourseDetailPage').then((module) => ({ default: module.CourseDetailPage })))
+const CoursesPage = lazy(() => import('./pages/public/CoursesPage').then((module) => ({ default: module.CoursesPage })))
+const FatwaPage = lazy(() => import('./pages/public/FatwaPage').then((module) => ({ default: module.FatwaPage })))
+const FatwaDetailPage = lazy(() => import('./pages/public/FatwaDetailPage').then((module) => ({ default: module.FatwaDetailPage })))
+const LandingPage = lazy(() => import('./pages/public/LandingPage').then((module) => ({ default: module.LandingPage })))
+const LibraryPage = lazy(() => import('./pages/public/LibraryPage').then((module) => ({ default: module.LibraryPage })))
+const LibraryDetailPage = lazy(() => import('./pages/public/LibraryDetailPage').then((module) => ({ default: module.LibraryDetailPage })))
+const LoginPage = lazy(() => import('./pages/public/LoginPage').then((module) => ({ default: module.LoginPage })))
+const ScholarProfilePage = lazy(() => import('./pages/public/ScholarProfilePage').then((module) => ({ default: module.ScholarProfilePage })))
+const ScholarAboutComingSoonPage = lazy(() => import('./pages/public/ScholarAboutComingSoonPage').then((module) => ({ default: module.ScholarAboutComingSoonPage })))
+const SearchResultsPage = lazy(() => import('./pages/public/SearchResultsPage').then((module) => ({ default: module.SearchResultsPage })))
+const ScholarsPage = lazy(() => import('./pages/public/ScholarsPage').then((module) => ({ default: module.ScholarsPage })))
 
 function App() {
   return (
     <ArchiveDataProvider>
-      <AppRoutes />
+      <Suspense fallback={<div className="route-loader" />}>
+        <AppRoutes />
+      </Suspense>
     </ArchiveDataProvider>
   )
 }

@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
 import { CoursesFilterCard, type CourseFilters } from '../../components/public/CoursesFilterCard'
 import { CoursesHeroTools } from '../../components/public/CoursesHeroTools'
 import { CoursesResults, type CourseViewMode } from '../../components/public/CoursesResults'
 import { FeaturedCourseCard } from '../../components/public/FeaturedCourseCard'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
 import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { coursesCopy } from '../../data/public/courses'
 import type { CourseItem } from '../../data/public/pageTypes'
+import { uniqueValues } from '../../utils/publicFormat'
 
 export function CoursesPage() {
   const { dir, language } = useLanguage()
@@ -22,9 +22,9 @@ export function CoursesPage() {
   const [activeFilters, setActiveFilters] = useState<CourseFilters>(draftFilters)
   const [showFilters, setShowFilters] = useState(false)
 
-  const categoryOptions = useMemo(() => unique(archive.courses.map((course) => course.category)), [archive.courses])
-  const levelOptions = useMemo(() => unique(archive.courses.map((course) => course.level)), [archive.courses])
-  const teacherOptions = useMemo(() => unique(archive.courses.map((course) => course.teacher)), [archive.courses])
+  const categoryOptions = useMemo(() => uniqueValues(archive.courses.map((course) => course.category)), [archive.courses])
+  const levelOptions = useMemo(() => uniqueValues(archive.courses.map((course) => course.level)), [archive.courses])
+  const teacherOptions = useMemo(() => uniqueValues(archive.courses.map((course) => course.teacher)), [archive.courses])
 
   const filteredCourses = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase()
@@ -73,7 +73,7 @@ export function CoursesPage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/courses" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
+      <PublicPageHeader activeTo="/courses" copy={copy} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="courses-hero" description={copy.description} title={copy.title}>
         <CoursesHeroTools
@@ -127,14 +127,8 @@ export function CoursesPage() {
         />
       </section>
 
-      <PublicFooter
-        brand={copy.brand}
-        footerText={copy.footerText}
-        newsletterButton={copy.newsletterButton}
-        newsletterPlaceholder={copy.newsletterPlaceholder}
-        newsletterText={copy.newsletterText}
-        newsletterTitle={copy.newsletterTitle}
-        quickLinks={copy.quickLinks}
+      <PublicPageFooter
+        copy={copy}
         quickLinksItems={[
           { label: copy.title, to: '/courses' },
           { label: copy.nav[1].label, to: '/categories' },
@@ -145,10 +139,6 @@ export function CoursesPage() {
       />
     </main>
   )
-}
-
-function unique(values: string[]) {
-  return Array.from(new Set(values))
 }
 
 function getCourseStatus(course: CourseItem, language: Language) {

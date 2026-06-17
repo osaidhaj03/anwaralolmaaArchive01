@@ -1,9 +1,7 @@
 import { Mail } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { PublicFooter } from '../../components/PublicFooter'
-import { PublicHeader } from '../../components/PublicHeader'
-import { DetailInfoList } from '../../components/public/DetailInfoList'
-import { DetailRelatedLinks } from '../../components/public/DetailRelatedLinks'
+import { DetailInfoCard, DetailRelatedCard, DetailTextCard } from '../../components/public/DetailCards'
+import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
@@ -109,7 +107,7 @@ export function ScholarProfilePage() {
 
   return (
     <main className="public-site" dir={dir}>
-      <PublicHeader activeTo="/scholars" brand={pageCopy.brand} languageLabel={pageCopy.languageLabel} login={pageCopy.login} nav={pageCopy.nav} searchLabel={pageCopy.searchLabel} subtitle={pageCopy.subtitle} themeLabel={pageCopy.themeLabel} />
+      <PublicPageHeader activeTo="/scholars" copy={pageCopy} />
 
       <section className="scholar-profile-hero islamic-soft-pattern">
         <div className="public-container scholar-profile-hero__inner">
@@ -133,52 +131,43 @@ export function ScholarProfilePage() {
 
       <section className="public-container scholar-profile-layout">
         <div className="scholar-profile-main">
-          <article className="scholar-profile-card">
-            <h2>{copy.overview}</h2>
+          <DetailTextCard className="scholar-profile-card" title={copy.overview}>
             <p>{copy.bio}</p>
-          </article>
+          </DetailTextCard>
 
-          <article className="scholar-profile-card">
-            <h2>{copy.featuredCourses}</h2>
-            <DetailRelatedLinks
-              className="library-detail-related"
-              items={(relatedCourses.length ? relatedCourses : archive.courses.map((course, courseIndex) => ({ course, courseIndex })).slice(0, 4)).map(({ course, courseIndex }) => ({
+          <DetailRelatedCard
+            cardClassName="scholar-profile-card"
+            linkClassName="library-detail-related"
+            title={copy.featuredCourses}
+            items={(relatedCourses.length ? relatedCourses : archive.courses.map((course, courseIndex) => ({ course, courseIndex })).slice(0, 4)).map(({ course, courseIndex }) => ({
                 description: `${course.teacher} · ${course.lessons}`,
                 title: course.title,
                 to: `/courses/${courseIndex + 1}`,
-              }))}
-            />
-          </article>
+            }))}
+          />
         </div>
 
         <aside className="scholar-profile-side">
-          <article className="scholar-profile-card">
-            <DetailInfoList
-              className="scholar-profile-info"
-              items={[
+          <DetailInfoCard
+            cardClassName="scholar-profile-card"
+            listClassName="scholar-profile-info"
+            items={[
                 { label: copy.field, value: scholar.field },
                 { label: copy.courses, value: scholar.courses },
                 { label: copy.lessons, value: scholar.lessons },
-              ]}
-            />
-          </article>
+            ]}
+          />
         </aside>
       </section>
 
-      <PublicFooter
-        brand={pageCopy.brand}
-        footerText={pageCopy.footerText}
-        newsletterButton={pageCopy.newsletterButton}
-        newsletterPlaceholder={pageCopy.newsletterPlaceholder}
-        newsletterText={pageCopy.newsletterText}
-        newsletterTitle={pageCopy.newsletterTitle}
-        quickLinks={pageCopy.quickLinks}
+      <PublicPageFooter
+        copy={pageCopy}
         quickLinksItems={[
           { label: pageCopy.nav[2].label, to: '/courses' },
           { label: pageCopy.nav[4].label, to: '/fatwa' },
           { label: pageCopy.nav[5].label, to: '/library' },
         ]}
-        successText={language === 'ar' ? 'تم تسجيل بريدك في القائمة البريدية.' : 'Your email has been added to the newsletter list.'}
+        successText={pageCopy.newsletterSuccess}
       />
     </main>
   )
