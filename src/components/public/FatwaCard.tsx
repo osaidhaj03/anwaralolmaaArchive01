@@ -7,6 +7,7 @@ type FatwaCardProps = {
     date: string
     duration: string
     scholar: string
+    thumbnail: string
     title: string
     tone: string
     views: string
@@ -18,6 +19,7 @@ export function FatwaCard({ fatwa, href }: FatwaCardProps) {
   return (
     <Link className="fatwa-card" to={href} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={`fatwa-thumb tone-${fatwa.tone}`}>
+        <img alt="" src={fatwa.thumbnail} />
         <HelpCircle size={30} />
         <span>{fatwa.duration}</span>
       </div>

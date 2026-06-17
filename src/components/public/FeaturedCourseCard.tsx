@@ -16,6 +16,7 @@ export function FeaturedCourseCard({ aboutLabel, allCourses, contentLabel, cours
   return (
     <Link className="featured-course-card" to={`/courses/${courseIndex}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={`public-course-cover tone-${course.tone}`}>
+        <img alt="" src={course.thumbnail} />
         <span>{course.title}</span>
         <small>{featuredLabel}</small>
       </div>

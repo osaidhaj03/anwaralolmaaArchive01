@@ -4,6 +4,7 @@ import type { Language } from '../../context/LanguageContext'
 
 type WatchPlaylistSidebarProps = {
   courseTeacher: string
+  courseThumbnail: string
   courseTitle: string
   courseTone: string
   language: Language
@@ -13,6 +14,7 @@ type WatchPlaylistSidebarProps = {
 
 export function WatchPlaylistSidebar({
   courseTeacher,
+  courseThumbnail,
   courseTitle,
   courseTone,
   language,
@@ -44,6 +46,7 @@ export function WatchPlaylistSidebar({
                 <div className="playlist-lesson-item__left">
                   {isActive && <div className="active-indicator-bar" />}
                   <div className={`playlist-lesson-thumbnail tone-${courseTone}`}>
+                    <img alt="" src={courseThumbnail} />
                     <Play size={12} className="play-hover-icon" fill="currentColor" />
                     <span className="duration-badge">{lesson.duration}</span>
                   </div>

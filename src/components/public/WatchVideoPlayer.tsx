@@ -1,166 +1,72 @@
-import { useState, useEffect } from 'react'
-import { Headphones, Maximize, Play, Pause, Settings, SkipForward, Volume2 } from 'lucide-react'
-import type { Language } from '../../context/LanguageContext'
+import { Pause, Play, Volume2, VolumeX } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
-type WatchVideoPlayerProps = {
-  audioMode: boolean
-  courseTone: string
-  language: Language
-  setAudioMode: (value: boolean) => void
+const TEST_YOUTUBE_EMBED = 'https://www.youtube.com/embed/V2SY82U0C8g?controls=0&disablekb=1&rel=0&playsinline=1&enablejsapi=1'
+const VIDEO_DURATION = 142
+
+function formatTime(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = Math.floor(totalSeconds % 60)
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
 }
 
-export function WatchVideoPlayer({ audioMode, courseTone, language, setAudioMode }: WatchVideoPlayerProps) {
+export function WatchVideoPlayer() {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const [isMuted, setIsMuted] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useState(true)
-  const [showSettingsMenu, setShowSettingsMenu] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+
+  function sendYouTubeCommand(func: string) {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({
+        event: 'command',
+        func,
+        args: [],
+      }),
+      '*',
+    )
+  }
+
+  function togglePlay() {
+    const nextPlaying = !isPlaying
+    setIsPlaying(nextPlaying)
+    sendYouTubeCommand(nextPlaying ? 'playVideo' : 'pauseVideo')
+  }
+
+  function toggleMute() {
+    const nextMuted = !isMuted
+    setIsMuted(nextMuted)
+    sendYouTubeCommand(nextMuted ? 'mute' : 'unMute')
+  }
 
   useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      const activeEl = document.activeElement
-      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
-        return
-      }
+    if (!isPlaying) return undefined
+    const timer = window.setInterval(() => {
+      setElapsed((current) => Math.min(current + 1, VIDEO_DURATION))
+    }, 1000)
 
-      switch (event.key.toLowerCase()) {
-        case ' ':
-          event.preventDefault()
-          setIsPlaying((prev) => !prev)
-          break
-        case 'm':
-          event.preventDefault()
-          setVolume((prev) => !prev)
-          break
-        case 'f': {
-          event.preventDefault()
-          const playerEl = document.querySelector('.new-player-card')
-          if (playerEl) {
-            if (document.fullscreenElement) {
-              document.exitFullscreen().catch(() => {})
-            } else {
-              playerEl.requestFullscreen().catch(() => {})
-            }
-          }
-          break
-        }
-        default:
-          break
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [])
+    return () => window.clearInterval(timer)
+  }, [isPlaying])
 
   return (
-    <div className="course-video-card new-player-card">
-      <div className={`course-video-frame tone-${courseTone} ${audioMode ? 'audio-mode-active' : ''} ${isPlaying ? 'video-playing-active' : ''}`}>
-        {audioMode ? (
-          <div className="audio-mode-visualizer">
-            <div className={`pulsing-headphones ${isPlaying ? 'is-playing' : ''}`}>
-              <Headphones size={64} className="glow-icon" />
-            </div>
-            {isPlaying && (
-              <div className="wave-bars">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            )}
-            <h3>{language === 'ar' ? (isPlaying ? 'جاري تشغيل الصوت' : 'تم إيقاف الصوت مؤقتاً') : (isPlaying ? 'Playing Audio' : 'Audio Paused')}</h3>
-          </div>
-        ) : (
-          <div className="video-player-poster">
-            {!isPlaying ? (
-              <button type="button" className="center-play-btn" aria-label="Play video" onClick={() => setIsPlaying(true)}>
-                <Play size={32} fill="currentColor" />
-              </button>
-            ) : (
-              <div className="video-playing-overlay" onClick={() => setIsPlaying(false)}>
-                <div className="pause-hover-indicator">
-                  <Pause size={32} fill="currentColor" />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+    <section className="youtube-player-shell" aria-label="Video player">
+      <iframe
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        ref={iframeRef}
+        src={TEST_YOUTUBE_EMBED}
+        title="Course lesson video"
+      />
+      <div className="youtube-custom-controls">
+        <button aria-label={isPlaying ? 'Pause video' : 'Play video'} onClick={togglePlay} type="button">
+          {isPlaying ? <Pause size={21} fill="currentColor" /> : <Play size={21} fill="currentColor" />}
+        </button>
+        <button aria-label={isMuted ? 'Unmute video' : 'Mute video'} onClick={toggleMute} type="button">
+          {isMuted ? <VolumeX size={21} /> : <Volume2 size={21} />}
+        </button>
+        <span>{formatTime(elapsed)} / {formatTime(VIDEO_DURATION)}</span>
       </div>
-
-      {/* Video Controls Panel */}
-      <div className="video-controls-bar">
-        <div className="controls-progress-wrapper">
-          <div className="controls-progress-bar">
-            <div className={`progress-played ${isPlaying ? 'animate-progress' : ''}`} style={{ width: isPlaying ? '100%' : '28%' }}>
-              <span className="progress-handle"></span>
-            </div>
-          </div>
-        </div>
-        <div className="controls-buttons-row">
-          <div className="controls-left">
-            <button type="button" className="control-btn" aria-label="Play/Pause" onClick={() => setIsPlaying(!isPlaying)}>
-              {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
-            </button>
-            <button type="button" className="control-btn" aria-label="Next Lesson"><SkipForward size={16} fill="currentColor" /></button>
-            <span className="time-display">{isPlaying ? '13:02' : '12:45'} / 45:30</span>
-          </div>
-          <div className="controls-right" style={{ position: 'relative' }}>
-            <button type="button" className="control-btn" aria-label="Volume" onClick={() => setVolume(!volume)}>
-              <Volume2 size={16} className={volume ? '' : 'muted-volume'} />
-            </button>
-            <button type="button" className="control-btn" aria-label="Settings" onClick={() => setShowSettingsMenu(!showSettingsMenu)}>
-              <Settings size={16} />
-            </button>
-            
-            {showSettingsMenu && (
-              <div className="watch-actions-dropdown player-settings-dropdown">
-                <button type="button" onClick={() => setShowSettingsMenu(false)}>1080p (HD)</button>
-                <button type="button" onClick={() => setShowSettingsMenu(false)}>720p</button>
-                <button type="button" onClick={() => setShowSettingsMenu(false)}>1.0x Speed</button>
-              </div>
-            )}
-            
-            <button type="button" className="control-btn" aria-label="Fullscreen"><Maximize size={16} /></button>
-          </div>
-        </div>
-      </div>
-
-      {/* Audio Switcher Panel */}
-      <div className="audio-only-banner">
-        <div className="audio-only-left">
-          <div className="headphones-circle-icon">
-            <Headphones size={20} />
-          </div>
-          <div className="audio-only-texts">
-            <h3>{language === 'ar' ? 'وضع الصوت فقط' : 'Audio Only'}</h3>
-            <p>{language === 'ar' ? 'استمع إلى هذا الدرس كملف صوتي' : 'Listen to this lesson as audio'}</p>
-          </div>
-        </div>
-        <div className="audio-only-right">
-          {audioMode && isPlaying && (
-            <div className="mini-wave-visualizer">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          )}
-          <button
-            type="button"
-            className={`audio-switch-btn ${audioMode ? 'active' : ''}`}
-            onClick={() => setAudioMode(!audioMode)}
-            aria-label="Toggle audio mode"
-          >
-            <span className="switch-knob"></span>
-          </button>
-        </div>
-      </div>
-    </div>
+    </section>
   )
 }
 

@@ -13,6 +13,7 @@ type PreviewCourse = {
   title: string
   teacher: string
   lessons: string
+  thumbnail?: string
   tone: string
 }
 
@@ -83,6 +84,7 @@ export function LandingPreviewSection(props: LandingPreviewSectionProps) {
           {props.items.map((course, index) => (
             <Link className="course-card" key={course.title} to={`/courses/${index + 1}`}>
               <div className={`course-cover tone-${course.tone}`}>
+                {course.thumbnail ? <img alt="" src={course.thumbnail} /> : null}
                 <span>{course.title}</span>
               </div>
               <div>

@@ -94,6 +94,7 @@ export function FatwaDetailPage() {
           <span>{copy.breadcrumb}</span>
           <div className="fatwa-detail-head">
             <div className={`fatwa-thumb tone-${item.tone}`}>
+              <img alt="" src={item.thumbnail} />
               <MessageCircleQuestion size={44} />
               <span>{item.duration}</span>
             </div>

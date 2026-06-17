@@ -10,6 +10,7 @@ type CourseCardProps = {
     rating: string
     students: string
     teacher: string
+    thumbnail: string
     title: string
     tone: string
   }
@@ -20,8 +21,7 @@ export function CourseCard({ course, href }: CourseCardProps) {
   return (
     <Link className="public-course-card" to={href} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={`public-course-cover tone-${course.tone}`}>
-        <span>{course.title}</span>
-        <small>{course.lessons}</small>
+        <img alt="" src={course.thumbnail} />
       </div>
       <div className="public-course-body">
         <h3>{course.title}</h3>

@@ -1,4 +1,4 @@
-import { Bookmark, Search, type LucideIcon } from 'lucide-react'
+import { Search, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 type LandingHeroStat = {
@@ -8,7 +8,6 @@ type LandingHeroStat = {
 }
 
 type LandingHeroProps = {
-  badge: string
   title: string
   accent: string
   text: string
@@ -45,7 +44,6 @@ function getStatLink(label: string): string {
 
 export function LandingHero({
   accent,
-  badge,
   onSearchChange,
   onSubmit,
   placeholder,
@@ -57,12 +55,12 @@ export function LandingHero({
 }: LandingHeroProps) {
   return (
     <section className="hero-section islamic-soft-pattern" id="home">
+      <div aria-hidden="true" className="hero-laptop-screen">
+        <img alt="" src="/scholars/Screenshot 2026-06-16 222008.png" />
+      </div>
+
       <div className="public-container hero-grid">
         <div className="hero-copy">
-          <span className="hero-badge">
-            <Bookmark size={16} />
-            {badge}
-          </span>
           <h1>{title}</h1>
           <h2>{accent}</h2>
           <p>{text}</p>

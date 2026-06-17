@@ -63,6 +63,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
       rating: item.rating,
       progress: item.progress,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   en: {
@@ -124,6 +125,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
       rating: item.rating,
       progress: item.progress,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   uz: {
@@ -185,6 +187,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
       rating: item.rating,
       progress: item.progress,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   uzCyr: {
@@ -246,6 +249,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
       rating: item.rating,
       progress: item.progress,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   ru: {
@@ -307,6 +311,7 @@ export const coursesCopy: Record<Language, CoursesCopy> = {
       rating: item.rating,
       progress: item.progress,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
 }

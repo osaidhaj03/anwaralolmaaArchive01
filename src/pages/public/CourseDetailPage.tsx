@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { CourseDetailHero } from '../../components/public/CourseDetailHero'
 import { CourseDetailWatchLayout } from '../../components/public/CourseDetailWatchLayout'
@@ -136,6 +137,13 @@ export function CourseDetailPage() {
   const course = archive.courses[index]
   const storedLessons = lessonsByCourse[String(index)] ?? []
 
+  useEffect(() => {
+    document.body.classList.add('watch-page-body')
+    return () => {
+      document.body.classList.remove('watch-page-body')
+    }
+  }, [])
+
   if (!course) {
     return <Navigate to="/courses" replace />
   }
@@ -144,7 +152,7 @@ export function CourseDetailPage() {
   const materialRows = getCourseMaterialRows(course.title, copy)
 
   return (
-    <main className="public-site" dir={dir}>
+    <main className="public-site watch-page" dir={dir}>
       <PublicPageHeader activeTo="/courses" copy={listCopy} />
 
       <CourseDetailHero category={course.category} courseTitle={course.title} language={language} />

@@ -23,6 +23,7 @@ export type CourseItem = {
   rating: string
   progress: number
   tone: string
+  thumbnail: string
 }
 
 export type Scholar = {
@@ -56,6 +57,7 @@ export type FatwaItem = {
   views: string
   date: string
   tone: string
+  thumbnail: string
 }
 
 export type CategoryItem = {
@@ -79,6 +81,7 @@ export type LandingCourse = {
   teacher: string
   lessons: string
   tone: string
+  thumbnail?: string
 }
 
 export type CoursesCopy = {

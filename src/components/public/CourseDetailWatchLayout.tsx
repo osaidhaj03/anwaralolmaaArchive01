@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import type { CourseLesson } from '../../context/ArchiveDataContext'
 import type { Language } from '../../context/LanguageContext'
@@ -10,6 +9,7 @@ import { WatchVideoPlayer } from './WatchVideoPlayer'
 type CourseDetailCourse = {
   category: string
   teacher: string
+  thumbnail: string
   title: string
   tone: string
 }
@@ -31,12 +31,10 @@ type CourseDetailWatchLayoutProps = {
 }
 
 export function CourseDetailWatchLayout({ course, language, lessonCountLabel, materials, materialsTitle, openLabel, storedLessons }: CourseDetailWatchLayoutProps) {
-  const [audioMode, setAudioMode] = useState(false)
-
   return (
     <section className="public-container course-detail-layout youtube-style">
       <div className="course-detail-main">
-        <WatchVideoPlayer audioMode={audioMode} courseTone={course.tone} language={language} setAudioMode={setAudioMode} />
+        <WatchVideoPlayer />
 
         <WatchLessonInfo category={course.category} courseTitle={course.title} language={language} teacher={course.teacher} />
 
@@ -45,6 +43,7 @@ export function CourseDetailWatchLayout({ course, language, lessonCountLabel, ma
 
       <WatchPlaylistSidebar
         courseTeacher={course.teacher}
+        courseThumbnail={course.thumbnail}
         courseTitle={course.title}
         courseTone={course.tone}
         language={language}

@@ -51,6 +51,7 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
       views: formatNumber(item.views),
       date: item.date,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   en: {
@@ -100,6 +101,7 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
       views: formatNumber(item.views),
       date: item.date,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   uz: {
@@ -149,6 +151,7 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
       views: formatNumber(item.views),
       date: item.date,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   uzCyr: {
@@ -198,6 +201,7 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
       views: formatNumber(item.views),
       date: item.date,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
   ru: {
@@ -247,6 +251,7 @@ export const fatwaCopy: Record<Language, FatwaCopy> = {
       views: formatNumber(item.views),
       date: item.date,
       tone: item.tone,
+      thumbnail: item.thumbnail,
     })),
   },
 }

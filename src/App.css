@@ -17,6 +17,19 @@ button {
   background: var(--public-bg, #f8f6f0);
 }
 
+body.watch-page-body {
+  background: #0f0f0f !important;
+}
+
+body.watch-page-body #root {
+  min-height: 100vh;
+  background: #0f0f0f !important;
+}
+
+body.watch-page-body .route-loader {
+  background: #0f0f0f !important;
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -323,19 +336,28 @@ button {
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(247, 246, 242, 0.98) 0%, rgba(247, 246, 242, 0.96) 26%, rgba(247, 246, 242, 0.78) 43%, rgba(247, 246, 242, 0.34) 58%, rgba(247, 246, 242, 0.08) 78%),
-    url('/Hero page/Herobackground.png') center center / cover no-repeat;
+  background: #f7f6f2;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/Hero page/HeroBackgroundLight.png') right center / contain no-repeat;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .hero-section::after {
   content: '';
   position: absolute;
-  inset: -1px;
+  inset-block: -1px;
+  inset-inline-start: -1px;
+  width: min(68vw, 1180px);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(247, 246, 242, 0.08) 54%, rgba(247, 246, 242, 0.3)),
-    radial-gradient(circle at 5% 14%, rgba(184, 134, 45, 0.1), transparent 28%),
-    radial-gradient(circle at 96% 18%, rgba(255, 255, 255, 0.2), transparent 28%);
+    linear-gradient(90deg, rgba(247, 246, 242, 0.99) 0%, rgba(247, 246, 242, 0.97) 34%, rgba(247, 246, 242, 0.76) 50%, rgba(247, 246, 242, 0.34) 66%, rgba(247, 246, 242, 0) 88%),
+    radial-gradient(ellipse at 34% 48%, rgba(247, 246, 242, 0.64) 0%, rgba(247, 246, 242, 0.3) 36%, rgba(247, 246, 242, 0) 68%),
+    linear-gradient(180deg, rgba(247, 246, 242, 0) 72%, rgba(247, 246, 242, 0.34) 88%, #f7f6f2 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -350,21 +372,20 @@ button {
 }
 
 .hero-section.islamic-soft-pattern {
-  background:
-    linear-gradient(90deg, rgba(247, 246, 242, 0.98) 0%, rgba(247, 246, 242, 0.96) 26%, rgba(247, 246, 242, 0.78) 43%, rgba(247, 246, 242, 0.34) 58%, rgba(247, 246, 242, 0.08) 78%),
-    url('/Hero page/Herobackground.png') center center / cover no-repeat;
+  background: #f7f6f2;
 }
 
-[dir='rtl'] .hero-section {
-  background:
-    linear-gradient(270deg, rgba(247, 246, 242, 0.98) 0%, rgba(247, 246, 242, 0.96) 26%, rgba(247, 246, 242, 0.78) 43%, rgba(247, 246, 242, 0.34) 58%, rgba(247, 246, 242, 0.08) 78%),
-    url('/Hero page/Herobackground.png') center center / cover no-repeat;
+[dir='rtl'] .hero-section::before {
+  transform: scaleX(-1);
 }
 
-[dir='rtl'] .hero-section.islamic-soft-pattern {
+[dir='rtl'] .hero-section::after {
+  inset-inline-start: auto;
+  inset-inline-end: -1px;
   background:
-    linear-gradient(270deg, rgba(247, 246, 242, 0.98) 0%, rgba(247, 246, 242, 0.96) 26%, rgba(247, 246, 242, 0.78) 43%, rgba(247, 246, 242, 0.34) 58%, rgba(247, 246, 242, 0.08) 78%),
-    url('/Hero page/Herobackground.png') center center / cover no-repeat;
+    linear-gradient(270deg, rgba(247, 246, 242, 0.99) 0%, rgba(247, 246, 242, 0.97) 34%, rgba(247, 246, 242, 0.76) 50%, rgba(247, 246, 242, 0.34) 66%, rgba(247, 246, 242, 0) 88%),
+    radial-gradient(ellipse at 66% 48%, rgba(247, 246, 242, 0.64) 0%, rgba(247, 246, 242, 0.3) 36%, rgba(247, 246, 242, 0) 68%),
+    linear-gradient(180deg, rgba(247, 246, 242, 0) 72%, rgba(247, 246, 242, 0.34) 88%, #f7f6f2 100%);
 }
 
 .hero-grid {
@@ -377,11 +398,59 @@ button {
   flex: 1;
 }
 
+.hero-laptop-screen {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: clamp(245px, 31.4vh, 335px);
+  inset-inline-end: 21.65vw;
+  width: min(31.2vw, 638px);
+  aspect-ratio: 638 / 362;
+  border-radius: 8px;
+  overflow: hidden;
+  pointer-events: none;
+  background: #091018;
+  transform: perspective(900px) rotateX(0.5deg) rotateZ(0.15deg);
+  transform-origin: center;
+}
+
+[dir='rtl'] .hero-laptop-screen {
+  inset-inline-end: auto;
+  inset-inline-start: 21.65vw;
+  transform: perspective(900px) rotateX(0.5deg) rotateZ(-0.15deg);
+}
+
+.hero-laptop-screen img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
 .hero-copy {
   position: relative;
   z-index: 1;
+  isolation: isolate;
+  max-width: 690px;
   text-align: start;
-  padding-block: 42px 18px;
+  padding-block: 10px 18px;
+  transform: translateY(-28px);
+}
+
+.hero-copy::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -18px -22px -20px;
+  border-radius: 0;
+  background:
+    radial-gradient(ellipse at 28% 50%, rgba(247, 246, 242, 0.62), rgba(247, 246, 242, 0.28) 42%, rgba(247, 246, 242, 0) 74%);
+  filter: blur(20px);
+}
+
+[dir='rtl'] .hero-copy::before {
+  background:
+    radial-gradient(ellipse at 72% 50%, rgba(247, 246, 242, 0.62), rgba(247, 246, 242, 0.28) 42%, rgba(247, 246, 242, 0) 74%);
 }
 
 .hero-badge {
@@ -401,7 +470,7 @@ button {
 }
 
 .hero-copy h1 {
-  margin: 24px 0 0;
+  margin: 0;
   color: #153124;
   font-family: var(--font-display);
   font-size: clamp(58px, 6.4vw, 88px);
@@ -681,6 +750,8 @@ button {
 }
 
 .course-cover {
+  position: relative;
+  overflow: hidden;
   min-height: 132px;
   padding: 18px;
   display: flex;
@@ -689,7 +760,47 @@ button {
   background: #0d263d;
 }
 
+.course-cover::after,
+.public-course-cover::after,
+.fatwa-thumb::after,
+.playlist-lesson-thumbnail::after,
+.video-player-poster::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 15, 25, 0.04), rgba(5, 15, 25, 0.56));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.course-cover img,
+.public-course-cover img,
+.fatwa-thumb img,
+.playlist-lesson-thumbnail img,
+.video-player-poster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.video-player-poster iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  z-index: 1;
+}
+
 .course-cover span {
+  position: relative;
+  z-index: 2;
   max-width: 160px;
   font-family: var(--font-display);
   font-size: 22px;
@@ -1111,6 +1222,7 @@ button {
 
 .public-course-grid.is-list .public-course-cover {
   min-height: 100%;
+  aspect-ratio: auto;
 }
 
 .public-course-card {
@@ -1118,8 +1230,11 @@ button {
 }
 
 .public-course-cover {
-  min-height: 140px;
-  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  padding: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1127,7 +1242,13 @@ button {
   background: #0d263d;
 }
 
+.public-course-card .public-course-cover::after {
+  display: none;
+}
+
 .public-course-cover span {
+  position: relative;
+  z-index: 2;
   max-width: 220px;
   font-family: var(--font-display);
   font-size: 23px;
@@ -1135,6 +1256,8 @@ button {
 }
 
 .public-course-cover small {
+  position: relative;
+  z-index: 2;
   width: fit-content;
   border-radius: 999px;
   padding: 4px 9px;
@@ -1169,27 +1292,28 @@ button {
 }
 
 .public-course-body {
-  padding: 15px;
+  padding: 18px 18px 20px;
 }
 
 .public-course-body h3 {
   margin: 0;
   color: #0d263d;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
+  line-height: 1.25;
 }
 
 .public-course-body p {
-  margin: 7px 0 0;
+  margin: 12px 0 0;
   color: var(--color-ink-500);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
 }
 
 .public-course-meta {
-  margin-top: 12px;
+  margin-top: 16px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -1198,7 +1322,7 @@ button {
   align-items: center;
   gap: 5px;
   color: var(--color-ink-500);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -2174,6 +2298,8 @@ button {
 }
 
 .fatwa-thumb {
+  position: relative;
+  overflow: hidden;
   min-height: 128px;
   padding: 16px;
   display: flex;
@@ -2184,6 +2310,8 @@ button {
 }
 
 .fatwa-thumb span {
+  position: relative;
+  z-index: 2;
   border-radius: 999px;
   padding: 5px 9px;
   background: rgba(7, 26, 46, 0.38);
@@ -2832,10 +2960,103 @@ button {
   align-items: start;
 }
 
+.watch-page {
+  color: #f1f5f9;
+  min-height: 100vh;
+  background: #0f0f0f !important;
+}
+
+.watch-page .public-header {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: #0f0f0f !important;
+  box-shadow: none;
+}
+
+.watch-page .public-brand,
+.watch-page .public-nav a,
+.watch-page .public-icon-button,
+.watch-page .public-language-button {
+  color: #f1f5f9;
+}
+
+.watch-page .public-brand span,
+.watch-page .custom-watch-breadcrumbs,
+.watch-page .custom-watch-breadcrumbs a {
+  color: #a5adba;
+}
+
+.watch-page .course-detail-hero {
+  display: none;
+  padding: 0;
+  background: #0f0f0f;
+}
+
+.watch-page .course-detail-layout {
+  padding-top: 22px;
+  width: min(100% - 36px, 1920px);
+}
+
+.youtube-player-shell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+
+.youtube-player-shell iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.youtube-player-shell::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 96px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.78));
+  pointer-events: none;
+}
+
+.youtube-custom-controls {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: 18px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.65);
+}
+
+.youtube-custom-controls button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: transparent;
+}
+
+.youtube-custom-controls button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.youtube-custom-controls span {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
 /* YouTube Watch Page Layout Overrides */
 .course-detail-layout.youtube-style {
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 28px;
 }
 
 /* Breadcrumbs */
@@ -2865,24 +3086,52 @@ button {
 
 /* Custom Video Player and Controls */
 .new-player-card {
-  border-radius: 16px !important;
+  border-radius: 0 !important;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(13, 38, 61, 0.08) !important;
+  background: #000;
+  box-shadow: none !important;
+}
+
+.new-player-card .course-video-frame {
+  width: 100%;
+  aspect-ratio: 1920 / 1080;
+  min-height: 0;
+  height: auto;
+  border-radius: inherit;
+  background: #000 !important;
+}
+
+.new-player-card .course-video-frame iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
 }
 
 .video-player-poster {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   min-height: 390px;
   background-size: cover;
   background-position: center;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.video-player-poster::after {
+  background: linear-gradient(180deg, rgba(5, 15, 25, 0.1), rgba(5, 15, 25, 0.5));
+}
+
+.video-playing-active .video-player-poster::after {
+  display: none;
+}
+
 .center-play-btn {
+  position: relative;
+  z-index: 2;
   width: 76px;
   height: 76px;
   border-radius: 50%;
@@ -3221,6 +3470,82 @@ button {
   font-weight: 800;
 }
 
+.watch-page .lesson-details-card,
+.watch-page .course-materials-card,
+.watch-page .course-outline-card {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f1f5f9;
+  background: #181818 !important;
+  box-shadow: none !important;
+}
+
+.watch-page .lesson-details-card {
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 18px 4px 0 !important;
+  background: transparent !important;
+}
+
+.watch-page .lesson-number-tag {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.watch-page .lesson-main-title,
+.watch-page .playlist-header h2,
+.watch-page .playlist-lesson-info h4,
+.watch-page .about-lesson-box h3,
+.watch-page .course-materials-card h3 {
+  color: #f1f5f9;
+}
+
+.watch-page .lesson-main-title {
+  font-size: clamp(24px, 2.2vw, 34px);
+  line-height: 1.25;
+}
+
+.watch-page .lesson-number-tag {
+  display: none;
+}
+
+.watch-page .lesson-details-meta-row,
+.watch-page .meta-avatar-item,
+.watch-page .meta-category-item,
+.watch-page .meta-date-item,
+.watch-page .meta-views-item,
+.watch-page .playlist-count,
+.watch-page .playlist-lesson-info p,
+.watch-page .about-lesson-box p,
+.watch-page .lesson-tags-row span,
+.watch-page .course-materials-card p,
+.watch-page .course-materials-card span {
+  color: #a5adba;
+}
+
+.watch-page .action-btn-outline,
+.watch-page .action-btn-more {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  background: #272727;
+}
+
+.watch-page .action-btn-outline:hover,
+.watch-page .action-btn-more:hover,
+.watch-page .playlist-lesson-item:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #323232;
+}
+
+.watch-page .about-lesson-box {
+  border-color: rgba(255, 255, 255, 0.08);
+  margin-top: 18px;
+  background: #272727;
+}
+
+.watch-page .lesson-tags-row span {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 /* Right Sidebar Playlist Override */
 .playlist-sidebar {
   border-radius: 16px !important;
@@ -3277,6 +3602,16 @@ button {
   background: rgba(184, 134, 45, 0.08);
 }
 
+.watch-page .playlist-sidebar {
+  border-radius: 12px !important;
+  height: calc(100vh - 132px) !important;
+  background: #181818 !important;
+}
+
+.watch-page .playlist-lesson-item.is-active {
+  background: #272727;
+}
+
 .active-indicator-bar {
   width: 4px;
   height: calc(100% - 16px);
@@ -3307,6 +3642,10 @@ button {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
+.playlist-lesson-thumbnail::after {
+  background: linear-gradient(180deg, rgba(5, 15, 25, 0.08), rgba(5, 15, 25, 0.52));
+}
+
 .playlist-lesson-thumbnail.tone-green { background: linear-gradient(135deg, #0c6b56, #063f34); }
 .playlist-lesson-thumbnail.tone-gold { background: linear-gradient(135deg, #cfa052, #a17834); }
 .playlist-lesson-thumbnail.tone-navy { background: linear-gradient(135deg, #0d263d, #06182b); }
@@ -3315,6 +3654,8 @@ button {
 .playlist-lesson-thumbnail.tone-blue { background: linear-gradient(135deg, #1f3a5f, #10233f); }
 
 .play-hover-icon {
+  position: relative;
+  z-index: 2;
   color: #fff;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -3326,6 +3667,7 @@ button {
 }
 
 .duration-badge {
+  z-index: 2;
   font-size: 10px;
   font-weight: 900;
   color: #fff;
@@ -6013,6 +6355,36 @@ button {
   background: #0a0e17 !important;
 }
 
+.fatwa-thumb > svg {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
+}
+
+:root[data-theme='dark'] .hero-section::before {
+  background-image: url('/Hero page/HeroBackgrounDark.png');
+}
+
+:root[data-theme='dark'] .hero-section::after {
+  background:
+    linear-gradient(90deg, rgba(10, 14, 23, 0.98) 0%, rgba(10, 14, 23, 0.92) 34%, rgba(10, 14, 23, 0.68) 50%, rgba(10, 14, 23, 0.32) 66%, rgba(10, 14, 23, 0) 88%),
+    radial-gradient(ellipse at 34% 48%, rgba(10, 14, 23, 0.62) 0%, rgba(10, 14, 23, 0.3) 36%, rgba(10, 14, 23, 0) 68%),
+    linear-gradient(180deg, rgba(10, 14, 23, 0) 72%, rgba(10, 14, 23, 0.42) 88%, #0a0e17 100%);
+}
+
+:root[data-theme='dark'] [dir='rtl'] .hero-section::after,
+[dir='rtl']:root[data-theme='dark'] .hero-section::after {
+  background:
+    linear-gradient(270deg, rgba(10, 14, 23, 0.98) 0%, rgba(10, 14, 23, 0.92) 34%, rgba(10, 14, 23, 0.68) 50%, rgba(10, 14, 23, 0.32) 66%, rgba(10, 14, 23, 0) 88%),
+    radial-gradient(ellipse at 66% 48%, rgba(10, 14, 23, 0.62) 0%, rgba(10, 14, 23, 0.3) 36%, rgba(10, 14, 23, 0) 68%),
+    linear-gradient(180deg, rgba(10, 14, 23, 0) 72%, rgba(10, 14, 23, 0.42) 88%, #0a0e17 100%);
+}
+
+:root[data-theme='dark'] .hero-copy::before {
+  background:
+    radial-gradient(ellipse at 28% 50%, rgba(10, 14, 23, 0.68), rgba(10, 14, 23, 0.34) 42%, rgba(10, 14, 23, 0) 74%);
+}
+
 [dir='rtl']:root[data-theme='dark'] .hero-section.islamic-soft-pattern {
   background: #0a0e17 !important;
 }
@@ -6922,6 +7294,28 @@ button {
   .hero-section {
     min-height: calc(100vh - 78px);
     padding: 26px 0 24px;
+    background: #f7f6f2;
+  }
+
+  .hero-laptop-screen {
+    display: none;
+  }
+
+  .hero-section::before,
+  [dir='rtl'] .hero-section::before {
+    background-position: right top;
+    background-size: contain;
+    transform: none;
+  }
+
+  [dir='rtl'] .hero-section::before {
+    transform: scaleX(-1);
+  }
+
+  .hero-section::after,
+  [dir='rtl'] .hero-section::after {
+    background:
+      linear-gradient(180deg, rgba(247, 246, 242, 0.96) 0%, rgba(247, 246, 242, 0.9) 52%, rgba(247, 246, 242, 0.58) 78%, #f7f6f2 100%);
   }
 
   .hero-grid {
@@ -6955,6 +7349,13 @@ button {
 
   .hero-copy p {
     font-size: 16px;
+  }
+
+  .hero-copy::before {
+    inset: -8px -10px -10px;
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(247, 246, 242, 0.28), rgba(247, 246, 242, 0) 68%);
+    filter: blur(10px);
   }
 
   .hero-search {
@@ -7471,7 +7872,17 @@ button {
   }
 
   .hero-section.islamic-soft-pattern {
-    background-position: 64% center;
+    background: #f7f6f2;
+  }
+
+  .hero-section::before {
+    background-size: 132% auto;
+  }
+
+  .hero-section::after,
+  [dir='rtl'] .hero-section::after {
+    background:
+      linear-gradient(180deg, rgba(247, 246, 242, 0.98) 0%, rgba(247, 246, 242, 0.93) 54%, rgba(247, 246, 242, 0.7) 80%, #f7f6f2 100%);
   }
 
   .hero-visual {
@@ -7780,6 +8191,7 @@ button {
 .video-player-poster .video-playing-overlay {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: rgba(0, 0, 0, 0.05);
   cursor: pointer;
   display: grid;

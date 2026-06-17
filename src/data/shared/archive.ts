@@ -46,6 +46,7 @@ export type SharedCourse = {
   progress: number
   tone: string
   status: Localized
+  thumbnail: string
 }
 
 export type SharedBook = {
@@ -72,7 +73,10 @@ export type SharedFatwa = {
   views: number
   date: string
   tone: string
+  thumbnail: string
 }
+
+export const VIDEO_THUMBNAIL = '/Video thumbnail/seedvideothumb.png'
 
 export const sharedCategories: SharedCategory[] = [
   { id: 'quran', title: { ar: 'القرآن الكريم', en: 'Quran Studies' }, text: { ar: 'علوم القرآن والتفسير وعلومه', en: 'Tafsir, recitation, and Quranic sciences' }, icon: BookOpen, courses: 89, lessons: 2541, books: 156 },
@@ -95,14 +99,14 @@ export const sharedScholars: SharedScholar[] = [
 ]
 
 export const sharedCourses: SharedCourse[] = [
-  { id: 'manhaj-salikin', title: { ar: 'شرح منهج السالكين في الفقه', en: 'Manhaj as-Salikin in Fiqh' }, teacher: { ar: 'د. صالح بن فوزان الفوزان', en: 'Dr. Saleh Al-Fawzan' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 245, hours: 86, students: 12542, rating: '4.8', progress: 85, tone: 'green', status: { ar: 'منشور', en: 'Published' } },
-  { id: 'fiqh-worship', title: { ar: 'فقه العبادات على مذهب السلف', en: 'Fiqh of Worship' }, teacher: { ar: 'د. محمد بن صالح العثيمين', en: 'Dr. Ibn Uthaymeen' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 186, hours: 60, students: 8421, rating: '4.7', progress: 60, tone: 'gold', status: { ar: 'منشور', en: 'Published' } },
-  { id: 'comprehensive-fiqh', title: { ar: 'الجامع في الفقه الإسلامي', en: 'Comprehensive Islamic Fiqh' }, teacher: { ar: 'د. سعد بن ناصر الشثري', en: 'Dr. Saad Al-Shithri' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 312, hours: 96, students: 15231, rating: '4.9', progress: 72, tone: 'navy', status: { ar: 'منشور', en: 'Published' } },
-  { id: 'usul-maxims', title: { ar: 'أصول الفقه وقواعده', en: 'Usul al-Fiqh and Maxims' }, teacher: { ar: 'د. عبدالعزيز بن باز', en: 'Dr. Abdulaziz Ibn Baz' }, category: { ar: 'أصول الفقه', en: 'Usul' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 156, hours: 45, students: 6321, rating: '4.6', progress: 30, tone: 'cream', status: { ar: 'مسودة', en: 'Draft' } },
-  { id: 'legal-maxims', title: { ar: 'القواعد الفقهية وتطبيقاتها', en: 'Legal Maxims and Applications' }, teacher: { ar: 'د. عبدالرحمن السعدي', en: 'Dr. Abdulrahman As-Saadi' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 98, hours: 38, students: 4256, rating: '4.5', progress: 65, tone: 'brown', status: { ar: 'مراجعة', en: 'Review' } },
-  { id: 'financial-transactions', title: { ar: 'المعاملات المالية في الفقه الإسلامي', en: 'Financial Transactions in Fiqh' }, teacher: { ar: 'د. محمد المختار الشنقيطي', en: 'Dr. Muhammad Al-Shinqiti' }, category: { ar: 'المعاملات', en: 'Transactions' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 210, hours: 72, students: 9870, rating: '4.8', progress: 68, tone: 'green', status: { ar: 'منشور', en: 'Published' } },
-  { id: 'four-schools-worship', title: { ar: 'فقه العبادات على المذاهب الأربعة', en: 'Worship Across the Four Schools' }, teacher: { ar: 'د. عبدالمحسن العباد', en: 'Dr. Abdulmuhsin Al-Abbad' }, category: { ar: 'العبادات', en: 'Worship' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 278, hours: 92, students: 11624, rating: '4.7', progress: 80, tone: 'blue', status: { ar: 'منشور', en: 'Published' } },
-  { id: 'fatwa-rules', title: { ar: 'الفتوى ضوابط وأحكام', en: 'Fatwa: Rules and Etiquette' }, teacher: { ar: 'د. صالح الفوزان', en: 'Dr. Saleh Al-Fawzan' }, category: { ar: 'الفتوى', en: 'Fatwa' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 112, hours: 32, students: 5420, rating: '4.4', progress: 40, tone: 'navy', status: { ar: 'مراجعة', en: 'Review' } },
+  { id: 'manhaj-salikin', title: { ar: 'شرح منهج السالكين في الفقه', en: 'Manhaj as-Salikin in Fiqh' }, teacher: { ar: 'د. صالح بن فوزان الفوزان', en: 'Dr. Saleh Al-Fawzan' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 245, hours: 86, students: 12542, rating: '4.8', progress: 85, tone: 'green', status: { ar: 'منشور', en: 'Published' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'fiqh-worship', title: { ar: 'فقه العبادات على مذهب السلف', en: 'Fiqh of Worship' }, teacher: { ar: 'د. محمد بن صالح العثيمين', en: 'Dr. Ibn Uthaymeen' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 186, hours: 60, students: 8421, rating: '4.7', progress: 60, tone: 'gold', status: { ar: 'منشور', en: 'Published' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'comprehensive-fiqh', title: { ar: 'الجامع في الفقه الإسلامي', en: 'Comprehensive Islamic Fiqh' }, teacher: { ar: 'د. سعد بن ناصر الشثري', en: 'Dr. Saad Al-Shithri' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 312, hours: 96, students: 15231, rating: '4.9', progress: 72, tone: 'navy', status: { ar: 'منشور', en: 'Published' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'usul-maxims', title: { ar: 'أصول الفقه وقواعده', en: 'Usul al-Fiqh and Maxims' }, teacher: { ar: 'د. عبدالعزيز بن باز', en: 'Dr. Abdulaziz Ibn Baz' }, category: { ar: 'أصول الفقه', en: 'Usul' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 156, hours: 45, students: 6321, rating: '4.6', progress: 30, tone: 'cream', status: { ar: 'مسودة', en: 'Draft' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'legal-maxims', title: { ar: 'القواعد الفقهية وتطبيقاتها', en: 'Legal Maxims and Applications' }, teacher: { ar: 'د. عبدالرحمن السعدي', en: 'Dr. Abdulrahman As-Saadi' }, category: { ar: 'الفقه', en: 'Fiqh' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 98, hours: 38, students: 4256, rating: '4.5', progress: 65, tone: 'brown', status: { ar: 'مراجعة', en: 'Review' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'financial-transactions', title: { ar: 'المعاملات المالية في الفقه الإسلامي', en: 'Financial Transactions in Fiqh' }, teacher: { ar: 'د. محمد المختار الشنقيطي', en: 'Dr. Muhammad Al-Shinqiti' }, category: { ar: 'المعاملات', en: 'Transactions' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 210, hours: 72, students: 9870, rating: '4.8', progress: 68, tone: 'green', status: { ar: 'منشور', en: 'Published' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'four-schools-worship', title: { ar: 'فقه العبادات على المذاهب الأربعة', en: 'Worship Across the Four Schools' }, teacher: { ar: 'د. عبدالمحسن العباد', en: 'Dr. Abdulmuhsin Al-Abbad' }, category: { ar: 'العبادات', en: 'Worship' }, categoryId: 'fiqh', level: { ar: 'متقدم', en: 'Advanced' }, lessons: 278, hours: 92, students: 11624, rating: '4.7', progress: 80, tone: 'blue', status: { ar: 'منشور', en: 'Published' }, thumbnail: VIDEO_THUMBNAIL },
+  { id: 'fatwa-rules', title: { ar: 'الفتوى ضوابط وأحكام', en: 'Fatwa: Rules and Etiquette' }, teacher: { ar: 'د. صالح الفوزان', en: 'Dr. Saleh Al-Fawzan' }, category: { ar: 'الفتوى', en: 'Fatwa' }, categoryId: 'fiqh', level: { ar: 'متوسط', en: 'Intermediate' }, lessons: 112, hours: 32, students: 5420, rating: '4.4', progress: 40, tone: 'navy', status: { ar: 'مراجعة', en: 'Review' }, thumbnail: VIDEO_THUMBNAIL },
 ]
 
 export const sharedBooks: SharedBook[] = [
@@ -115,12 +119,12 @@ export const sharedBooks: SharedBook[] = [
 ]
 
 export const sharedFatwas: SharedFatwa[] = [
-  { id: 'sea-water-wudu', title: { ar: 'حكم الوضوء بماء البحر', en: 'Ruling on making wudu with seawater' }, scholar: { ar: 'الشيخ عبدالعزيز بن باز', en: 'Shaykh Abdulaziz Ibn Baz' }, category: { ar: 'الطهارة', en: 'Purification' }, duration: '3:15', views: 4215, date: '2025-05-16', tone: 'green' },
-  { id: 'combining-prayers', title: { ar: 'حكم الجمع بين الصلاتين للمسافر', en: 'Combining prayers while travelling' }, scholar: { ar: 'الشيخ صالح الفوزان', en: 'Shaykh Saleh Al-Fawzan' }, category: { ar: 'الصلاة', en: 'Prayer' }, duration: '6:42', views: 8920, date: '2025-05-15', tone: 'navy' },
-  { id: 'zakat-savings', title: { ar: 'ضوابط الزكاة في المال المدخر', en: 'Zakat on saved money' }, scholar: { ar: 'الشيخ ابن عثيمين', en: 'Shaykh Ibn Uthaymeen' }, category: { ar: 'الزكاة', en: 'Zakat' }, duration: '9:10', views: 12340, date: '2025-05-14', tone: 'gold' },
-  { id: 'asking-etiquette', title: { ar: 'آداب طالب العلم في السؤال', en: 'How students of knowledge should ask' }, scholar: { ar: 'الشيخ سعد الشثري', en: 'Shaykh Saad Al-Shithri' }, category: { ar: 'طلب العلم', en: 'Knowledge' }, duration: '7:28', views: 5812, date: '2025-05-13', tone: 'blue' },
-  { id: 'installment-sales', title: { ar: 'حكم البيع بالتقسيط', en: 'Ruling on installment sales' }, scholar: { ar: 'الشيخ محمد المختار الشنقيطي', en: 'Shaykh Muhammad Al-Shinqiti' }, category: { ar: 'المعاملات', en: 'Transactions' }, duration: '11:04', views: 9540, date: '2025-05-12', tone: 'brown' },
-  { id: 'repenting-backbiting', title: { ar: 'التوبة من الغيبة والنميمة', en: 'Repenting from backbiting' }, scholar: { ar: 'الشيخ محمد سعيد رسلان', en: 'Shaykh Muhammad Saeed Raslan' }, category: { ar: 'الآداب', en: 'Conduct' }, duration: '5:36', views: 6730, date: '2025-05-11', tone: 'cream' },
+  { id: 'sea-water-wudu', title: { ar: 'حكم الوضوء بماء البحر', en: 'Ruling on making wudu with seawater' }, scholar: { ar: 'الشيخ عبدالعزيز بن باز', en: 'Shaykh Abdulaziz Ibn Baz' }, category: { ar: 'الطهارة', en: 'Purification' }, duration: '3:15', views: 4215, date: '2025-05-16', tone: 'green', thumbnail: VIDEO_THUMBNAIL },
+  { id: 'combining-prayers', title: { ar: 'حكم الجمع بين الصلاتين للمسافر', en: 'Combining prayers while travelling' }, scholar: { ar: 'الشيخ صالح الفوزان', en: 'Shaykh Saleh Al-Fawzan' }, category: { ar: 'الصلاة', en: 'Prayer' }, duration: '6:42', views: 8920, date: '2025-05-15', tone: 'navy', thumbnail: VIDEO_THUMBNAIL },
+  { id: 'zakat-savings', title: { ar: 'ضوابط الزكاة في المال المدخر', en: 'Zakat on saved money' }, scholar: { ar: 'الشيخ ابن عثيمين', en: 'Shaykh Ibn Uthaymeen' }, category: { ar: 'الزكاة', en: 'Zakat' }, duration: '9:10', views: 12340, date: '2025-05-14', tone: 'gold', thumbnail: VIDEO_THUMBNAIL },
+  { id: 'asking-etiquette', title: { ar: 'آداب طالب العلم في السؤال', en: 'How students of knowledge should ask' }, scholar: { ar: 'الشيخ سعد الشثري', en: 'Shaykh Saad Al-Shithri' }, category: { ar: 'طلب العلم', en: 'Knowledge' }, duration: '7:28', views: 5812, date: '2025-05-13', tone: 'blue', thumbnail: VIDEO_THUMBNAIL },
+  { id: 'installment-sales', title: { ar: 'حكم البيع بالتقسيط', en: 'Ruling on installment sales' }, scholar: { ar: 'الشيخ محمد المختار الشنقيطي', en: 'Shaykh Muhammad Al-Shinqiti' }, category: { ar: 'المعاملات', en: 'Transactions' }, duration: '11:04', views: 9540, date: '2025-05-12', tone: 'brown', thumbnail: VIDEO_THUMBNAIL },
+  { id: 'repenting-backbiting', title: { ar: 'التوبة من الغيبة والنميمة', en: 'Repenting from backbiting' }, scholar: { ar: 'الشيخ محمد سعيد رسلان', en: 'Shaykh Muhammad Saeed Raslan' }, category: { ar: 'الآداب', en: 'Conduct' }, duration: '5:36', views: 6730, date: '2025-05-11', tone: 'cream', thumbnail: VIDEO_THUMBNAIL },
 ]
 
 export const sharedArchiveMetrics = {

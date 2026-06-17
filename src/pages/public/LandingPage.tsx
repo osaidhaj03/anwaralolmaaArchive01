@@ -14,7 +14,6 @@ export function LandingPage() {
   const stats = useArchiveStats()
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
-  const heroBadge = language === 'ar' ? 'منصة علمية موثوقة' : 'A Trusted Scholarly Platform'
   const heroAccent = language === 'ar' ? 'إرشاد القلوب بالعلم الأصيل' : 'Guiding Hearts with Authentic Knowledge'
   const normalizedStats = copy.stats.map((item, index) => ({
     ...item,
@@ -38,7 +37,6 @@ export function LandingPage() {
 
       <LandingHero
         accent={heroAccent}
-        badge={heroBadge}
         onSearchChange={setSearch}
         onSubmit={submitSearch}
         placeholder={copy.heroPlaceholder}

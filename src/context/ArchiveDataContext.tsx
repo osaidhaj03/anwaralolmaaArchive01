@@ -10,6 +10,7 @@ import {
   sharedCourses,
   sharedFatwas,
   sharedScholars,
+  VIDEO_THUMBNAIL,
   type SharedBook,
   type SharedCategory,
   type SharedCourse,
@@ -274,6 +275,7 @@ function courseFromRow(row: Record<string, string>, index: number | null): Share
     progress: row.status === 'Published' || row.status === 'منشور' ? 82 : row.status === 'Review' || row.status === 'مراجعة' ? 55 : 24,
     tone: 'green',
     status: localizedStatus(row.status),
+    thumbnail: row.thumbnail || VIDEO_THUMBNAIL,
   }
 }
 
@@ -397,6 +399,7 @@ export function useLocalizedArchive(language: Language) {
           rating: item.rating,
           progress: item.progress,
           tone: item.tone,
+          thumbnail: item.thumbnail || VIDEO_THUMBNAIL,
         }
       }),
       books: books.map((item) => ({
@@ -426,6 +429,7 @@ export function useLocalizedArchive(language: Language) {
         views: formatNumber(item.views),
         date: item.date,
         tone: item.tone,
+        thumbnail: item.thumbnail || VIDEO_THUMBNAIL,
       })),
     }),
     [books, categories, courses, fatwas, language, scholars],
