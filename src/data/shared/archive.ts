@@ -4,6 +4,9 @@ import type { Language } from '../../context/LanguageContext'
 type Localized = {
   ar: string
   en: string
+  uz?: string
+  uzCyr?: string
+  ru?: string
 }
 
 export type SharedCategory = {
@@ -142,8 +145,14 @@ export const sharedArchiveMetrics = {
   },
 }
 
-export function pickLocalizedText(value: Localized, language: Language) {
-  return value[language]
+export function pickLocalizedText(value: Localized, language: Language): string {
+  const val = value as Record<string, string>
+  if (val && val[language]) {
+    return val[language]
+  }
+  if (language === 'uzCyr' && val['uz']) return val['uz']
+  if (val['en']) return val['en']
+  return val['ar'] || ''
 }
 
 export function formatNumber(value: number) {

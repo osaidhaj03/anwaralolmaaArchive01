@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { adminPages } from './data/adminSeed'
@@ -37,6 +38,10 @@ function AppRoutes() {
   const { language } = useLanguage()
   const pages = language === 'ar' ? adminPages : adminPagesEn
   const { books, categories, courses, deleteBookRow, deleteCategoryRow, deleteCourseRow, deleteScholarRow, saveBookRow, saveCategoryRow, saveCourseRow, saveScholarRow, scholars, toggleBookRowStatus, toggleCategoryRowStatus, toggleCourseRowStatus } = useArchiveData()
+
+  useEffect(() => {
+    document.title = language === 'ar' ? 'أنوار العلماء - منصة العلم الشرعي' : 'Anwar Alolmaa - Islamic Knowledge Platform'
+  }, [language])
 
   const teacherRows = scholars.map((item, index) => ({
     image: item.image,

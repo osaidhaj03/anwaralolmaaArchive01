@@ -1,10 +1,11 @@
-import { Search } from 'lucide-react'
+import { Search, SlidersHorizontal } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { FatwaCard } from '../../components/public/FatwaCard'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
 import { PublicStatStrip } from '../../components/public/PublicStatStrip'
+import { PublicFilterSelect } from '../../components/public/PublicFilterSelect'
 import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { fatwaCopy } from '../../data/public/fatwa'
@@ -18,6 +19,7 @@ export function FatwaPage() {
   const [category, setCategory] = useState('')
   const [scholar, setScholar] = useState('')
   const [sort, setSort] = useState<'latest' | 'views'>('latest')
+  const [showFilters, setShowFilters] = useState(false)
 
   const normalizedStats = [
     new Intl.NumberFormat('en-US').format(stats.public.fatwas),
@@ -42,6 +44,54 @@ export function FatwaPage() {
       <PublicHeader activeTo="/fatwa" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="fatwa-hero" description={copy.description} title={copy.title}>
+        <div className="courses-searchbar">
+          <label>
+            <Search size={20} />
+            <input onChange={(event) => setSearch(event.target.value)} placeholder={copy.searchPlaceholder} value={search} />
+          </label>
+          <button
+            className={`courses-filter-toggle-btn ${showFilters ? 'is-active' : ''}`}
+            onClick={() => setShowFilters(!showFilters)}
+            type="button"
+            aria-label="Toggle filters"
+          >
+            <SlidersHorizontal size={20} />
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="courses-filter-horizontal-card">
+            <div className="courses-filter-grid">
+              <PublicFilterSelect allLabel={copy.all} label={copy.categoryLabel} onChange={setCategory} options={categories} value={category} />
+              <PublicFilterSelect allLabel={copy.all} label={copy.scholarLabel} onChange={setScholar} options={scholars} value={scholar} />
+            </div>
+            <div className="courses-filter-horizontal-actions">
+              <button
+                className={sort === 'latest' ? 'is-active' : ''}
+                onClick={() => setSort('latest')}
+                type="button"
+                style={{
+                  background: sort === 'latest' ? 'var(--color-gold-700)' : '#fff',
+                  color: sort === 'latest' ? '#fff' : '#0d263d'
+                }}
+              >
+                {copy.latest}
+              </button>
+              <button
+                className={sort === 'views' ? 'is-active' : ''}
+                onClick={() => setSort('views')}
+                type="button"
+                style={{
+                  background: sort === 'views' ? 'var(--color-gold-700)' : '#fff',
+                  color: sort === 'views' ? '#fff' : '#0d263d'
+                }}
+              >
+                {copy.mostViewed}
+              </button>
+            </div>
+          </div>
+        )}
+
         <PublicStatStrip
           className="fatwa-stat-strip"
           items={copy.stats.map((item, index) => ({ ...item, value: normalizedStats[index] }))}
@@ -49,22 +99,9 @@ export function FatwaPage() {
       </PublicPageHero>
 
       <section className="public-container fatwa-layout">
-        <aside className="fatwa-filter-card">
-          <label className="fatwa-search">
-            <Search size={19} />
-            <input onChange={(event) => setSearch(event.target.value)} placeholder={copy.searchPlaceholder} value={search} />
-          </label>
-          <label><span>{copy.categoryLabel}</span><select onChange={(event) => setCategory(event.target.value)} value={category}><option value="">{copy.all}</option>{categories.map((value) => <option key={value}>{value}</option>)}</select></label>
-          <label><span>{copy.scholarLabel}</span><select onChange={(event) => setScholar(event.target.value)} value={scholar}><option value="">{copy.all}</option>{scholars.map((value) => <option key={value}>{value}</option>)}</select></label>
-          <div className="fatwa-sort-buttons">
-            <button className={sort === 'latest' ? 'is-active' : ''} onClick={() => setSort('latest')} type="button">{copy.latest}</button>
-            <button className={sort === 'views' ? 'is-active' : ''} onClick={() => setSort('views')} type="button">{copy.mostViewed}</button>
-          </div>
-        </aside>
-
         <div className="fatwa-grid">
           {items.map((item, index) => (
-            <FatwaCard fatwa={item} href={`/fatwa/${index + 1}`} key={item.title} watchLabel={copy.watch} />
+            <FatwaCard fatwa={item} href={`/fatwa/${index + 1}`} key={item.title} />
           ))}
           {items.length === 0 ? <p className="courses-empty">{copy.empty}</p> : null}
         </div>

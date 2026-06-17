@@ -21,6 +21,7 @@ type CoursesFilterCardProps = {
   teacherOptions: string[]
   title: string
   resetLabel: string
+  layout?: 'vertical' | 'horizontal'
   onApply: () => void
   onReset: () => void
   onUpdate: (key: keyof CourseFilters, value: string) => void
@@ -43,7 +44,29 @@ export function CoursesFilterCard({
   teacherLabel,
   teacherOptions,
   title,
+  layout = 'vertical',
 }: CoursesFilterCardProps) {
+  if (layout === 'horizontal') {
+    return (
+      <div className="courses-filter-horizontal-card">
+        <div className="courses-filter-grid">
+          <PublicFilterSelect allLabel={allLabel} label={categoryLabel} onChange={(value) => onUpdate('category', value)} options={categoryOptions} value={filters.category} />
+          <PublicFilterSelect allLabel={allLabel} label={levelLabel} onChange={(value) => onUpdate('level', value)} options={levelOptions} value={filters.level} />
+          <PublicFilterSelect allLabel={allLabel} label={statusLabel} onChange={(value) => onUpdate('status', value)} options={statusOptions} value={filters.status} />
+          <PublicFilterSelect allLabel={allLabel} label={teacherLabel} onChange={(value) => onUpdate('teacher', value)} options={teacherOptions} value={filters.teacher} />
+        </div>
+        <div className="courses-filter-horizontal-actions">
+          <button onClick={onApply} type="button">
+            {applyLabel}
+          </button>
+          <button onClick={onReset} type="button">
+            {resetLabel}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <aside className="courses-filter-card">
       <h2>{title}</h2>

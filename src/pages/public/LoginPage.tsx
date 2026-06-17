@@ -72,6 +72,7 @@ export function LoginPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    localStorage.setItem('admin_logged_in', 'true')
     navigate('/admin')
   }
 

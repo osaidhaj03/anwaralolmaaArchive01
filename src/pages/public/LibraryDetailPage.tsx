@@ -1,4 +1,4 @@
-import { BookOpen, Download, Eye, FileText, UserRound } from 'lucide-react'
+import { BookOpen, Eye, FileText, UserRound } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
@@ -18,9 +18,7 @@ const detailCopy: Record<Language, Record<string, string>> = {
     type: 'النوع',
     pages: 'الصفحات',
     reads: 'القراءات',
-    downloads: 'التحميلات',
     readNow: 'القراءة الآن',
-    download: 'تحميل النسخة',
     related: 'كتب ذات صلة',
   },
   en: {
@@ -32,9 +30,7 @@ const detailCopy: Record<Language, Record<string, string>> = {
     type: 'Type',
     pages: 'Pages',
     reads: 'Reads',
-    downloads: 'Downloads',
     readNow: 'Read now',
-    download: 'Download copy',
     related: 'Related books',
   },
 }
@@ -67,7 +63,6 @@ export function LibraryDetailPage() {
               <p>{copy.description}</p>
               <div className="library-detail-actions">
                 <Link to="/login">{copy.readNow}</Link>
-                <Link to="/login"><Download size={16} />{copy.download}</Link>
               </div>
             </div>
           </div>
@@ -102,7 +97,6 @@ export function LibraryDetailPage() {
                 { label: copy.type, value: item.type },
                 { label: copy.pages, value: <><FileText size={15} />{item.pages}</> },
                 { label: copy.reads, value: <><Eye size={15} />{item.views}</> },
-                { label: copy.downloads, value: <><Download size={15} />{item.downloads}</> },
               ]}
             />
           </article>

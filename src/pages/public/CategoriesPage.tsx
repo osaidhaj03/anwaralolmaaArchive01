@@ -24,18 +24,17 @@ export function CategoriesPage() {
       <PublicHeader activeTo="/categories" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="categories-hero" description={copy.description} title={copy.title}>
-        <div className="categories-tools">
-          <label className="courses-searchbar">
+        <div className="courses-searchbar">
+          <label>
             <Search size={20} />
             <input onChange={(event) => setSearch(event.target.value)} placeholder={copy.searchPlaceholder} value={search} />
           </label>
-          <button className="category-tool-button" type="button">{copy.sortLabel}</button>
         </div>
       </PublicPageHero>
 
       <section className="public-container categories-page-grid">
         {items.map((item) => (
-          <CategoryCard category={item} key={item.id} viewLabel={copy.view} />
+          <CategoryCard category={item} key={item.id} />
         ))}
         {items.length === 0 ? <p className="courses-empty">{copy.empty}</p> : null}
       </section>

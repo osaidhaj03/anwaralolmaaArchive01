@@ -6,16 +6,15 @@ type FeaturedCourseCardProps = {
   allCourses: CourseItem[]
   contentLabel: string
   course: CourseItem
-  detailsLabel: string
   featuredLabel: string
   levelLabel: string
 }
 
-export function FeaturedCourseCard({ aboutLabel, allCourses, contentLabel, course, detailsLabel, featuredLabel, levelLabel }: FeaturedCourseCardProps) {
+export function FeaturedCourseCard({ aboutLabel, allCourses, contentLabel, course, featuredLabel, levelLabel }: FeaturedCourseCardProps) {
   const courseIndex = Math.max(1, allCourses.findIndex((item) => item.title === course.title) + 1)
 
   return (
-    <aside className="featured-course-card">
+    <Link className="featured-course-card" to={`/courses/${courseIndex}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={`public-course-cover tone-${course.tone}`}>
         <span>{course.title}</span>
         <small>{featuredLabel}</small>
@@ -34,7 +33,7 @@ export function FeaturedCourseCard({ aboutLabel, allCourses, contentLabel, cours
           <dd>{course.level}</dd>
         </div>
       </dl>
-      <Link to={`/courses/${courseIndex}`}>{detailsLabel}</Link>
-    </aside>
+    </Link>
   )
 }
+

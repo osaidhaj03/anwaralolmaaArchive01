@@ -20,6 +20,7 @@ export function CoursesPage() {
   const [viewMode, setViewMode] = useState<CourseViewMode>('grid')
   const [draftFilters, setDraftFilters] = useState<CourseFilters>({ category: '', level: '', status: '', teacher: '' })
   const [activeFilters, setActiveFilters] = useState<CourseFilters>(draftFilters)
+  const [showFilters, setShowFilters] = useState(false)
 
   const categoryOptions = useMemo(() => unique(archive.courses.map((course) => course.category)), [archive.courses])
   const levelOptions = useMemo(() => unique(archive.courses.map((course) => course.level)), [archive.courses])
@@ -75,33 +76,41 @@ export function CoursesPage() {
       <PublicHeader activeTo="/courses" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="courses-hero" description={copy.description} title={copy.title}>
-        <CoursesHeroTools onSearchChange={setSearch} search={search} searchPlaceholder={copy.searchPlaceholder} stats={normalizedStats} />
+        <CoursesHeroTools
+          onSearchChange={setSearch}
+          search={search}
+          searchPlaceholder={copy.searchPlaceholder}
+          stats={normalizedStats}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+        />
+        {showFilters && (
+          <CoursesFilterCard
+            layout="horizontal"
+            allLabel={copy.all}
+            applyLabel={copy.apply}
+            categoryLabel={copy.categoryFilter}
+            categoryOptions={categoryOptions}
+            filters={draftFilters}
+            levelLabel={copy.levelFilter}
+            levelOptions={levelOptions}
+            onApply={applyFilters}
+            onReset={resetFilters}
+            onUpdate={updateDraftFilter}
+            resetLabel={copy.reset}
+            statusLabel={copy.statusFilter}
+            statusOptions={[copy.active, copy.completed]}
+            teacherLabel={copy.teacherFilter}
+            teacherOptions={teacherOptions}
+            title={copy.filtersTitle}
+          />
+        )}
       </PublicPageHero>
 
       <section className="public-container courses-layout">
-        <CoursesFilterCard
-          allLabel={copy.all}
-          applyLabel={copy.apply}
-          categoryLabel={copy.categoryFilter}
-          categoryOptions={categoryOptions}
-          filters={draftFilters}
-          levelLabel={copy.levelFilter}
-          levelOptions={levelOptions}
-          onApply={applyFilters}
-          onReset={resetFilters}
-          onUpdate={updateDraftFilter}
-          resetLabel={copy.reset}
-          statusLabel={copy.statusFilter}
-          statusOptions={[copy.active, copy.completed]}
-          teacherLabel={copy.teacherFilter}
-          teacherOptions={teacherOptions}
-          title={copy.filtersTitle}
-        />
-
         <CoursesResults
           allCourses={archive.courses}
           courses={filteredCourses}
-          detailsLabel={copy.details}
           emptyLabel={copy.empty}
           onViewModeChange={setViewMode}
           showingText={showingText}
@@ -113,7 +122,6 @@ export function CoursesPage() {
           allCourses={archive.courses}
           contentLabel={copy.content}
           course={featured}
-          detailsLabel={copy.details}
           featuredLabel={copy.featured}
           levelLabel={copy.levelFilter}
         />

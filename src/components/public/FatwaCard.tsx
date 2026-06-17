@@ -1,4 +1,4 @@
-import { Eye, HelpCircle, Play } from 'lucide-react'
+import { Eye, HelpCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 type FatwaCardProps = {
@@ -12,12 +12,11 @@ type FatwaCardProps = {
     views: string
   }
   href: string
-  watchLabel: string
 }
 
-export function FatwaCard({ fatwa, href, watchLabel }: FatwaCardProps) {
+export function FatwaCard({ fatwa, href }: FatwaCardProps) {
   return (
-    <article className="fatwa-card">
+    <Link className="fatwa-card" to={href} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={`fatwa-thumb tone-${fatwa.tone}`}>
         <HelpCircle size={30} />
         <span>{fatwa.duration}</span>
@@ -30,8 +29,8 @@ export function FatwaCard({ fatwa, href, watchLabel }: FatwaCardProps) {
           <span><Eye size={15} />{fatwa.views}</span>
           <span>{fatwa.date}</span>
         </div>
-        <Link to={href}><Play size={15} />{watchLabel}</Link>
       </div>
-    </article>
+    </Link>
   )
 }
+

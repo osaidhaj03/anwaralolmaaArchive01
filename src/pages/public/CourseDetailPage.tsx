@@ -1,20 +1,15 @@
 import {
-  BookOpen,
-  Clock,
-  Download,
   FileText,
   FileImage,
-  ListVideo,
-  Play,
-  Star,
-  UsersRound,
 } from 'lucide-react'
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
-import { CourseLessonList } from '../../components/public/CourseLessonList'
-import { CourseSummaryCard } from '../../components/public/CourseSummaryCard'
+import { WatchBreadcrumbs } from '../../components/public/WatchBreadcrumbs'
+import { WatchVideoPlayer } from '../../components/public/WatchVideoPlayer'
+import { WatchLessonInfo } from '../../components/public/WatchLessonInfo'
+import { WatchPlaylistSidebar } from '../../components/public/WatchPlaylistSidebar'
 import { useArchiveData, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
 import { coursesCopy } from '../../data/public/courses'
@@ -37,8 +32,7 @@ const detailCopy: Record<Language, Record<string, string>> = {
     teacher: 'المحاضر',
     level: 'المستوى',
     category: 'القسم',
-    rating: 'التقييم',
-    coursePlan: 'خطة الدورة',
+    coursePlan: 'قائمة الدروس',
   },
   en: {
     breadcrumb: 'Home / Courses / Course details',
@@ -57,8 +51,7 @@ const detailCopy: Record<Language, Record<string, string>> = {
     teacher: 'Lecturer',
     level: 'Level',
     category: 'Category',
-    rating: 'Rating',
-    coursePlan: 'Course plan',
+    coursePlan: 'Playlist Lessons',
   },
 }
 
@@ -71,17 +64,10 @@ export function CourseDetailPage() {
   const copy = detailCopy[language]
   const index = Number(courseId) - 1
   const course = archive.courses[index]
-  const [activeTab, setActiveTab] = useState<'content' | 'materials' | 'downloads'>('content')
+  const [audioMode, setAudioMode] = useState(false)
   const storedLessons = lessonsByCourse[String(index)] ?? []
   const lessonCountLabel = language === 'ar' ? `${storedLessons.length} درس` : `${storedLessons.length} lessons`
-  const lessonRows = storedLessons.map((lesson, lessonIndex) => ({
-    title:
-      language === 'ar'
-        ? `${lessonIndex + 1}. ${lesson.title.includes('Course introduction') ? copy.overview : lesson.title.replace('Lesson', 'الدرس')}`
-        : `${lessonIndex + 1}. ${lesson.title}`,
-    duration: lesson.duration,
-    locked: lesson.locked,
-  }))
+
   const materialRows = [
     {
       title: language === 'ar' ? `${course?.title ?? ''} - ${copy.materials}` : `${course?.title ?? ''} - ${copy.materials}`,
@@ -99,10 +85,6 @@ export function CourseDetailPage() {
       icon: FileImage,
     },
   ]
-  const downloadRows = lessonRows.slice(0, 5).map((lesson, lessonIndex) => ({
-      title: language === 'ar' ? `تحميل ${lesson.title}` : `Download ${lesson.title}`,
-    meta: language === 'ar' ? `MP4 · الجودة ${lessonIndex % 2 === 0 ? 'العالية' : 'المتوسطة'}` : `MP4 · ${lessonIndex % 2 === 0 ? 'High' : 'Medium'} quality`,
-  }))
 
   if (!course) {
     return <Navigate to="/courses" replace />
@@ -114,97 +96,56 @@ export function CourseDetailPage() {
 
       <section className="course-detail-hero islamic-soft-pattern">
         <div className="public-container course-detail-hero__inner">
-          <span>{copy.breadcrumb}</span>
-          <div className="course-detail-title">
-            <div>
-              <h1>{course.title}</h1>
-              <p>{copy.description}</p>
-            </div>
-            <div className={`public-course-cover tone-${course.tone}`}>
-              <span>{course.title}</span>
-              <small>{course.lessons}</small>
-            </div>
-          </div>
+          <WatchBreadcrumbs category={course.category} courseTitle={course.title} language={language} />
         </div>
       </section>
 
-      <section className="public-container course-detail-layout">
-        <aside className="course-detail-side">
-          <CourseSummaryCard
-            course={course}
-            ctaLabel={copy.start}
-            ctaTo="/login"
-            labels={{
-              category: copy.category,
-              level: copy.level,
-              progress: copy.progress,
-              rating: copy.rating,
-              teacher: copy.teacher,
-            }}
-          />
-        </aside>
-
+      <section className="public-container course-detail-layout youtube-style">
         <div className="course-detail-main">
-          <div className="course-video-card">
-            <div className={`course-video-frame tone-${course.tone}`}>
-              <button type="button"><Play size={28} /></button>
-              <h2>{course.title}</h2>
-            </div>
-            <div className="course-video-meta">
-              <span><BookOpen size={17} />{lessonCountLabel}</span>
-              <span><Clock size={17} />{course.hours}</span>
-              <span><UsersRound size={17} />{course.students}</span>
-              <span><Star size={17} />{course.rating}</span>
-            </div>
-          </div>
+          {/* Custom Video Player Block */}
+          <WatchVideoPlayer
+            audioMode={audioMode}
+            courseTone={course.tone}
+            language={language}
+            setAudioMode={setAudioMode}
+          />
+
+          {/* Lesson Metadata Block */}
+          <WatchLessonInfo
+            category={course.category}
+            courseTitle={course.title}
+            language={language}
+            teacher={course.teacher}
+          />
 
           <div className="course-tabs-card">
-            <div className="course-tabs">
-              <button className={activeTab === 'content' ? 'is-active' : ''} onClick={() => setActiveTab('content')} type="button"><ListVideo size={17} />{copy.content}</button>
-              <button className={activeTab === 'materials' ? 'is-active' : ''} onClick={() => setActiveTab('materials')} type="button"><FileText size={17} />{copy.materials}</button>
-              <button className={activeTab === 'downloads' ? 'is-active' : ''} onClick={() => setActiveTab('downloads')} type="button"><Download size={17} />{copy.downloadAll}</button>
+            <h3 className="materials-title" style={{ padding: '16px 20px', margin: 0, fontSize: '15px', color: '#0d263d', borderBottom: '1px solid rgba(13, 38, 61, 0.06)' }}>
+              {copy.materials}
+            </h3>
+            <div className="course-resource-list">
+              {materialRows.map(({ icon: Icon, meta, title }) => (
+                <article key={title}>
+                  <span><Icon size={18} /></span>
+                  <div>
+                    <strong>{title}</strong>
+                    <small>{meta}</small>
+                  </div>
+                  <Link to="/login">{language === 'ar' ? 'فتح' : 'Open'}</Link>
+                </article>
+              ))}
             </div>
-            {activeTab === 'content' ? <CourseLessonList lessons={lessonRows} teacher={course.teacher} /> : null}
-            {activeTab === 'materials' ? (
-              <div className="course-resource-list">
-                {materialRows.map(({ icon: Icon, meta, title }) => (
-                  <article key={title}>
-                    <span><Icon size={18} /></span>
-                    <div>
-                      <strong>{title}</strong>
-                      <small>{meta}</small>
-                    </div>
-                    <Link to="/login">{language === 'ar' ? 'فتح' : 'Open'}</Link>
-                  </article>
-                ))}
-              </div>
-            ) : null}
-            {activeTab === 'downloads' ? (
-              <div className="course-resource-list">
-                {downloadRows.map(({ meta, title }) => (
-                  <article key={title}>
-                    <span><Download size={18} /></span>
-                    <div>
-                      <strong>{title}</strong>
-                      <small>{meta}</small>
-                    </div>
-                    <Link to="/login">{language === 'ar' ? 'تنزيل' : 'Download'}</Link>
-                  </article>
-                ))}
-              </div>
-            ) : null}
           </div>
         </div>
 
-        <aside className="course-outline-card">
-          <h2>{copy.coursePlan}</h2>
-          {lessonRows.slice(0, 6).map((lesson) => (
-            <Link to="/login" key={lesson.title}>
-              <span>{lesson.duration}</span>
-              {lesson.title}
-            </Link>
-          ))}
-        </aside>
+        {/* YouTube Watch Playlist Sidebar */}
+        <WatchPlaylistSidebar
+          courseTeacher={course.teacher}
+          courseTitle={course.title}
+          courseTone={course.tone}
+          language={language}
+          lessonCountLabel={lessonCountLabel}
+          storedLessons={storedLessons}
+        />
       </section>
 
       <PublicFooter
@@ -225,3 +166,4 @@ export function CourseDetailPage() {
     </main>
   )
 }
+

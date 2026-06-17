@@ -1,8 +1,8 @@
-import { BookOpen, GraduationCap, MapPin } from 'lucide-react'
+import { BookOpen, GraduationCap } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 type ScholarCardProps = {
-  aboutLabel: string
+  aboutTo: string
   scholar: {
     country: string
     courses: number
@@ -12,12 +12,11 @@ type ScholarCardProps = {
     name: string
     title: string
   }
-  aboutTo: string
 }
 
-export function ScholarCard({ aboutLabel, aboutTo, scholar }: ScholarCardProps) {
+export function ScholarCard({ aboutTo, scholar }: ScholarCardProps) {
   return (
-    <article className="public-scholar-card">
+    <Link className="public-scholar-card" to={aboutTo} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="public-scholar-photo">
         <img alt={scholar.name} src={scholar.image} />
       </div>
@@ -28,12 +27,9 @@ export function ScholarCard({ aboutLabel, aboutTo, scholar }: ScholarCardProps) 
         <div className="public-scholar-meta">
           <span><GraduationCap size={15} />{scholar.courses}</span>
           <span><BookOpen size={15} />{scholar.lessons}</span>
-          <span><MapPin size={15} />{scholar.country}</span>
-        </div>
-        <div className="public-scholar-actions">
-          <Link to={aboutTo}>{aboutLabel}</Link>
         </div>
       </div>
-    </article>
+    </Link>
   )
 }
+

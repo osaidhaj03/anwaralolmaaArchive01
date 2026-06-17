@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
+import { Search, SlidersHorizontal } from 'lucide-react'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
 import { PublicPageHero } from '../../components/public/PublicPageHero'
-import { ScholarsFilterCard } from '../../components/public/ScholarsFilterCard'
 import { ScholarsGrid } from '../../components/public/ScholarsGrid'
 import { ScholarsHeroStats } from '../../components/public/ScholarsHeroStats'
+import { PublicFilterSelect } from '../../components/public/PublicFilterSelect'
 import { useArchiveStats, useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { scholarsCopy } from '../../data/public/scholars'
@@ -16,7 +17,7 @@ export function ScholarsPage() {
   const stats = useArchiveStats()
   const [search, setSearch] = useState('')
   const [field, setField] = useState('')
-  const [country, setCountry] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
   const normalizedStats = [
     String(stats.public.scholars),
     String(stats.public.courses),
@@ -26,39 +27,46 @@ export function ScholarsPage() {
   const heroStats = copy.stats.map((item, index) => ({ ...item, value: normalizedStats[index] }))
 
   const fields = useMemo(() => unique(archive.scholars.map((scholar) => scholar.field)), [archive.scholars])
-  const countries = useMemo(() => unique(archive.scholars.map((scholar) => scholar.country)), [archive.scholars])
   const scholars = useMemo(() => {
     const query = search.trim().toLowerCase()
     return archive.scholars.filter((scholar) => {
-      const matchesSearch = [scholar.name, scholar.title, scholar.field, scholar.country].some((value) => value.toLowerCase().includes(query))
-      return (!query || matchesSearch) && (!field || scholar.field === field) && (!country || scholar.country === country)
+      const matchesSearch = [scholar.name, scholar.title, scholar.field].some((value) => value.toLowerCase().includes(query))
+      return (!query || matchesSearch) && (!field || scholar.field === field)
     })
-  }, [archive.scholars, country, field, search])
+  }, [archive.scholars, field, search])
   return (
     <main className="public-site" dir={dir}>
       <PublicHeader activeTo="/scholars" brand={copy.brand} languageLabel={copy.languageLabel} login={copy.login} nav={copy.nav} searchLabel={copy.searchLabel} subtitle={copy.subtitle} themeLabel={copy.themeLabel} />
 
       <PublicPageHero breadcrumb={copy.breadcrumb} className="scholars-hero" description={copy.description} title={copy.title}>
+        <div className="courses-searchbar">
+          <label>
+            <Search size={20} />
+            <input onChange={(event) => setSearch(event.target.value)} placeholder={copy.searchPlaceholder} value={search} />
+          </label>
+          <button
+            className={`courses-filter-toggle-btn ${showFilters ? 'is-active' : ''}`}
+            onClick={() => setShowFilters(!showFilters)}
+            type="button"
+            aria-label="Toggle filters"
+          >
+            <SlidersHorizontal size={20} />
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="courses-filter-horizontal-card">
+            <div className="courses-filter-grid">
+              <PublicFilterSelect allLabel={copy.all} label={copy.fieldsTitle} onChange={setField} options={fields} value={field} />
+            </div>
+          </div>
+        )}
+
         <ScholarsHeroStats stats={heroStats} />
       </PublicPageHero>
 
       <section className="public-container scholars-layout">
-        <ScholarsFilterCard
-          allLabel={copy.all}
-          countries={countries}
-          country={country}
-          countryLabel={copy.countriesTitle}
-          field={field}
-          fieldLabel={copy.fieldsTitle}
-          fields={fields}
-          onCountryChange={setCountry}
-          onFieldChange={setField}
-          onSearchChange={setSearch}
-          search={search}
-          searchPlaceholder={copy.searchPlaceholder}
-        />
-
-        <ScholarsGrid aboutLabel={copy.about} allScholars={archive.scholars} emptyLabel={copy.empty} scholars={scholars} />
+        <ScholarsGrid allScholars={archive.scholars} emptyLabel={copy.empty} scholars={scholars} />
       </section>
 
       <PublicFooter

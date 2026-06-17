@@ -1,4 +1,4 @@
-import { BookOpen, GraduationCap, Mail, MapPin, Star, UserRound } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
@@ -91,12 +91,6 @@ export function ScholarProfilePage() {
           <article className="scholar-profile-card">
             <h2>{copy.overview}</h2>
             <p>{copy.bio}</p>
-            <div className="scholar-profile-stats">
-              <div><GraduationCap size={18} /><strong>{scholar.courses}</strong><span>{copy.courses}</span></div>
-              <div><BookOpen size={18} /><strong>{scholar.lessons}</strong><span>{copy.lessons}</span></div>
-              <div><UserRound size={18} /><strong>{scholar.students}</strong><span>{copy.students}</span></div>
-              <div><Star size={18} /><strong>{scholar.rating}</strong><span>{copy.rating}</span></div>
-            </div>
           </article>
 
           <article className="scholar-profile-card">
@@ -118,7 +112,6 @@ export function ScholarProfilePage() {
               className="scholar-profile-info"
               items={[
                 { label: copy.field, value: scholar.field },
-                { label: copy.country, value: <><MapPin size={15} />{scholar.country}</> },
                 { label: copy.courses, value: scholar.courses },
                 { label: copy.lessons, value: scholar.lessons },
               ]}

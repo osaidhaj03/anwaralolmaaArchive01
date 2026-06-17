@@ -1,5 +1,5 @@
 import { BookOpen, GraduationCap, LibraryBig, MessageCircleQuestion, PlaySquare, Search, UsersRound } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { PublicFooter } from '../../components/PublicFooter'
 import { PublicHeader } from '../../components/PublicHeader'
@@ -58,6 +58,10 @@ export function SearchResultsPage() {
   const courses = coursesCopy[language]
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState(params.get('q') ?? '')
+
+  useEffect(() => {
+    setQuery(params.get('q') ?? '')
+  }, [params])
 
   const results = useMemo(() => {
     const lessonItems: SearchResult[] = Object.entries(lessonsByCourse).flatMap(([courseIndex, lessons]) =>

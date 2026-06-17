@@ -7,14 +7,13 @@ export type CourseViewMode = 'grid' | 'list'
 type CoursesResultsProps = {
   allCourses: CourseItem[]
   courses: CourseItem[]
-  detailsLabel: string
   emptyLabel: string
   showingText: string
   viewMode: CourseViewMode
   onViewModeChange: (mode: CourseViewMode) => void
 }
 
-export function CoursesResults({ allCourses, courses, detailsLabel, emptyLabel, onViewModeChange, showingText, viewMode }: CoursesResultsProps) {
+export function CoursesResults({ allCourses, courses, emptyLabel, onViewModeChange, showingText, viewMode }: CoursesResultsProps) {
   return (
     <div className="courses-content">
       <div className="courses-content__header">
@@ -32,7 +31,7 @@ export function CoursesResults({ allCourses, courses, detailsLabel, emptyLabel, 
       <div className={`public-course-grid ${viewMode === 'list' ? 'is-list' : ''}`}>
         {courses.map((course) => {
           const courseIndex = allCourses.findIndex((item) => item.title === course.title)
-          return <CourseCard course={course} detailsLabel={detailsLabel} href={`/courses/${courseIndex + 1}`} key={course.title} />
+          return <CourseCard course={course} href={`/courses/${courseIndex + 1}`} key={course.title} />
         })}
         {courses.length === 0 ? <p className="courses-empty">{emptyLabel}</p> : null}
       </div>

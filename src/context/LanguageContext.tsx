@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 
-export type Language = 'ar' | 'en'
+export type Language = 'ar' | 'uz' | 'uzCyr' | 'ru' | 'en'
 
 type LanguageContextValue = {
   language: Language
@@ -20,7 +20,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       language,
       dir: language === 'ar' ? 'rtl' : 'ltr',
       setLanguage,
-      toggleLanguage: () => setLanguage((current) => (current === 'ar' ? 'en' : 'ar')),
+      toggleLanguage: () => {
+        setLanguage((current) => {
+          const order: Language[] = ['ar', 'uz', 'uzCyr', 'ru', 'en']
+          const nextIndex = (order.indexOf(current) + 1) % order.length
+          return order[nextIndex]
+        })
+      },
     }),
     [language],
   )

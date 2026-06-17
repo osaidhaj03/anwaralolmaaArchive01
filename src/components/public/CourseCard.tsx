@@ -13,13 +13,12 @@ type CourseCardProps = {
     title: string
     tone: string
   }
-  detailsLabel: string
   href: string
 }
 
-export function CourseCard({ course, detailsLabel, href }: CourseCardProps) {
+export function CourseCard({ course, href }: CourseCardProps) {
   return (
-    <article className="public-course-card">
+    <Link className="public-course-card" to={href} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={`public-course-cover tone-${course.tone}`}>
         <span>{course.title}</span>
         <small>{course.lessons}</small>
@@ -37,9 +36,9 @@ export function CourseCard({ course, detailsLabel, href }: CourseCardProps) {
         </div>
         <div className="public-course-footer">
           <small>{course.level}</small>
-          <Link to={href}>{detailsLabel}</Link>
         </div>
       </div>
-    </article>
+    </Link>
   )
 }
+

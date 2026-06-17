@@ -48,6 +48,12 @@ export function AdminShell() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   useEffect(() => {
+    if (localStorage.getItem('admin_logged_in') !== 'true') {
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
+
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setNotificationsOpen(false)
@@ -102,7 +108,14 @@ export function AdminShell() {
           <ChevronDown size={16} />
         </div>
 
-        <button className="logout-button" type="button">
+        <button
+          className="logout-button"
+          onClick={() => {
+            localStorage.removeItem('admin_logged_in')
+            navigate('/login')
+          }}
+          type="button"
+        >
           <LogOut size={18} />
           {copy.logout}
         </button>

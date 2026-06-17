@@ -11,14 +11,13 @@ type CategoryCardProps = {
     text: string
     title: string
   }
-  viewLabel: string
 }
 
-export function CategoryCard({ category, viewLabel }: CategoryCardProps) {
+export function CategoryCard({ category }: CategoryCardProps) {
   const Icon = category.icon
 
   return (
-    <article className="category-page-card">
+    <Link className="category-page-card" to={`/categories/${category.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <span className="category-page-card__icon">
         <Icon size={30} />
       </span>
@@ -29,7 +28,7 @@ export function CategoryCard({ category, viewLabel }: CategoryCardProps) {
         <span>{category.lessons}</span>
         <span>{category.books}</span>
       </div>
-      <Link to={`/categories/${category.id}`}>{viewLabel}</Link>
-    </article>
+    </Link>
   )
 }
+
