@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react'
+import { PublicFilterSelect } from './PublicFilterSelect'
 
 type ScholarsFilterCardProps = {
   allLabel: string
@@ -27,15 +28,13 @@ export function ScholarsFilterCard({
         <Search size={19} />
         <input onChange={(event) => onSearchChange(event.target.value)} placeholder={searchPlaceholder} value={search} />
       </label>
-      <label>
-        <span>{fieldLabel}</span>
-        <select onChange={(event) => onFieldChange(event.target.value)} value={field}>
-          <option value="">{allLabel}</option>
-          {fields.map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </label>
+      <PublicFilterSelect
+        allLabel={allLabel}
+        label={fieldLabel}
+        onChange={onFieldChange}
+        options={fields}
+        value={field}
+      />
     </div>
   )
 }

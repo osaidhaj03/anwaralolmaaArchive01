@@ -1,7 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { CategoryDetailCourses } from '../../components/public/CategoryDetailCourses'
 import { CategoryDetailHero } from '../../components/public/CategoryDetailHero'
-import { CategoryDetailLinks } from '../../components/public/CategoryDetailLinks'
 import { PublicPageFooter, PublicPageHeader } from '../../components/public/PublicPageChrome'
 import { useLocalizedArchive } from '../../context/ArchiveDataContext'
 import { useLanguage, type Language } from '../../context/LanguageContext'
@@ -87,14 +86,12 @@ export function CategoryDetailPage() {
     <main className="public-site" dir={dir}>
       <PublicPageHeader activeTo="/categories" copy={copy} />
 
-      <CategoryDetailHero breadcrumb={detail.breadcrumb} category={category} copy={detail} />
+      <CategoryDetailHero breadcrumb={detail.breadcrumb} category={category} />
 
       <section className="public-container category-detail-layout">
         <div className="category-detail-main">
-          <CategoryDetailCourses courses={featuredCourses} openLabel={detail.open} title={detail.topCourses} />
+          <CategoryDetailCourses courses={featuredCourses} title={detail.topCourses} />
         </div>
-
-        <CategoryDetailLinks booksLabel={detail.books} fatwaLabel={language === 'ar' ? 'فتاوى مرتبطة' : 'Related fatwas'} relatedLabel={detail.related} scholarsLabel={detail.scholars} viewAllLabel={detail.viewAll} />
       </section>
 
       <PublicPageFooter
