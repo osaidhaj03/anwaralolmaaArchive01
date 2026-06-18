@@ -60,7 +60,7 @@ export function LandingPage() {
       <LandingPreviewSection items={archive.scholars.slice(0, 6)} kind="scholars" link={copy.scholarsLink} linkTo="/scholars" title={copy.scholarsTitle} />
 
       <LandingPreviewSection
-        items={archive.books.slice(0, 5).map((book) => ({ title: book.title }))}
+        items={archive.books.slice(0, 10).map((book) => ({ title: book.title }))}
         kind="books"
         link={language === 'ar' ? 'عرض المكتبة' : 'Open library'}
         linkTo="/library"

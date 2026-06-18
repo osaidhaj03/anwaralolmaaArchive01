@@ -82,7 +82,7 @@ const ArchiveDataContext = createContext<ArchiveDataContextValue | null>(null)
 const STORAGE_KEYS = {
   scholars: 'anwar-archive-scholars',
   courses: 'anwar-archive-courses',
-  books: 'anwar-archive-books',
+  books: 'anwar-archive-books-v2',
   categories: 'anwar-archive-categories',
   lessons: 'anwar-archive-lessons',
 } as const

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Search, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -42,6 +43,52 @@ function getStatLink(label: string): string {
   return '/courses';
 }
 
+function AnimatedCounter({ targetValue }: { targetValue: string }) {
+  const numericString = targetValue.replace(/[^0-9]/g, '')
+  const target = parseInt(numericString, 10) || 0
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (target === 0) {
+      setCount(0)
+      return
+    }
+
+    const duration = 1500 // 1.5 seconds animation duration
+    const startTime = performance.now()
+    let animationFrameId: number
+
+    const updateCount = (timestamp: number) => {
+      const elapsed = timestamp - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const easedProgress = progress * (2 - progress) // easeOutQuad
+      const currentVal = Math.floor(easedProgress * target)
+      setCount(currentVal)
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(updateCount)
+      } else {
+        setCount(target)
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(updateCount)
+
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [target])
+
+  const formatCount = (val: number) => {
+    if (targetValue.includes(',')) {
+      return new Intl.NumberFormat('en-US').format(val)
+    }
+    return String(val)
+  }
+
+  return <>{formatCount(count)}</>
+}
+
 export function LandingHero({
   accent,
   onSearchChange,
@@ -55,10 +102,6 @@ export function LandingHero({
 }: LandingHeroProps) {
   return (
     <section className="hero-section islamic-soft-pattern" id="home">
-      <div aria-hidden="true" className="hero-laptop-screen">
-        <img alt="" src="/scholars/Screenshot 2026-06-16 222008.png" />
-      </div>
-
       <div className="public-container hero-grid">
         <div className="hero-copy">
           <h1>{title}</h1>
@@ -87,8 +130,10 @@ export function LandingHero({
         {stats.map(({ icon: Icon, label, value }) => (
           <Link key={label} to={getStatLink(label)} style={{ textDecoration: 'none', color: 'inherit', display: 'contents' }}>
             <div>
-              <Icon size={24} />
-              <strong>{value}</strong>
+              <div className="stat-icon-wrapper">
+                <Icon size={24} />
+              </div>
+              <strong><AnimatedCounter targetValue={value} /></strong>
               <span>{label}</span>
             </div>
           </Link>
