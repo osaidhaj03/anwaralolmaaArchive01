@@ -129,7 +129,7 @@ export function LandingHero({
       <div className="public-container stat-strip">
         {stats.map(({ icon: Icon, label, value }) => (
           <Link key={label} to={getStatLink(label)} style={{ textDecoration: 'none', color: 'inherit', display: 'contents' }}>
-            <div>
+            <div className="stat-strip-item">
               <div className="stat-icon-wrapper">
                 <Icon size={24} />
               </div>

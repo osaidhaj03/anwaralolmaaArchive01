@@ -41,8 +41,10 @@ export function PublicStatStrip({ className, iconSize = 23, items }: PublicStatS
     <div className={className}>
       {items.map(({ icon: Icon, label, value }) => (
         <Link key={label} to={getStatLink(label)} style={{ textDecoration: 'none', color: 'inherit', display: 'contents' }}>
-          <div>
-            <Icon size={iconSize} />
+          <div className="stat-strip-item">
+            <span className="stat-icon-wrapper" aria-hidden="true">
+              <Icon size={iconSize} />
+            </span>
             <strong>{value}</strong>
             <span>{label}</span>
           </div>
