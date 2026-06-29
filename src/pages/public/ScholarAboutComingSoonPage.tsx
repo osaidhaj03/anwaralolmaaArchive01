@@ -28,6 +28,9 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     lessons: 'الدروس',
     rating: 'التقييم',
     successText: 'تم تسجيل بريدك في القائمة البريدية.',
+    birthYear: 'سنة الميلاد',
+    deathYear: 'سنة الوفاة',
+    lang: 'ar',
   },
   en: {
     breadcrumb: 'Home / Scholars / About',
@@ -49,6 +52,9 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     lessons: 'Lessons',
     rating: 'Rating',
     successText: 'Your email has been added to the newsletter list.',
+    birthYear: 'Birth Year',
+    deathYear: 'Death Year',
+    lang: 'en',
   },
   uz: {
     breadcrumb: 'Bosh sahifa / Ustozlar / Haqida',
@@ -70,6 +76,9 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     lessons: 'Darslar',
     rating: 'Reyting',
     successText: 'Emailingiz xabarnomalar ro‘yxatiga qo‘shildi.',
+    birthYear: 'Tug‘ilgan yili',
+    deathYear: 'Vafot etgan yili',
+    lang: 'uz',
   },
   uzCyr: {
     breadcrumb: 'Бош саҳифа / Устозлар / Ҳақида',
@@ -82,7 +91,7 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     references: 'Шарҳ ва таҳлил',
     referencesText: 'Матнлар шарҳи, атамалар ва умумий масалаларни аниқлаштиришга қаратилган эътибор.',
     outreach: 'Жавоб ва йўриқнома',
-    outreachText: 'Илмий мавзулардаги тез-тез сўраладиган саволларга қисқа ва батафсил жавоблар.',
+    outreachText: 'Илмий мавзулардаги тез-тез сўраладиган саволларга қишқа ва батафсил жавоблар.',
     highlights: 'Асосий кўрсаткичлар',
     profile: 'Профиль',
     field: 'Йўналиш',
@@ -91,6 +100,9 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     lessons: 'Дарслар',
     rating: 'Рейтинг',
     successText: 'Эмаилингиз хабарномалар рўйхатига қўшилди.',
+    birthYear: 'Туғилган йили',
+    deathYear: 'Вафот этган йили',
+    lang: 'uzCyr',
   },
   ru: {
     breadcrumb: 'Главная / Ученые / Об ученом',
@@ -112,6 +124,9 @@ const aboutCopy: Record<Language, Record<string, string>> = {
     lessons: 'Уроки',
     rating: 'Рейтинг',
     successText: 'Ваш email добавлен в список рассылки.',
+    birthYear: 'Год рождения',
+    deathYear: 'Год смерти',
+    lang: 'ru',
   },
 }
 
@@ -121,12 +136,15 @@ export function ScholarAboutComingSoonPage() {
   const copy = aboutCopy[language]
   const scholarsPageCopy = scholarsCopy[language]
   const archive = useLocalizedArchive(language)
-  const index = Number(scholarId) - 1
-  const scholar = archive.scholars[index]
+  
+  const scholar = archive.scholars.find((s) => s.id === scholarId) || archive.scholars[Number(scholarId) - 1]
 
   if (!scholar) {
     return <Navigate to="/scholars" replace />
   }
+
+  const scholarIndex = archive.scholars.findIndex((s) => s.id === scholar.id)
+  const index = scholarIndex !== -1 ? scholarIndex : Number(scholarId) - 1
 
   return (
     <main className="public-site" dir={dir}>
@@ -135,7 +153,7 @@ export function ScholarAboutComingSoonPage() {
       <ScholarAboutHero backLabel={copy.back} breadcrumb={copy.breadcrumb} field={scholar.field} image={scholar.image} name={scholar.name} profileLabel={copy.profile} profileTo={`/scholars/${index + 1}`} title={copy.title} />
 
       <section className="public-container scholar-profile-layout">
-        <ScholarAboutContent copy={copy} />
+        <ScholarAboutContent copy={copy} bioLong={scholar.bioLong} />
         <ScholarAboutHighlights copy={copy} scholar={scholar} />
       </section>
 

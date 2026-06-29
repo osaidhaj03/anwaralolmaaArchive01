@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { ChevronDown, Languages, LogIn, Menu, Moon, Search, Sun, type LucideIcon } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Languages, Menu, Moon, Sun, type LucideIcon } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { BrandMark } from './AdminIcons'
 import { useLanguage, type Language } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
@@ -22,58 +22,29 @@ type PublicHeaderProps = {
   themeLabel: string
 }
 
-export function PublicHeader({ activeTo, brand, login, nav, searchLabel, subtitle, themeLabel }: PublicHeaderProps) {
+export function PublicHeader({ activeTo, brand, login, nav, themeLabel }: PublicHeaderProps) {
   const { language, setLanguage } = useLanguage()
   const { theme, toggleTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [headerSearch, setHeaderSearch] = useState('')
-  const navigate = useNavigate()
-
-  function handleHeaderSearchSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const query = headerSearch.trim()
-    navigate(query ? `/search?q=${encodeURIComponent(query)}` : '/search')
-  }
 
   return (
     <header className="public-header">
       <div className="public-container public-header__inner">
-        <Link className="public-brand" to="/">
+        <Link aria-label={brand} className="public-brand" to="/">
           <BrandMark />
-          <div>
-            <strong>{brand}</strong>
-            <span>{subtitle}</span>
-          </div>
         </Link>
 
-        {activeTo === '/' && (
-          <form className="public-header-mobile-search" onSubmit={handleHeaderSearchSubmit}>
-            <Search size={15} />
-            <input
-              type="text"
-              value={headerSearch}
-              onChange={(e) => setHeaderSearch(e.target.value)}
-              placeholder={language === 'ar' ? 'بحث...' : 'Search...'}
-            />
-          </form>
-        )}
-
         <nav className="public-nav" aria-label="Site links">
-          {nav.map((item) => {
-            const Icon = item.icon
-            return (
-              <Link className={item.to === activeTo ? 'is-active' : ''} key={item.to} to={item.to}>
-                <Icon size={17} />
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
+          {nav.map((item) => (
+            <Link className={item.to === activeTo ? 'is-active' : ''} key={item.to} to={item.to}>
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <HeaderActions
           language={language}
           login={login}
-          searchLabel={searchLabel}
           setLanguage={setLanguage}
           theme={theme}
           themeLabel={themeLabel}
@@ -96,26 +67,21 @@ export function PublicHeader({ activeTo, brand, login, nav, searchLabel, subtitl
           </summary>
           <div className="public-mobile-menu__panel">
             <nav aria-label="Mobile site links">
-              {nav.map((item) => {
-                const Icon = item.icon
-                return (
-                  <Link
-                    className={item.to === activeTo ? 'is-active' : ''}
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
-                  </Link>
-                )
-              })}
+              {nav.map((item) => (
+                <Link
+                  className={item.to === activeTo ? 'is-active' : ''}
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
             </nav>
             <HeaderActions
               language={language}
               login={login}
               onActionClick={() => setMenuOpen(false)}
-              searchLabel={searchLabel}
               setLanguage={setLanguage}
               theme={theme}
               themeLabel={themeLabel}
@@ -132,7 +98,6 @@ function HeaderActions({
   language,
   login,
   onActionClick,
-  searchLabel,
   setLanguage,
   theme,
   themeLabel,
@@ -141,7 +106,6 @@ function HeaderActions({
   language: Language
   login: string
   onActionClick?: () => void
-  searchLabel: string
   setLanguage: (language: Language) => void
   theme: 'light' | 'dark'
   themeLabel: string
@@ -151,22 +115,18 @@ function HeaderActions({
 
   return (
     <div className="public-actions">
-      <Link className="public-icon-button" to="/search" aria-label={searchLabel} onClick={onActionClick}>
-        <Search size={19} />
-      </Link>
       <button className="public-icon-button" onClick={toggleTheme} type="button" aria-label={themeLabel}>
         {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
       </button>
-      
+
       <div className="public-language-dropdown-container">
         <button
-          className="public-language-select-wrap"
-          type="button"
+          aria-label={getLanguageLabel(language)}
+          className="public-language-select-wrap public-language-icon-only"
           onClick={() => setDropdownOpen(!dropdownOpen)}
+          type="button"
         >
-          <Languages size={17} />
-          <span className="selected-lang-label">{getLanguageLabel(language)}</span>
-          <ChevronDown size={14} className={`chevron-down-icon ${dropdownOpen ? 'is-open' : ''}`} />
+          <Languages size={18} />
         </button>
 
         {dropdownOpen && (
@@ -174,52 +134,52 @@ function HeaderActions({
             <div className="public-language-dropdown-backdrop" onClick={() => setDropdownOpen(false)} />
             <div className="public-language-dropdown-menu">
               <button
-                type="button"
                 className={language === 'ar' ? 'is-active' : ''}
                 onClick={() => {
                   setLanguage('ar')
                   setDropdownOpen(false)
                 }}
+                type="button"
               >
                 العربية
               </button>
               <button
-                type="button"
                 className={language === 'uz' ? 'is-active' : ''}
                 onClick={() => {
                   setLanguage('uz')
                   setDropdownOpen(false)
                 }}
+                type="button"
               >
                 O'zbekcha
               </button>
               <button
-                type="button"
                 className={language === 'uzCyr' ? 'is-active' : ''}
                 onClick={() => {
                   setLanguage('uzCyr')
                   setDropdownOpen(false)
                 }}
+                type="button"
               >
-                Ўзбекча
+                O'zbekcha Cyrillic
               </button>
               <button
-                type="button"
                 className={language === 'ru' ? 'is-active' : ''}
                 onClick={() => {
                   setLanguage('ru')
                   setDropdownOpen(false)
                 }}
+                type="button"
               >
                 Русский
               </button>
               <button
-                type="button"
                 className={language === 'en' ? 'is-active' : ''}
                 onClick={() => {
                   setLanguage('en')
                   setDropdownOpen(false)
                 }}
+                type="button"
               >
                 English
               </button>
@@ -229,7 +189,6 @@ function HeaderActions({
       </div>
 
       <Link className="login-button" to="/login" onClick={onActionClick}>
-        <LogIn size={17} />
         {login}
       </Link>
     </div>
@@ -238,11 +197,17 @@ function HeaderActions({
 
 function getLanguageLabel(lang: Language) {
   switch (lang) {
-    case 'ar': return 'العربية'
-    case 'uz': return 'O\'zbekcha'
-    case 'uzCyr': return 'Ўзбекча'
-    case 'ru': return 'Русский'
-    case 'en': return 'English'
-    default: return ''
+    case 'ar':
+      return 'العربية'
+    case 'uz':
+      return "O'zbekcha"
+    case 'uzCyr':
+      return "O'zbekcha Cyrillic"
+    case 'ru':
+      return 'Русский'
+    case 'en':
+      return 'English'
+    default:
+      return ''
   }
 }

@@ -7,6 +7,7 @@ type CategoryDetailItem = {
   lessons: number
   text: string
   title: string
+  imageUrl?: string
 }
 
 type CategoryDetailHeroProps = {
@@ -24,7 +25,11 @@ export function CategoryDetailHero({ breadcrumb, category }: CategoryDetailHeroP
         <div className="category-detail-head">
           <div className="category-detail-copy">
             <div className="category-detail-badge">
-              <Icon size={26} />
+              {category.imageUrl ? (
+                <img src={category.imageUrl} alt={category.title} style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
+              ) : (
+                <Icon size={26} />
+              )}
               <strong>{category.title}</strong>
             </div>
             <h1>{category.title}</h1>

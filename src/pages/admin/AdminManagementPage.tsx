@@ -14,11 +14,15 @@ type AdminManagementPageProps = {
   onSaveRow?: (row: Record<string, string>, index: number | null) => void
   onDeleteRow?: (index: number) => void
   onToggleRowStatus?: (index: number, language: Language) => void
+  onAddClick?: () => void
+  onEditClick?: (row: Record<string, string>, index: number) => void
+  onImportClick?: () => void
 }
 
-export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, onToggleRowStatus, rowsOverride }: AdminManagementPageProps) {
+export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, onToggleRowStatus, rowsOverride, onAddClick, onEditClick, onImportClick }: AdminManagementPageProps) {
   const { language } = useLanguage()
   const copy = managementCopy[language]
+  const isLecturesPage = page.title === 'إدارة المحاضرات العامة' || page.title === 'Public Lectures'
   const [rows, setRows] = useState(page.rows)
   const sourceRows = rowsOverride ?? rows
   const [query, setQuery] = useState('')
@@ -45,6 +49,10 @@ export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, 
   const visibleRows = filteredRows.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
 
   function openAddDialog() {
+    if (onAddClick) {
+      onAddClick()
+      return
+    }
     const blankRow = Object.fromEntries(page.columns.map((column) => [column.key, '']))
     setEditingRow(blankRow)
     setEditingIndex(null)
@@ -52,6 +60,10 @@ export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, 
 
   function openEditDialog(row: Record<string, string>) {
     const originalIndex = sourceRows.indexOf(row)
+    if (onEditClick) {
+      onEditClick(row, originalIndex)
+      return
+    }
     setEditingRow({ ...row })
     setEditingIndex(originalIndex)
   }
@@ -121,11 +133,21 @@ export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, 
 
   return (
     <div className="admin-page">
-      <AdminManagementHero actionLabel={page.actionLabel} adminLabel={copy.admin} description={page.description} exportLabel={copy.export} onAdd={openAddDialog} onExport={exportRows} title={page.title} />
+      <AdminManagementHero
+        actionLabel={page.actionLabel}
+        adminLabel={copy.admin}
+        description={page.description}
+        exportLabel={copy.export}
+        importLabel={copy.import}
+        onAdd={openAddDialog}
+        onExport={exportRows}
+        onImport={onImportClick}
+        title={page.title}
+      />
 
       <AdminManagementStats stats={page.stats} title={page.title} />
 
-      <section className="management-layout">
+      <section className={isLecturesPage ? "management-layout-full" : "management-layout"}>
         <AdminManagementTable
           activeFilter={activeFilter}
           columns={page.columns}
@@ -152,7 +174,9 @@ export function AdminManagementPage({ page, getRowHref, onDeleteRow, onSaveRow, 
           visibleRows={visibleRows}
         />
 
-        <AdminManagementSidePanels insights={page.insights} insightsTitle={copy.insights} notes={page.notes} notesTitle={copy.notes} />
+        {!isLecturesPage && (
+          <AdminManagementSidePanels insights={page.insights} insightsTitle={copy.insights} notes={page.notes} notesTitle={copy.notes} />
+        )}
       </section>
 
       {editingRow ? (
@@ -195,6 +219,7 @@ const managementCopy: Record<Language, Record<string, string>> = {
   ar: {
     admin: 'لوحة التحكم',
     export: 'تصدير',
+    import: 'استيراد',
     filters: 'الفلاتر',
     actions: 'الإجراءات',
     edit: 'تعديل',
@@ -218,6 +243,7 @@ const managementCopy: Record<Language, Record<string, string>> = {
   en: {
     admin: 'Admin Panel',
     export: 'Export',
+    import: 'Import',
     filters: 'Filters',
     actions: 'Actions',
     edit: 'Edit',
@@ -241,6 +267,7 @@ const managementCopy: Record<Language, Record<string, string>> = {
   uz: {
     admin: 'Boshqaruv paneli',
     export: 'Eksport',
+    import: 'Import',
     filters: 'Filtrlar',
     actions: 'Harakatlar',
     edit: 'Tahrirlash',
@@ -264,6 +291,7 @@ const managementCopy: Record<Language, Record<string, string>> = {
   uzCyr: {
     admin: 'Бошқарув панели',
     export: 'Экспорт',
+    import: 'Импорт',
     filters: 'Филтрлар',
     actions: 'Ҳаракатлар',
     edit: 'Таҳрирлаш',
@@ -287,6 +315,7 @@ const managementCopy: Record<Language, Record<string, string>> = {
   ru: {
     admin: 'Панель управления',
     export: 'Экспорт',
+    import: 'Импорт',
     filters: 'Фильтры',
     actions: 'Действия',
     edit: 'Редактировать',

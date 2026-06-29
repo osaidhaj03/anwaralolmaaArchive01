@@ -1,5 +1,6 @@
-import { type ComponentType, useEffect, useRef } from 'react'
+import { type ComponentType, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { CalendarDays, Image, LibraryBig, Newspaper, PenLine } from 'lucide-react'
 import { PublicSectionHeading } from './PublicSectionHeading'
 import { ScholarCard } from './ScholarCard'
 import { CourseCard } from './CourseCard'
@@ -10,9 +11,19 @@ type PreviewCategory = {
   title: string
   text: string
   icon: ComponentType<{ size?: number }>
+  imageUrl?: string
 }
 
 type PreviewBook = {
+  title: string
+}
+
+type InfoItem = {
+  author?: string
+  date?: string
+  image?: string
+  meta?: string
+  text: string
   title: string
 }
 
@@ -46,53 +57,15 @@ type LandingPreviewSectionProps =
     items: PreviewBook[]
     meta: string
   }
+  | {
+    kind: 'articles' | 'digital-library' | 'gallery' | 'news'
+    title: string
+    link: string
+    linkTo: string
+    items: InfoItem[]
+  }
 
 export function LandingPreviewSection(props: LandingPreviewSectionProps) {
-  const scholarsTrackRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (props.kind !== 'scholars') return
-
-    let active = true
-    const updateScales = () => {
-      if (!active) return
-      const track = scholarsTrackRef.current
-      if (track) {
-        const cards = track.children
-        const containerRect = track.parentElement?.getBoundingClientRect()
-        if (containerRect) {
-          const containerCenter = containerRect.left + containerRect.width / 2
-          for (let i = 0; i < cards.length; i++) {
-            const card = cards[i] as HTMLElement
-            const cardRect = card.getBoundingClientRect()
-            const cardCenter = cardRect.left + cardRect.width / 2
-            const distanceFromCenter = Math.abs(containerCenter - cardCenter)
-
-            // Non-linear scale: 1.7 at center, ~1.43 on sides, fading to 1.0
-            const maxDistance = 1020
-            const x = distanceFromCenter / maxDistance
-            let scale = 1.0
-            if (x < 1) {
-              scale = 1.0 + 0.7 * Math.pow(1 - x, 0.7)
-            }
-
-            // Direct style transform, z-index, and transition updates
-            const zIndex = Math.round(100 - distanceFromCenter / 5)
-            card.style.transform = `scale(${scale})`
-            card.style.zIndex = `${zIndex}`
-            card.style.transition = 'transform 0.1s ease, z-index 0.1s ease'
-          }
-        }
-      }
-      requestAnimationFrame(updateScales)
-    }
-
-    requestAnimationFrame(updateScales)
-    return () => {
-      active = false
-    }
-  }, [props.kind])
-
   return (
     <section className="public-section" id={props.kind}>
       <PublicSectionHeading link={props.link} linkTo={props.linkTo} title={props.title} />
@@ -104,7 +77,11 @@ export function LandingPreviewSection(props: LandingPreviewSectionProps) {
             return (
               <Link className="category-card" key={category.id} to={`/categories/${category.id}`}>
                 <span>
-                  <Icon size={28} />
+                  {category.imageUrl ? (
+                    <img src={category.imageUrl} alt={category.title} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                  ) : (
+                    <Icon size={28} />
+                  )}
                 </span>
                 <h3>{category.title}</h3>
                 <p>{category.text}</p>
@@ -115,31 +92,20 @@ export function LandingPreviewSection(props: LandingPreviewSectionProps) {
       ) : null}
 
       {props.kind === 'courses' ? (
-        <div className="public-container courses-marquee-wrapper">
-          <div className="courses-marquee-track">
-            {[...props.items, ...props.items].map((course, index) => (
-              <CourseCard
-                key={`${course.title}-${index}`}
-                href={`/courses/${(index % props.items.length) + 1}`}
-                course={course}
-                showProgress={false}
-              />
-            ))}
-          </div>
+        <div className="public-container landing-courses-rail">
+          {props.items.map((course, index) => (
+            <div className="landing-course-card-wrap" key={course.title}>
+              <CourseCard href={`/courses/${index + 1}`} course={course} showProgress={false} />
+            </div>
+          ))}
         </div>
       ) : null}
 
       {props.kind === 'scholars' ? (
-        <div className="public-container scholars-marquee-wrapper">
-          <div ref={scholarsTrackRef} className="scholars-marquee-track">
-            {[...props.items, ...props.items].map((scholar, index) => (
-              <ScholarCard
-                key={`${scholar.name}-${index}`}
-                aboutTo={`/scholars/${(index % props.items.length) + 1}`}
-                scholar={scholar}
-              />
-            ))}
-          </div>
+        <div className="public-container landing-scholars-strip">
+          {props.items.map((scholar, index) => (
+            <ScholarCard key={scholar.name} aboutTo={`/scholars/${index + 1}`} scholar={scholar} />
+          ))}
         </div>
       ) : null}
 
@@ -163,6 +129,58 @@ export function LandingPreviewSection(props: LandingPreviewSectionProps) {
           ))}
         </div>
       ) : null}
+
+      {props.kind === 'news' ? (
+        <div className="public-container landing-news-list">
+          {props.items.map((item) => (
+            <Link className="landing-news-item" key={item.title} to={props.linkTo}>
+              <small>{item.date ?? item.meta}</small>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
+      {isInfoSection(props) && props.kind !== 'news' ? (
+        <div className={`public-container landing-info-grid landing-info-grid--${props.kind}`}>
+          {props.items.map((item, index) => (
+            <Link className="landing-info-card" key={item.title} to={props.linkTo}>
+              {renderInfoMedia(props.kind, item, index)}
+              {props.kind === 'gallery' ? null : (
+                <div className="landing-info-card__body">
+                  <small>{item.meta ?? item.author ?? item.date}</small>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              )}
+            </Link>
+          ))}
+        </div>
+      ) : null}
     </section>
+  )
+}
+
+function isInfoSection(props: LandingPreviewSectionProps): props is Extract<LandingPreviewSectionProps, { kind: 'articles' | 'digital-library' | 'gallery' | 'news' }> {
+  return props.kind === 'articles' || props.kind === 'digital-library' || props.kind === 'gallery' || props.kind === 'news'
+}
+
+function renderInfoMedia(kind: 'articles' | 'digital-library' | 'gallery' | 'news', item: InfoItem, index: number): ReactNode {
+  if (kind === 'gallery') {
+    return (
+      <div className={`landing-info-card__media landing-info-card__media--photo tone-${index % 4}`}>
+        {item.image ? <img alt="" src={item.image} /> : <Image size={30} />}
+      </div>
+    )
+  }
+
+  const Icon = kind === 'articles' ? PenLine : kind === 'digital-library' ? LibraryBig : CalendarDays
+  const accent = kind === 'news' ? <Newspaper size={20} /> : <Icon size={22} />
+
+  return (
+    <div className={`landing-info-card__media landing-info-card__media--icon tone-${index % 4}`}>
+      {accent}
+    </div>
   )
 }

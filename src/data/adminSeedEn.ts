@@ -16,7 +16,7 @@ import {
   UsersRound,
 } from 'lucide-react'
 import type { AdminPageSeed } from './adminSeed'
-import { formatNumber, sharedArchiveMetrics, sharedBooks, sharedCategories, sharedCourses, sharedScholars } from './shared/archive'
+import { formatNumber, sharedArchiveMetrics, sharedBooks, sharedCategories, sharedCourses, sharedScholars, sharedLectures, pickLocalizedText } from './shared/archive'
 
 export const adminPagesEn: Record<string, AdminPageSeed> = {
   categories: {
@@ -177,6 +177,37 @@ export const adminPagesEn: Record<string, AdminPageSeed> = {
     })),
     insights: ['The lesson list is now anchored to the same course source.', 'Lesson ordering is required for the public course page.', 'Attachments can move into the shared source next.'],
     notes: ['Validate YouTube links before publishing.', 'Use a stable duration format.'],
+  },
+  lectures: {
+    title: 'Public Lectures Management',
+    description: 'Organize and manage standalone public lectures, updates parts, streaming links, and metadata.',
+    actionLabel: 'Add Lecture',
+    searchPlaceholder: 'Search lecture, scholar or category...',
+    filters: ['All statuses', 'Published', 'Draft', 'Review'],
+    stats: [
+      { label: 'Total Lectures', value: String(sharedArchiveMetrics.public.lectures), change: '+5 this month', icon: PlaySquare, tone: 'teal' },
+      { label: 'Est. Listening Hours', value: '430 hours', change: '+32 hours', icon: Clock3, tone: 'green' },
+      { label: 'Active Scholars', value: String(sharedArchiveMetrics.public.scholars), change: 'active', icon: UsersRound, tone: 'blue' },
+      { label: 'Need Review', value: '1', change: 'Audio links', icon: AlertTriangle, tone: 'rose' },
+    ],
+    columns: [
+      { key: 'title', label: 'Lecture' },
+      { key: 'scholar', label: 'Scholar' },
+      { key: 'category', label: 'Category' },
+      { key: 'parts', label: 'Parts Count' },
+      { key: 'views', label: 'Views' },
+      { key: 'status', label: 'Status' },
+    ],
+    rows: sharedLectures.map((item, index) => ({
+      title: pickLocalizedText(item.title, 'en'),
+      scholar: pickLocalizedText(item.scholar, 'en'),
+      category: pickLocalizedText(item.category, 'en'),
+      parts: `${item.parts.length} parts`,
+      views: formatNumber(item.views),
+      status: index === 2 ? 'Draft' : 'Published',
+    })),
+    insights: ['Public lectures are standalone events and do not belong to a course.', 'Each lecture can have one or multiple parts.', 'Users can toggle between video or audio streams for each part.'],
+    notes: ['Verify both video and audio streams are configured.', 'We recommend attaching a summary or text for longer lectures.'],
   },
   youtubeImport: makeOpsPage('YouTube Import', 'Import channels and playlists, then prepare them for editorial review.', 'Start Import', UploadCloud),
   importReview: makeOpsPage('Import Review', 'Classify imported videos and link them to category, scholar, and course.', 'Approve Selected', CheckCircle2),

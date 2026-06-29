@@ -8,15 +8,32 @@ type ScholarAboutHighlightsProps = {
     field: string
     lessons: number
     rating: string
+    birthYear?: string
+    deathYear?: string
   }
 }
 
 export function ScholarAboutHighlights({ copy, scholar }: ScholarAboutHighlightsProps) {
+  const showBirth = scholar.birthYear && scholar.birthYear !== '—' && scholar.birthYear.trim() !== ''
+  const showDeath = scholar.deathYear && scholar.deathYear !== '—' && scholar.deathYear.trim() !== ''
+
   return (
     <aside className="scholar-profile-side">
       <article className="scholar-profile-card">
         <h2>{copy.highlights}</h2>
         <dl className="scholar-profile-info">
+          {showBirth && (
+            <div>
+              <dt>{copy.birthYear || (copy.lang === 'ar' ? 'سنة الميلاد' : 'Birth Year')}</dt>
+              <dd>{scholar.birthYear}</dd>
+            </div>
+          )}
+          {showDeath && (
+            <div>
+              <dt>{copy.deathYear || (copy.lang === 'ar' ? 'سنة الوفاة' : 'Death Year')}</dt>
+              <dd>{scholar.deathYear}</dd>
+            </div>
+          )}
           <div>
             <dt>{copy.field}</dt>
             <dd>{scholar.field}</dd>

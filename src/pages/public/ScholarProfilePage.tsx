@@ -90,16 +90,20 @@ export function ScholarProfilePage() {
   const pageCopy = scholarsCopy[language]
   const archive = useLocalizedArchive(language)
   const copy = profileCopy[language]
-  const index = Number(scholarId) - 1
-  const scholar = archive.scholars[index]
+  
+  const scholar = archive.scholars.find((s) => s.id === scholarId) || archive.scholars[Number(scholarId) - 1]
 
   if (!scholar) {
     return <Navigate to="/scholars" replace />
   }
 
+  const scholarIndex = archive.scholars.findIndex((s) => s.id === scholar.id)
+  const index = scholarIndex !== -1 ? scholarIndex : Number(scholarId) - 1
+
   const relatedCourses = archive.courses
     .map((course, courseIndex) => ({ course, courseIndex }))
     .filter(({ course }) => {
+      if (scholar.categoryId && course.categoryId === scholar.categoryId) return true
       const combined = `${course.teacher} ${course.category} ${course.title}`.toLowerCase()
       return combined.includes(scholar.name.split(' ').slice(-1)[0].toLowerCase()) || combined.includes(scholar.field.split(' ')[0].toLowerCase())
     })
@@ -123,7 +127,7 @@ export function ScholarProfilePage() {
       <section className="public-container scholar-profile-layout">
         <div className="scholar-profile-main">
           <DetailTextCard className="scholar-profile-card" title={copy.overview}>
-            <p>{copy.bio}</p>
+            <p>{scholar.bioShort || copy.bio}</p>
           </DetailTextCard>
 
           <DetailRelatedCard

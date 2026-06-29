@@ -16,7 +16,7 @@ import {
   UploadCloud,
   UsersRound,
 } from 'lucide-react'
-import { formatNumber, sharedArchiveMetrics, sharedBooks, sharedCategories, sharedCourses, sharedScholars } from './shared/archive'
+import { formatNumber, sharedArchiveMetrics, sharedBooks, sharedCategories, sharedCourses, sharedScholars, sharedLectures } from './shared/archive'
 
 export type AdminStat = {
   label: string
@@ -205,6 +205,37 @@ export const adminPages: Record<string, AdminPageSeed> = {
     })),
     insights: ['مصدر الدورات هو نفسه الذي يغذي قائمة الدروس.', 'أرقام الدروس ضرورية لصفحة مشاهدة الدرس.', 'المرفقات ستصبح لاحقاً جزءاً من المصدر المشترك أيضاً.'],
     notes: ['تحقق من رابط يوتيوب قبل النشر.', 'استخدم مدة الفيديو بصيغة موحدة.'],
+  },
+  lectures: {
+    title: 'إدارة المحاضرات العامة',
+    description: 'تنظيم وإدارة المحاضرات العامة المستقلة واللقاءات وتحديث أجزائها وروابط البث والمحتوى.',
+    actionLabel: 'إضافة محاضرة جديدة',
+    searchPlaceholder: 'ابحث عن محاضرة، شيخ أو تصنيف...',
+    filters: ['كل الحالات', 'منشور', 'مسودة', 'مراجعة'],
+    stats: [
+      { label: 'إجمالي المحاضرات', value: String(sharedArchiveMetrics.public.lectures), change: '+5 هذا الشهر', icon: PlaySquare, tone: 'teal' },
+      { label: 'ساعات الاستماع المقدرة', value: '430 ساعة', change: '+32 ساعة', icon: Clock3, tone: 'green' },
+      { label: 'المشايخ المشاركين', value: String(sharedArchiveMetrics.public.scholars), change: 'نشطين', icon: UsersRound, tone: 'blue' },
+      { label: 'محاضرات تحتاج مراجعة', value: '1', change: 'روابط الصوت', icon: AlertTriangle, tone: 'rose' },
+    ],
+    columns: [
+      { key: 'title', label: 'المحاضرة' },
+      { key: 'scholar', label: 'المحاضر' },
+      { key: 'category', label: 'القسم' },
+      { key: 'parts', label: 'عدد الأجزاء' },
+      { key: 'views', label: 'المشاهدات' },
+      { key: 'status', label: 'الحالة' },
+    ],
+    rows: sharedLectures.map((item, index) => ({
+      title: item.title.ar,
+      scholar: item.scholar.ar,
+      category: item.category.ar,
+      parts: `${item.parts.length} أجزاء`,
+      views: formatNumber(item.views),
+      status: index === 2 ? 'مسودة' : 'منشور',
+    })),
+    insights: ['المحاضرات العامة تكون مستقلة ولا تتبع دورة معينة.', 'كل محاضرة يمكن أن تحتوي على جزء واحد أو أجزاء متعددة.', 'يمكن للمستخدمين التبديل بين تشغيل الفيديو أو الصوت لكل جزء.'],
+    notes: ['تأكد من إدخال روابط الفيديو والصوت لكل جزء.', 'يفضل إرفاق ملخص أو متن مع المحاضرات الطويلة.'],
   },
   youtubeImport: makeOpsPage('الاستيراد من يوتيوب', 'استيراد بيانات القنوات وقوائم التشغيل وتجهيزها للمراجعة قبل النشر.', 'بدء استيراد جديد', UploadCloud),
   importReview: makeOpsPage('مراجعة الاستيراد', 'تصنيف الفيديوهات المستوردة وربطها بالقسم والشيخ والدورة المناسبة.', 'اعتماد المحدد', CheckCircle2),

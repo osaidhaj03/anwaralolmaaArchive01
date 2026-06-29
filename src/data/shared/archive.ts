@@ -1,7 +1,7 @@
 import { BookOpen, GraduationCap, LibraryBig, UserRound, type LucideIcon } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 
-type Localized = {
+export type Localized = {
   ar: string
   en: string
   uz?: string
@@ -17,7 +17,16 @@ export type SharedCategory = {
   courses: number
   lessons: number
   books: number
+  status?: Localized
+  updated?: Localized
+  iconName?: string
+  imageUrl?: string
+  parentId?: string
+  seoTitle?: string
+  seoDescription?: string
+  seoKeywords?: string
 }
+
 
 export type SharedScholar = {
   id: string
@@ -30,6 +39,16 @@ export type SharedScholar = {
   students: number
   rating: string
   image: string
+  bioShort?: Localized
+  bioLong?: Localized
+  birthYear?: string
+  deathYear?: string
+  categoryId?: string
+  kunya?: Localized
+  madhab?: Localized
+  seoTitle?: string
+  seoDescription?: string
+  seoKeywords?: string
 }
 
 export type SharedCourse = {
@@ -47,6 +66,11 @@ export type SharedCourse = {
   tone: string
   status: Localized
   thumbnail: string
+  descriptionShort?: Localized
+  descriptionLong?: Localized
+  seoTitle?: string
+  seoDescription?: string
+  seoKeywords?: string
 }
 
 export type SharedBook = {
@@ -62,6 +86,29 @@ export type SharedBook = {
   explanations: number
   file: Localized
   status: Localized
+  coverImage?: string
+  bookImages?: string[]
+  downloadLink?: string
+  fileType?: string
+  source?: string
+  kamelahLink?: string
+  descriptionShort?: Localized
+  descriptionLong?: Localized
+  madhab?: Localized
+  volumes?: SharedBookVolume[]
+  downloadLinks?: { url: string; fileType: string; source: string }[]
+  seoTitle?: string
+  seoDescription?: string
+  seoKeywords?: string
+}
+
+export type SharedBookVolume = {
+  title: string
+  downloadLink: string
+  fileType: string
+  coverImage?: string
+  pages?: number
+  coverType?: 'main' | 'custom' | 'none'
 }
 
 export type SharedFatwa = {
@@ -75,6 +122,30 @@ export type SharedFatwa = {
   tone: string
   thumbnail: string
 }
+
+export type SharedLecturePart = {
+  title: Localized
+  duration: string
+  videoUrl?: string
+  audioUrl?: string
+  description?: Localized
+}
+
+export type SharedLecture = {
+  id: string
+  title: Localized
+  scholar: Localized
+  scholarId: string
+  category: Localized
+  categoryId: string
+  views: number
+  date: string
+  tone: string
+  thumbnail: string
+  description?: Localized
+  parts: SharedLecturePart[]
+}
+
 
 export const VIDEO_THUMBNAIL = '/Video thumbnail/seedvideothumb.png'
 
@@ -131,6 +202,105 @@ export const sharedFatwas: SharedFatwa[] = [
   { id: 'repenting-backbiting', title: { ar: 'التوبة من الغيبة والنميمة', en: 'Repenting from backbiting' }, scholar: { ar: 'الشيخ محمد سعيد رسلان', en: 'Shaykh Muhammad Saeed Raslan' }, category: { ar: 'الآداب', en: 'Conduct' }, duration: '5:36', views: 6730, date: '2025-05-11', tone: 'cream', thumbnail: VIDEO_THUMBNAIL },
 ]
 
+export const sharedLectures: SharedLecture[] = [
+  {
+    id: 'importance-of-knowledge',
+    title: { ar: 'أهمية العلم والعمل به', en: 'The Importance of Knowledge and Action' },
+    scholar: { ar: 'الشيخ صالح الفوزان', en: 'Shaykh Saleh Al-Fawzan' },
+    scholarId: 'saleh-fawzan',
+    category: { ar: 'العقيدة', en: 'Aqidah' },
+    categoryId: 'aqidah',
+    views: 8940,
+    date: '2025-06-01',
+    tone: 'green',
+    thumbnail: VIDEO_THUMBNAIL,
+    description: {
+      ar: 'محاضرة قيمة تتناول منزلة العلم في الإسلام ووجوب العمل بمقتضى العلم والتحذير من إهمال العمل.',
+      en: 'A valuable lecture on the status of knowledge in Islam, the obligation of acting upon it, and a warning against neglecting action.'
+    },
+    parts: [
+      {
+        title: { ar: 'الجزء الأول والوحيد', en: 'Part 1' },
+        duration: '45:12',
+        videoUrl: 'https://www.youtube.com/watch?v=mock1',
+        audioUrl: 'https://example.com/audio/mock1.mp3',
+        description: { ar: 'منزلة العلم والعمل به وثمرته في الدنيا والآخرة.', en: 'The status of knowledge and its fruit in this life and the hereafter.' }
+      }
+    ]
+  },
+  {
+    id: 'rights-of-prophet',
+    title: { ar: 'حقوق النبي صلى الله عليه وسلم على أمته', en: 'Rights of the Prophet Over His Ummah' },
+    scholar: { ar: 'الشيخ محمد بن صالح العثيمين', en: 'Shaykh Ibn Uthaymeen' },
+    scholarId: 'ibn-uthaymeen',
+    category: { ar: 'السيرة النبوية', en: 'Prophetic Seerah' },
+    categoryId: 'seerah',
+    views: 12450,
+    date: '2025-05-28',
+    tone: 'navy',
+    thumbnail: VIDEO_THUMBNAIL,
+    description: {
+      ar: 'محاضرة توضح وجوب محبة النبي صلى الله عليه وسلم، وتوقيره، ونصرته، واتباع سنته وشريعته.',
+      en: 'A lecture outlining the obligation of loving, honoring, supporting, and following the Prophet\'s Sunnah.'
+    },
+    parts: [
+      {
+        title: { ar: 'الجزء الأول: وجوب المحبة والاتباع', en: 'Part 1: Obligation of Love and Following' },
+        duration: '32:40',
+        videoUrl: 'https://www.youtube.com/watch?v=mock2_1',
+        audioUrl: 'https://example.com/audio/mock2_1.mp3',
+        description: { ar: 'توضيح وجوب تقديم محبة النبي على النفس والولد والناس أجمعين.', en: 'Explaining the obligation of prioritizing the love of the Prophet.' }
+      },
+      {
+        title: { ar: 'الجزء الثاني: التوقير ونصرة السنة', en: 'Part 2: Honoring and Supporting the Sunnah' },
+        duration: '28:15',
+        videoUrl: 'https://www.youtube.com/watch?v=mock2_2',
+        audioUrl: 'https://example.com/audio/mock2_2.mp3',
+        description: { ar: 'آداب التعامل مع سنته صلى الله عليه وسلم والدفاع عنها.', en: 'Etiquettes of dealing with his Sunnah and defending it.' }
+      }
+    ]
+  },
+  {
+    id: 'etiquette-student-fitnah',
+    title: { ar: 'آداب طالب العلم في الفتن', en: 'Etiquette of the Student of Knowledge During Tribulations' },
+    scholar: { ar: 'الشيخ سعد الشثري', en: 'Shaykh Saad Al-Shithri' },
+    scholarId: 'saad-shithri',
+    category: { ar: 'الفقه وأصوله', en: 'Fiqh and Usul' },
+    categoryId: 'fiqh',
+    views: 6512,
+    date: '2025-05-20',
+    tone: 'gold',
+    thumbnail: VIDEO_THUMBNAIL,
+    description: {
+      ar: 'محاضرة توعوية هامة للطلاب حول كيفية التعامل مع الفتن، والالتزام بأقوال العلماء الكبار وعدم العجلة.',
+      en: 'An important lecture for students on how to deal with tribulations, adhering to the opinions of senior scholars, and avoiding haste.'
+    },
+    parts: [
+      {
+        title: { ar: 'القسم الأول: الصبر والتأني', en: 'Part 1: Patience and Deliberation' },
+        duration: '22:10',
+        videoUrl: 'https://www.youtube.com/watch?v=mock3_1',
+        audioUrl: 'https://example.com/audio/mock3_1.mp3',
+        description: { ar: 'ضرورة الرجوع للعلماء الكبار في النوازل.', en: 'The necessity of referring back to senior scholars.' }
+      },
+      {
+        title: { ar: 'القسم الثاني: حفظ اللسان والائتلاف', en: 'Part 2: Guarding the Tongue and Unity' },
+        duration: '25:34',
+        videoUrl: 'https://www.youtube.com/watch?v=mock3_2',
+        audioUrl: 'https://example.com/audio/mock3_2.mp3',
+        description: { ar: 'التحذير من الغيبة والنميمة وإثارة النزاعات.', en: 'Warning against backbiting, gossip, and raising disputes.' }
+      },
+      {
+        title: { ar: 'القسم الثالث: الثبات العلمي والعملي', en: 'Part 3: Scientific and Practical Steadfastness' },
+        duration: '30:05',
+        videoUrl: 'https://www.youtube.com/watch?v=mock3_3',
+        audioUrl: 'https://example.com/audio/mock3_3.mp3',
+        description: { ar: 'الاستمرار في تلقي العلم والتحلي بالأخلاق الكريمة.', en: 'Continuing the path of acquiring knowledge and displaying noble character.' }
+      }
+    ]
+  }
+]
+
 export const sharedArchiveMetrics = {
   public: {
     categories: 20,
@@ -139,6 +309,7 @@ export const sharedArchiveMetrics = {
     scholars: 48,
     books: 328,
     fatwas: 1532,
+    lectures: 142,
     downloads: 42000,
     reads: 245000,
     students: 156000,
@@ -149,6 +320,7 @@ export const sharedArchiveMetrics = {
     lessons: 12842,
     books: 1245,
     fatwas: 532,
+    lectures: 142,
     views: 2453876,
   },
 }

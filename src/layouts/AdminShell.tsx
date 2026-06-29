@@ -31,6 +31,7 @@ const navItems = [
   { label: { ar: 'العلماء', en: 'Scholars' }, href: '/admin/teachers', icon: UsersRound },
   { label: { ar: 'الكتب', en: 'Books' }, href: '/admin/books', icon: BookOpen },
   { label: { ar: 'الدورات', en: 'Courses' }, href: '/admin/courses', icon: GraduationCap },
+  { label: { ar: 'المحاضرات', en: 'Lectures' }, href: '/admin/lectures', icon: PlayCircle },
   { label: { ar: 'الاستيراد', en: 'Import' }, href: '/admin/youtube-import', icon: PlayCircle },
   { label: { ar: 'مراجعة الاستيراد', en: 'Import Review' }, href: '/admin/import-review', icon: ClipboardList },
   { label: { ar: 'التعليقات والتنبيهات', en: 'Comments & Alerts' }, href: '/admin/comments', icon: MessageCircle },

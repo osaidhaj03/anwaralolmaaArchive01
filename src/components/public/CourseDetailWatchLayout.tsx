@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { BookOpen, X } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { CourseLesson } from '../../context/ArchiveDataContext'
@@ -38,16 +38,89 @@ type CourseDetailWatchLayoutProps = {
 }
 
 export function CourseDetailWatchLayout({ course, language, lessonCountLabel, materials, materialsTitle, openLabel, storedLessons }: CourseDetailWatchLayoutProps) {
-  const [activeLessonIndex, setActiveLessonIndex] = useState(0)
+  const [activeLessonIndex, setActiveLessonIndex] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const lessonParam = params.get('lesson')
+      if (lessonParam) {
+        const val = parseInt(lessonParam, 10)
+        if (!isNaN(val) && val >= 1 && val <= storedLessons.length) {
+          return val - 1
+        }
+      }
+    } catch (e) {}
+    return 0
+  })
+  const [activeVideoLinkIndex, setActiveVideoLinkIndex] = useState(0)
   const [isMaterialsPopupOpen, setIsMaterialsPopupOpen] = useState(false)
-  const activeEmbedUrl = useMemo(() => WATCH_VIDEO_URLS[activeLessonIndex % WATCH_VIDEO_URLS.length], [activeLessonIndex])
+
+  const handleSelectLesson = (idx: number) => {
+    setActiveLessonIndex(idx)
+    try {
+      const url = new URL(window.location.href)
+      url.searchParams.set('lesson', String(idx + 1))
+      window.history.replaceState({}, '', url.toString())
+    } catch (e) {}
+  }
+
+  // Reset video source index when lesson changes
+  useEffect(() => {
+    setActiveVideoLinkIndex(0)
+  }, [activeLessonIndex])
+
+  const activeLesson = storedLessons[activeLessonIndex]
+  const videoLinks = activeLesson?.videoLinks || []
+  
+  const activeVideoUrl = useMemo(() => {
+    if (videoLinks[activeVideoLinkIndex]?.url) {
+      return videoLinks[activeVideoLinkIndex].url
+    }
+    return WATCH_VIDEO_URLS[activeLessonIndex % WATCH_VIDEO_URLS.length]
+  }, [activeLessonIndex, activeVideoLinkIndex, videoLinks])
+
+  const activeLinkType = videoLinks[activeVideoLinkIndex]?.type || 'video'
 
   return (
     <section className="public-container course-detail-layout youtube-style">
       <div className="course-detail-main">
-        <WatchVideoPlayer embedUrl={activeEmbedUrl} />
+        <WatchVideoPlayer videoUrl={activeVideoUrl} poster={activeLesson?.thumbnail} type={activeLinkType} />
 
-        <WatchLessonInfo category={course.category} courseTitle={course.title} language={language} teacher={course.teacher} />
+        {/* Video switcher toolbar if multiple streaming URLs are present */}
+        {videoLinks.length > 1 && (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginRight: '8px' }}>
+              {language === 'ar' ? 'سيرفر المشاهدة والتحميل:' : 'Streaming Server:'}
+            </span>
+            {videoLinks.map((link, idx) => (
+              <button
+                key={`stream-${idx}`}
+                type="button"
+                onClick={() => setActiveVideoLinkIndex(idx)}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '13px',
+                  borderRadius: '6px',
+                  border: activeVideoLinkIndex === idx ? 'none' : '1px solid #cbd5e1',
+                  background: activeVideoLinkIndex === idx ? 'var(--color-gold, #c5a880)' : '#fff',
+                  color: activeVideoLinkIndex === idx ? '#fff' : '#475569',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {link.label || `سيرفر ${idx + 1}`}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <WatchLessonInfo
+          category={course.category}
+          courseTitle={course.title}
+          language={language}
+          teacher={course.teacher}
+          activeLesson={activeLesson}
+        />
 
         <button
           type="button"
@@ -69,7 +142,7 @@ export function CourseDetailWatchLayout({ course, language, lessonCountLabel, ma
         language={language}
         lessonCountLabel={lessonCountLabel}
         activeLessonIndex={activeLessonIndex}
-        onSelectLesson={setActiveLessonIndex}
+        onSelectLesson={handleSelectLesson}
         storedLessons={storedLessons}
       />
 

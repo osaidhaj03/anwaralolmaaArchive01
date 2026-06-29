@@ -1,4 +1,4 @@
-import { Edit3, Search, Trash2 } from 'lucide-react'
+import { Edit3, Search, Trash2, Eye } from 'lucide-react'
 import type { CourseLesson } from '../../context/ArchiveDataContext'
 import type { AdminPageSeed, AdminTableRow } from '../../data/adminSeed'
 
@@ -62,6 +62,25 @@ export function AdminCourseLessonsTable({
                 ))}
                 <td>
                   <div className="row-actions">
+                    <a
+                      href={`/courses/${course.id || 1}?lesson=${lessonIndex + 1}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={copy.view || 'مشاهدة الدرس'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '6px',
+                        borderRadius: '4px',
+                        color: '#64748b',
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <Eye size={16} />
+                    </a>
                     <button onClick={() => onEditLesson(lesson)} title={copy.edit} type="button">
                       <Edit3 size={16} />
                     </button>

@@ -2,6 +2,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { AdminCourseLessonModal } from '../../components/admin/AdminCourseLessonModal'
+import { AdminExcelImportModal } from '../../components/admin/AdminExcelImportModal'
 import { AdminCourseLessonsHero } from '../../components/admin/AdminCourseLessonsHero'
 import { AdminCourseLessonsStats } from '../../components/admin/AdminCourseLessonsStats'
 import { AdminCourseLessonsTable } from '../../components/admin/AdminCourseLessonsTable'
@@ -17,13 +18,14 @@ type AdminCourseLessonsPageProps = {
 export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourseLessonsPageProps) {
   const { courseId } = useParams()
   const { language } = useLanguage()
-  const { deleteLessonRow, lessonsByCourse, reorderLessons: reorderCourseLessons, saveLessonRow } = useArchiveData()
+  const { deleteLessonRow, lessonsByCourse, reorderLessons: reorderCourseLessons, saveLessonRow, saveBulkLessons } = useArchiveData()
   const copy = courseLessonsCopy[language]
   const index = Number(courseId) - 1
   const course = coursesPage.rows[index]
   const [query, setQuery] = useState('')
   const [editingLesson, setEditingLesson] = useState<Record<string, string> | null>(null)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [showImportModal, setShowImportModal] = useState(false)
   const lessons = useMemo(() => lessonsByCourse[String(index)] ?? [], [index, lessonsByCourse])
 
   const BackIcon = language === 'ar' ? ArrowRight : ArrowLeft
@@ -42,6 +44,11 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
       teacher: course.teacher,
       number: `${lessons.length + 1}`,
       status: language === 'ar' ? 'مسودة' : 'Draft',
+      videoLinks: '[]',
+      descriptionShort: '',
+      descriptionLong: '',
+      transcription: '',
+      attachments: '[]',
     })
     setEditingIndex(null)
   }
@@ -54,6 +61,11 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
       status: lesson.status,
       teacher: lesson.teacher,
       title: lesson.title,
+      videoLinks: lesson.videoLinks ? JSON.stringify(lesson.videoLinks) : '[]',
+      descriptionShort: lesson.descriptionShort || '',
+      descriptionLong: lesson.descriptionLong || '',
+      transcription: lesson.transcription || '',
+      attachments: lesson.attachments ? JSON.stringify(lesson.attachments) : '[]',
     })
     setEditingIndex(lessons.indexOf(lesson))
   }
@@ -86,7 +98,7 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
 
   return (
     <div className="admin-page">
-      <AdminCourseLessonsHero BackIcon={BackIcon} addLabel={copy.addLesson} backLabel={copy.back} copy={copy} course={course} onAddLesson={openAddLesson} />
+      <AdminCourseLessonsHero BackIcon={BackIcon} addLabel={copy.addLesson} backLabel={copy.back} copy={copy} course={course} onAddLesson={openAddLesson} onImportExcel={() => setShowImportModal(true)} />
 
       <AdminCourseLessonsStats copy={copy} course={course} lessonsCount={lessons.length} />
 
@@ -115,6 +127,13 @@ export function AdminCourseLessonsPage({ coursesPage, lessonsPage }: AdminCourse
           title={editingIndex === null ? copy.addLesson : copy.edit}
         />
       ) : null}
+
+      {showImportModal ? (
+        <AdminExcelImportModal
+          onClose={() => setShowImportModal(false)}
+          onImport={(importedLessons) => saveBulkLessons(index, importedLessons)}
+        />
+      ) : null}
     </div>
   )
 }
@@ -125,6 +144,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     description: 'إدارة الدروس المرتبطة بهذه الدورة للشيخ',
     back: 'العودة للدورات',
     addLesson: 'إضافة درس',
+    importExcel: 'استيراد من إكسل',
     lessonCount: 'عدد الدروس',
     lessonCountHint: 'حسب بيانات الدورة',
     status: 'حالة الدورة',
@@ -138,6 +158,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     reorder: 'ترتيب الدروس',
     search: 'ابحث في الدروس...',
     actions: 'الإجراءات',
+    view: 'مشاهدة',
     edit: 'تعديل الدرس',
     delete: 'حذف الدرس',
     empty: 'لا توجد دروس مطابقة',
@@ -149,6 +170,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     description: 'Manage lessons linked to this course by',
     back: 'Back to courses',
     addLesson: 'Add Lesson',
+    importExcel: 'Import from Excel',
     lessonCount: 'Lessons',
     lessonCountHint: 'From course data',
     status: 'Course Status',
@@ -162,6 +184,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     reorder: 'Reorder lessons',
     search: 'Search lessons...',
     actions: 'Actions',
+    view: 'View',
     edit: 'Edit lesson',
     delete: 'Delete lesson',
     empty: 'No matching lessons',
@@ -173,6 +196,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     description: 'Ushbu kursga tegishli darslarni boshqarish. Ustoz:',
     back: 'Kurslarga qaytish',
     addLesson: 'Dars qo‘shish',
+    importExcel: 'Exceldan import',
     lessonCount: 'Darslar soni',
     lessonCountHint: 'Kurs ma’lumotlaridan',
     status: 'Kurs holati',
@@ -186,6 +210,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     reorder: 'Darslarni qayta tartiblash',
     search: 'Darslarni qidirish...',
     actions: 'Harakatlar',
+    view: 'Ko‘rish',
     edit: 'Darsni tahrirlash',
     delete: 'Darsni o‘chirish',
     empty: 'Mos darslar topilmadi',
@@ -197,6 +222,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     description: 'Ушбу курсга тегишли дарсларни бошқариш. Устоз:',
     back: 'Курсларга қайтиш',
     addLesson: 'Дарс қўшиш',
+    importExcel: 'Excelдан импорт',
     lessonCount: 'Дарслар сони',
     lessonCountHint: 'Курс маълумотларидан',
     status: 'Курс ҳолати',
@@ -206,10 +232,11 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     category: 'Категория',
     categoryHint: 'Таркиб таснифи',
     lessonsTitle: 'Ушбу курсдаги дарслар',
-    lessonsSubtitle: 'Бу рўйхат фақат курслар саҳифасидан курс танлангандан кейин пайdo бўлади.',
+    lessonsSubtitle: 'Бу рўйхат фақат курслар саҳифасидан курс талангандан кейин пайдо бўлади.',
     reorder: 'Дарсларни қайта тартиблаш',
     search: 'Дарсларни қидириш...',
     actions: 'Ҳаракатлар',
+    view: 'Кўриш',
     edit: 'Дарсни таҳрирлаш',
     delete: 'Дарсни ўчириш',
     empty: 'Мос дарслар топилмади',
@@ -221,6 +248,7 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     description: 'Управление уроками, привязанными к этому курсу. Преподаватель:',
     back: 'Назад к курсам',
     addLesson: 'Добавить урок',
+    importExcel: 'Импорт из Excel',
     lessonCount: 'Количество уроков',
     lessonCountHint: 'Из данных курса',
     status: 'Статус курса',
@@ -234,8 +262,9 @@ const courseLessonsCopy: Record<Language, Record<string, string>> = {
     reorder: 'Изменить порядок уроков',
     search: 'Поиск уроков...',
     actions: 'Действия',
+    view: 'Просмотр',
     edit: 'Редактировать урок',
-    delete: 'Улить урок',
+    delete: 'Удалить урок',
     empty: 'Уроки не найдены',
     cancel: 'Отмена',
     save: 'Сохранить',

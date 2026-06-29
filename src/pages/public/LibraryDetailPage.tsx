@@ -90,13 +90,74 @@ export function LibraryDetailPage() {
         <div className="public-container library-detail-hero__inner">
           <span>{copy.breadcrumb}</span>
           <div className="library-detail-head">
-            <div className={`library-book-cover tone-${item.tone}`}><BookOpen size={48} /><span>{item.type}</span></div>
+            {item.coverImage ? (
+              <div className="library-book-cover-container" style={{ width: '130px', height: '178px', overflow: 'hidden', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', background: '#0d263d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <img src={item.coverImage} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            ) : (
+              <div className={`library-book-cover tone-${item.tone}`} style={{ flexShrink: 0 }}><BookOpen size={48} /><span>{item.type}</span></div>
+            )}
             <div className="library-detail-copy">
               <small>{item.category}</small>
               <h1>{item.title}</h1>
-              <p>{copy.description}</p>
-              <div className="library-detail-actions">
-                <Link to="/login">{copy.readNow}</Link>
+              <p>{item.descriptionShort || copy.description}</p>
+              <div className="library-detail-actions" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '16px' }}>
+                {item.downloadLinks && item.downloadLinks.length > 0 ? (
+                  item.downloadLinks.map((link: any, lIdx: number) => (
+                    <a key={lIdx} href={link.url} target="_blank" rel="noopener noreferrer" className="read-now-btn" style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: 'var(--color-gold, #c5a880)',
+                      color: '#fff',
+                      padding: '10px 24px',
+                      borderRadius: '6px',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 12px rgba(197, 168, 128, 0.2)',
+                      transition: 'all 0.2s',
+                    }}>
+                      <span>{language === 'ar' ? 'تنزيل' : 'Download'} ({link.fileType || 'PDF'})</span>
+                      {link.source && <span style={{ fontSize: '11px', opacity: 0.85, borderRight: dir === 'rtl' ? '1px solid rgba(255,255,255,0.4)' : 'none', borderLeft: dir === 'ltr' ? '1px solid rgba(255,255,255,0.4)' : 'none', paddingRight: dir === 'rtl' ? '8px' : '0', paddingLeft: dir === 'ltr' ? '8px' : '0' }}>{link.source}</span>}
+                    </a>
+                  ))
+                ) : item.downloadLink ? (
+                  <a href={item.downloadLink} target="_blank" rel="noopener noreferrer" className="read-now-btn" style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'var(--color-gold, #c5a880)',
+                    color: '#fff',
+                    padding: '10px 24px',
+                    borderRadius: '6px',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    boxShadow: '0 4px 12px rgba(197, 168, 128, 0.3)',
+                    transition: 'all 0.2s',
+                  }}>
+                    {language === 'ar' ? 'تنزيل الكتاب' : 'Download Book'} ({item.fileType || 'PDF'})
+                  </a>
+                ) : (
+                  <Link to="/login" className="read-now-btn">{copy.readNow}</Link>
+                )}
+                
+                {item.kamelahLink && (
+                  <a href={item.kamelahLink} target="_blank" rel="noopener noreferrer" style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: '#f8fafc',
+                    border: '1px solid #cbd5e1',
+                    color: '#0f172a',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    transition: 'all 0.2s',
+                  }}>
+                    {language === 'ar' ? 'رابط المكتبة الكاملة' : 'Kamelah Library'}
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -106,8 +167,59 @@ export function LibraryDetailPage() {
       <section className="public-container library-detail-layout">
         <div className="library-detail-main">
           <DetailTextCard className="library-detail-card" title={copy.overview}>
-            <p>{language === 'ar' ? 'يُستخدم هذا الكتاب في الدراسة التمهيدية والمراجعة المنهجية، مع ترتيب واضح للأبواب وسهولة في الرجوع إلى المسائل.' : 'This title is used for guided study and structured review, with clearly arranged chapters and easy reference points.'}</p>
+            <p style={{ whiteSpace: 'pre-line' }}>{item.descriptionLong || item.descriptionShort || (language === 'ar' ? 'يُستخدم هذا الكتاب في الدراسة التمهيدية والمراجعة المنهجية، مع ترتيب واضح للأبواب وسهولة في الرجوع إلى المسائل.' : 'This title is used for guided study and structured review, with clearly arranged chapters and easy reference points.')}</p>
           </DetailTextCard>
+
+          {item.volumes && item.volumes.length > 0 && (
+            <DetailTextCard className="library-detail-card" title={language === 'ar' ? 'أجزاء ومجلدات الكتاب' : 'Book Volumes & Parts'}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginTop: '12px' }}>
+                {item.volumes.map((vol: any, vIdx: number) => {
+                  let volCover = '';
+                  if (vol.coverType === 'custom') {
+                    volCover = vol.coverImage || '';
+                  } else if (vol.coverType === 'main' || !vol.coverType) {
+                    volCover = item.coverImage || '';
+                  }
+                  
+                  return (
+                    <div key={vIdx} style={{ display: 'flex', gap: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', alignItems: 'center' }}>
+                      {volCover ? (
+                        <div style={{ width: '60px', height: '80px', flexShrink: 0, overflow: 'hidden', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+                          <img src={volCover} alt={vol.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                      ) : (
+                        <div className={`library-book-cover tone-${item.tone}`} style={{ width: '60px', height: '80px', minHeight: 'auto', padding: '4px', flexShrink: 0, borderRadius: '4px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                          <BookOpen size={20} />
+                          <span style={{ fontSize: '9px', padding: '2px 4px' }}>{vol.fileType || 'PDF'}</span>
+                        </div>
+                      )}
+                      
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 700, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{vol.title}</h4>
+                        {vol.pages && <p style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#64748b' }}>{vol.pages} {language === 'ar' ? 'صفحة' : 'pages'}</p>}
+                        <a href={vol.downloadLink} target="_blank" rel="noopener noreferrer" style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          background: '#0d263d',
+                          color: '#fff',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          textDecoration: 'none',
+                          transition: 'background 0.2s',
+                        }}>
+                          {language === 'ar' ? 'تنزيل الجزء' : 'Download Part'}
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </DetailTextCard>
+          )}
+
           <DetailRelatedCard
             cardClassName="library-detail-card"
             linkClassName="library-detail-related"
@@ -129,6 +241,8 @@ export function LibraryDetailPage() {
                 { label: copy.type, value: item.type },
                 { label: copy.pages, value: <><FileText size={15} />{item.pages}</> },
                 { label: copy.reads, value: <><Eye size={15} />{item.views}</> },
+                ...(item.madhab ? [{ label: language === 'ar' ? 'المذهب الفقهي' : 'Madhab', value: item.madhab }] : []),
+                ...(item.source ? [{ label: language === 'ar' ? 'المصدر' : 'Source', value: item.source }] : []),
             ]}
           />
         </aside>

@@ -1,4 +1,4 @@
-import { BookOpen, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UserRound, UsersRound } from 'lucide-react'
+import { BookOpen, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UserRound, UsersRound, Play } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { ScholarsCopy } from './pageTypes'
 import { formatCompact, formatNumber, pickLocalizedText, sharedArchiveMetrics, sharedScholars } from '../shared/archive'
@@ -12,6 +12,7 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
       { label: 'الأقسام', to: '/categories', icon: LibraryBig },
       { label: 'الدورات', to: '/courses', icon: GraduationCap },
       { label: 'المشايخ', to: '/scholars', icon: UsersRound },
+      { label: 'المحاضرات', to: '/lectures', icon: Play },
       { label: 'الفتاوى', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'المكتبة', to: '/library', icon: BookOpen },
     ],
@@ -64,6 +65,7 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
       { label: 'Categories', to: '/categories', icon: LibraryBig },
       { label: 'Courses', to: '/courses', icon: GraduationCap },
       { label: 'Scholars', to: '/scholars', icon: UsersRound },
+      { label: 'Lectures', to: '/lectures', icon: Play },
       { label: 'Fatwa', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Library', to: '/library', icon: BookOpen },
     ],
@@ -113,10 +115,11 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     subtitle: 'Ilmiy arxiv',
     nav: [
       { label: 'Bosh sahifa', to: '/', icon: Home },
-      { label: 'Kategoriyalar', to: '/categories', icon: LibraryBig },
+      { label: 'Bo\'limlar', to: '/categories', icon: LibraryBig },
       { label: 'Kurslar', to: '/courses', icon: GraduationCap },
       { label: 'Ustozlar', to: '/scholars', icon: UsersRound },
-      { label: 'Fatvolar', to: '/fatwa', icon: MessageCircleQuestion },
+      { label: 'Ma’ruzalar', to: '/lectures', icon: Play },
+      { label: 'Fatvalar', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Kutubxona', to: '/library', icon: BookOpen },
     ],
     searchLabel: 'Izlash',
@@ -165,9 +168,10 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     subtitle: 'Илмий архив',
     nav: [
       { label: 'Бош саҳифа', to: '/', icon: Home },
-      { label: 'Категориялар', to: '/categories', icon: LibraryBig },
+      { label: 'Бўлимлар', to: '/categories', icon: LibraryBig },
       { label: 'Курслар', to: '/courses', icon: GraduationCap },
       { label: 'Устозлар', to: '/scholars', icon: UsersRound },
+      { label: 'Маърузалар', to: '/lectures', icon: Play },
       { label: 'Фатволар', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Кутубхона', to: '/library', icon: BookOpen },
     ],
@@ -217,9 +221,10 @@ export const scholarsCopy: Record<Language, ScholarsCopy> = {
     subtitle: 'Научный архив',
     nav: [
       { label: 'Главная', to: '/', icon: Home },
-      { label: 'Категории', to: '/categories', icon: LibraryBig },
+      { label: 'Разделы', to: '/categories', icon: LibraryBig },
       { label: 'Курсы', to: '/courses', icon: GraduationCap },
       { label: 'Ученые', to: '/scholars', icon: UsersRound },
+      { label: 'Лекции', to: '/lectures', icon: Play },
       { label: 'Фетвы', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Библиотека', to: '/library', icon: BookOpen },
     ],

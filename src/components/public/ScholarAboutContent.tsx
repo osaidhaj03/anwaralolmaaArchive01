@@ -2,14 +2,15 @@ import { BookOpen, GraduationCap, Landmark } from 'lucide-react'
 
 type ScholarAboutContentProps = {
   copy: Record<string, string>
+  bioLong?: string
 }
 
-export function ScholarAboutContent({ copy }: ScholarAboutContentProps) {
+export function ScholarAboutContent({ copy, bioLong }: ScholarAboutContentProps) {
   return (
     <div className="scholar-profile-main">
       <article className="scholar-profile-card">
         <h2>{copy.title}</h2>
-        <p>{copy.text}</p>
+        <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.7' }}>{bioLong || copy.text}</p>
       </article>
       <article className="scholar-profile-card">
         <h2>{copy.expertise}</h2>

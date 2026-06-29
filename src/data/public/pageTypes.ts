@@ -273,3 +273,61 @@ export type LandingCopy = {
   footerText: string
   newsletterSuccess: string
 }
+
+export type LecturePartItem = {
+  title: string
+  duration: string
+  videoUrl?: string
+  audioUrl?: string
+  description?: string
+}
+
+export type LectureItem = {
+  id: string
+  title: string
+  scholar: string
+  scholarId: string
+  category: string
+  categoryId: string
+  views: string
+  date: string
+  tone: string
+  thumbnail: string
+  description?: string
+  parts: LecturePartItem[]
+}
+
+export type LecturesCopy = {
+  brand: string
+  subtitle: string
+  nav: PublicNavItemSeed[]
+  searchLabel: string
+  themeLabel: string
+  languageLabel: string
+  login: string
+  breadcrumb: string
+  title: string
+  description: string
+  searchPlaceholder: string
+  all: string
+  categoryLabel: string
+  scholarLabel: string
+  latest: string
+  mostViewed: string
+  watch: string
+  empty: string
+  stats: PublicStatSeed[]
+  newsletterTitle: string
+  newsletterText: string
+  newsletterPlaceholder: string
+  newsletterButton: string
+  quickLinks: string
+  footerText: string
+  newsletterSuccess: string
+  items: LectureItem[]
+  partsLabel: string
+  partLabel: string
+  audioPlayerLabel: string
+  videoPlayerLabel: string
+}
+

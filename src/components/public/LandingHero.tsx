@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 type LandingHeroStat = {
   icon: LucideIcon
   label: string
+  to: string
   value: string
 }
 
@@ -20,7 +21,7 @@ type LandingHeroProps = {
   onSubmit: () => void
 }
 
-function getStatLink(label: string): string {
+export function getStatLink(label: string): string {
   const text = label.toLowerCase();
   if (text.includes('course') || text.includes('دورة') || text.includes('student') || text.includes('طالب')) {
     return '/courses';
@@ -127,8 +128,8 @@ export function LandingHero({
       </div>
 
       <div className="public-container stat-strip">
-        {stats.map(({ icon: Icon, label, value }) => (
-          <Link key={label} to={getStatLink(label)} style={{ textDecoration: 'none', color: 'inherit', display: 'contents' }}>
+        {stats.map(({ icon: Icon, label, to, value }) => (
+          <Link key={label} to={to} style={{ textDecoration: 'none', color: 'inherit', display: 'contents' }}>
             <div className="stat-strip-item">
               <div className="stat-icon-wrapper">
                 <Icon size={24} />

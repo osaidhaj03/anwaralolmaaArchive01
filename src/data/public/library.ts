@@ -1,4 +1,4 @@
-import { BookMarked, BookOpen, Eye, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UsersRound } from 'lucide-react'
+import { BookMarked, BookOpen, Eye, GraduationCap, Home, LibraryBig, MessageCircleQuestion, UsersRound, Play } from 'lucide-react'
 import type { Language } from '../../context/LanguageContext'
 import type { LibraryCopy } from './pageTypes'
 import { formatCompact, formatNumber, pickLocalizedText, sharedArchiveMetrics, sharedBooks } from '../shared/archive'
@@ -12,6 +12,7 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
       { label: 'الأقسام', to: '/categories', icon: LibraryBig },
       { label: 'الدورات', to: '/courses', icon: GraduationCap },
       { label: 'المشايخ', to: '/scholars', icon: UsersRound },
+      { label: 'المحاضرات', to: '/lectures', icon: Play },
       { label: 'الفتاوى', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'المكتبة', to: '/library', icon: BookOpen },
     ],
@@ -63,6 +64,7 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
       { label: 'Categories', to: '/categories', icon: LibraryBig },
       { label: 'Courses', to: '/courses', icon: GraduationCap },
       { label: 'Scholars', to: '/scholars', icon: UsersRound },
+      { label: 'Lectures', to: '/lectures', icon: Play },
       { label: 'Fatwa', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Library', to: '/library', icon: BookOpen },
     ],
@@ -114,6 +116,7 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
       { label: 'Bo\'limlar', to: '/categories', icon: LibraryBig },
       { label: 'Kurslar', to: '/courses', icon: GraduationCap },
       { label: 'Ustozlar', to: '/scholars', icon: UsersRound },
+      { label: 'Ma’ruzalar', to: '/lectures', icon: Play },
       { label: 'Fatvalar', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Kutubxona', to: '/library', icon: BookOpen },
     ],
@@ -165,6 +168,7 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
       { label: 'Бўлимлар', to: '/categories', icon: LibraryBig },
       { label: 'Курслар', to: '/courses', icon: GraduationCap },
       { label: 'Устозлар', to: '/scholars', icon: UsersRound },
+      { label: 'Маърузалар', to: '/lectures', icon: Play },
       { label: 'Фатволар', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Кутубхона', to: '/library', icon: BookOpen },
     ],
@@ -216,6 +220,7 @@ export const libraryCopy: Record<Language, LibraryCopy> = {
       { label: 'Разделы', to: '/categories', icon: LibraryBig },
       { label: 'Курсы', to: '/courses', icon: GraduationCap },
       { label: 'Шейхи', to: '/scholars', icon: UsersRound },
+      { label: 'Лекции', to: '/lectures', icon: Play },
       { label: 'Фетвы', to: '/fatwa', icon: MessageCircleQuestion },
       { label: 'Библиотека', to: '/library', icon: BookOpen },
     ],
